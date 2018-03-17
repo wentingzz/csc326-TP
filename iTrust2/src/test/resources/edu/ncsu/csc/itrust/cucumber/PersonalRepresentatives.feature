@@ -29,4 +29,12 @@ Examples:
 	| user | password | patientrep |
 	| pwtest1 | greenball | csc326 |
 	
-Scenario Outline: TestPatientRemovePatientRepresentative
+Scenario Outline: Test Patient Removing Their Patient Representative
+Given the patient <user> exists with patient representative <patientrep>
+When I login with username <user> and password <password>
+When I go to the Personal Representatives page
+When I remove the representative <patientrep> by selecting <patientrep> and clicking the 'Remove Patient Representative' button
+Then I have no representatives.
+Examples:
+	| user | password | patientrep |
+	| pwtest1 | greenball | csc326 |
