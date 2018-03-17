@@ -105,8 +105,8 @@ public class PersonalRepresentativesStepDefs {
 
     @When ( "I remove the representative <patientrep> by selecting <patientrep> and clicking the 'Remove Patient Representative' button" )
     public void removePersonalRep ( final String name ) {
-        final WebElement representative = driver.findElement( By.xpath( "//input[@value=name]" ) );
-        representative.click();
+        final WebElement patientRep = driver.findElement( By.xpath( "//input[@value=name]" ) );
+        patientRep.click();
         // assuming value for this button will be deleteRepSubmit
         final WebElement deleteRepresentative = driver.findElement( By.xpath( "//input[@value='deleteRepSubmit']" ) );
         deleteRepresentative.click();
