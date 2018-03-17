@@ -9,8 +9,7 @@ Feature: Personal Representatives
 	so that I can help patients prepare for and act properly if patients become incapacitated.
 	
 Scenario Outline: Test HCP Adding A Personal Representative for A Patient
-Given the hcp <user> exists
-When I login with username <user>
+Given I am able to log in to iTrust as <user> with password <password>
 When I go to the Personal Representatives page
 When I select patient with the name <patient>
 When I add the patient <patientrep> by typing their name and clicking the 'Add Representative' button
@@ -20,8 +19,7 @@ Examples:
 	| hcp | 12345 | csc326  | pwtest1 |
 	
 Scenario Outline: Test Patient Adding A Personal Representative for Themselves
-Given the patient <user> exists
-When I login with username <user> and password <password>
+Given I am able to log in to iTrust as <user> with password <password>
 When I go to the Personal Representatives page
 When I add the patient <patientrep> by typing their name and clicking the 'Add Representative' button
 Then <patientrep> is succesfully added as a representative.
@@ -30,8 +28,7 @@ Examples:
 	| pwtest1 | greenball | csc326 |
 	
 Scenario Outline: Test Patient Removing Their Patient Representative
-Given the patient <user> exists with patient representative <patientrep>
-When I login with username <user> and password <password>
+Given I am able to log in to iTrust as <user> with password <password>
 When I go to the Personal Representatives page
 When I remove the representative <patientrep> by selecting <patientrep> and clicking the 'Remove Patient Representative' button
 Then I have no representatives.
