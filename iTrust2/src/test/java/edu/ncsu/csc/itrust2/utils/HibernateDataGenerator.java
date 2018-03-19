@@ -188,7 +188,7 @@ public class HibernateDataGenerator {
         final User testTechUser = new User( "testlabtech",
                 "$2a$10$hOCH0uJlfbR6xzKWPQToXu1RP1/yLAngFXbVKhcnteRIQ1r/bGflm", Role.ROLE_ER, 1 );
         testTechUser.save();
-        testTech.setSelf( testERUser );
+        testTech.setSelf( testTechUser );
         testTech.setLastName( "User" );
         testTech.setEmail( "csc326s18.203.02@gmail.com" );
         final Calendar testtechBirth = Calendar.getInstance();
