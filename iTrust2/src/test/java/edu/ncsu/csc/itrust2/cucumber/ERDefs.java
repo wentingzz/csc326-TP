@@ -54,7 +54,7 @@ public class ERDefs {
         initialized = true;
     }
 
-    @When ( "I log into iTrust2 as an HCP" )
+    @When ( "I log in to iTrust2 as an HCP" )
     public void hcpLogin () {
         driver.get( baseUrl );
         final WebElement username = driver.findElement( By.name( "username" ) );
@@ -67,7 +67,7 @@ public class ERDefs {
         submit.click();
     }
 
-    @When ( "I log into iTrust2 as an ER" )
+    @When ( "I log in to iTrust2 as an ER" )
     public void erLogin () {
         driver.get( baseUrl );
         final WebElement username = driver.findElement( By.name( "username" ) );
@@ -107,6 +107,7 @@ public class ERDefs {
     @Then ( "The (.+), (.+), (.+), (.+), and (.+) are correct" )
     public void checkList ( final String name, final String age, final String birthday, final String gender,
             final String blood ) {
+        // TODO check the information is correct
         // final long time = System.currentTimeMillis();
         // while ( System.currentTimeMillis() - time < 5000 ) {
         // for ( final WebElement diag : driver.findElements( By.name(
@@ -121,7 +122,6 @@ public class ERDefs {
         // }
         // }
         // fail( "failed to find specified diagnosis" );
-        // TODO check the information is correct
     }
 
     @Then ( "I see the list of diagnoses codes for the patient" )

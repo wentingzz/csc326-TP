@@ -16,7 +16,7 @@ Then The <name>, <age>, <birthday>, <gender>, and <blood> are correct
 And I see the list of diagnoses codes for the patient
 Examples:
 	| usertype | name | age | birthday | gender | blood |
-	| csc326  | csc326 | 20 | 1/1/1990 | Female | A |
+	| csc326  | CSC | 13 | 2005 |  |  |
 
 Scenario Outline: HCP views invalid emergency record
 Given The required ERRecord facilities exist
@@ -33,7 +33,8 @@ Given The required ERRecord facilities exist
 When I log in to iTrust2 as an ER
 When I go to the Emergency Health Records page
 When I fill in user type with <usesrtype>
-Then user's information is shown successfully
+Then The <name>, <age>, <birthday>, <gender>, and <blood> are correct
+And I see the list of diagnoses codes for the patient
 Examples:
-	| usertype |
-	| csc326  |
+	| usertype | name | age | birthday | gender | blood |
+	| csc326  | ER | 13 | 2005 | Female | A |
