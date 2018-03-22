@@ -266,7 +266,32 @@ public enum TransactionType {
     /**
      * An email would be sent but email address is missing.
      */
-    CREATE_MISSING_EMAIL_LOG ( 1404, "Email notification could not be sent due to missing email address", true );
+    CREATE_MISSING_EMAIL_LOG ( 1404, "Email notification could not be sent due to missing email address", true ),
+
+    /**
+     * Personal Representatives are viewed
+     */
+    VIEW_PERSONAL_REPRESENTATIVES ( 1600, "Personal representatives were viewed", true ),
+
+    /**
+     * Personal Representatives are declared
+     */
+    DECLARE_PERSONAL_REPRESENTATIVES ( 1601, "Personal representatives were declared", true ),
+
+    /**
+     * Personal Representatives are undeclared
+     */
+    UNDECLARE_PERSONAL_REPRESENTATIVES ( 1602, "Personal representatives were undeclared", true ),
+
+    /**
+     * Patient viewed who they represent
+     */
+    VIEW_REPRESENTED ( 1603, "Patient viewed who they represent", true ),
+
+    /**
+     * Patient undeclared who they represented
+     */
+    UNDECLARE_REPRESENTED ( 1604, "Patiented undeclared who they represented", true );
 
     /**
      * Creates a TransactionType for logging events
