@@ -726,4 +726,60 @@ public class Patient extends DomainObject<Patient> implements Serializable {
         this.gender = gender;
     }
 
+    /**
+     * get the personal representatives of the patient
+     *
+     * @param username
+     * @return a List of patients who are this Patient's representatives
+     */
+    public static List<Patient> getPatientRepresentatives ( final String username ) {
+        return null;
+    }
+
+    /**
+     * undeclares the representative for the patient
+     *
+     * @param patient
+     * @param representative
+     * @return
+     **/
+    public static void undeclarePersonalRepresentative ( final String patient, final String representative ) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * adds a personal representative
+     * 
+     * @param patient
+     * @param representative
+     */
+    public static void addPersonalRepresentative ( final String patient, final String representative ) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * adds someone who is represented by the patient
+     * 
+     * @param patient
+     * @param represented
+     */
+    public static void addRepresented ( final String patient, final String represented ) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * remove someone who is represented by the patient (remove the patient as a
+     * representative for represented)
+     * 
+     * @param patient
+     * @param representative
+     */
+    public static void undeclareRepresented ( final String patient, final String represented ) {
+        // TODO Auto-generated method stub
+
+    }
+
 }

@@ -178,4 +178,88 @@ public class APIPatientController extends APIController {
         }
     }
 
+    /**
+     * Gets the personal representatives for the username provided
+     */
+    @GetMapping ( BASE_PATH + "/patients/{username}/representatives" )
+    public List<Patient> getPatientRepresentatives ( @PathVariable ( "username" ) final String username ) {
+        return Patient.getPatientRepresentatives( username );
+    }
+
+    /**
+     * Undeclares the representative for patient
+     */
+    @GetMapping ( BASE_PATH + "/patients/{patient}/{representative}/removerepresentative" )
+    public ResponseEntity undeclarePersonalRepresentative ( @PathVariable ( "patient" ) final String patient,
+            @PathVariable ( "representative" ) final String representative ) {
+        final Patient patientBeingChanged = Patient.getByName( patient );
+        if ( patient == null ) {
+            return new ResponseEntity( errorResponse( "No Patient found for username " + patient ),
+                    HttpStatus.NOT_FOUND );
+        }
+        else {
+            Patient.undeclarePersonalRepresentative( patient, representative );
+            LoggerUtil.log( TransactionType.DECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(), patient,
+                    "Patient  " + patient + "undeclared " + representative );
+            return new ResponseEntity( patientBeingChanged, HttpStatus.OK );
+        }
+    }
+
+    /**
+     * Declares the representative for patient
+     */
+    @GetMapping ( BASE_PATH + "/patients/{patient}/{representative}/addrepresentative" )
+    public ResponseEntity declarePersonalRepresentative ( @PathVariable ( "patient" ) final String patient,
+            @PathVariable ( "representative" ) final String representative ) {
+        final Patient patientBeingChanged = Patient.getByName( patient );
+        if ( patient == null ) {
+            return new ResponseEntity( errorResponse( "No Patient found for username " + patient ),
+                    HttpStatus.NOT_FOUND );
+        }
+        else {
+            Patient.addPersonalRepresentative( patient, representative );
+            LoggerUtil.log( TransactionType.UNDECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(), patient,
+                    "Patient " + patient + "declared representative  + representative" );
+            return new ResponseEntity( patientBeingChanged, HttpStatus.OK );
+        }
+    }
+
+    /**
+     * Undeclare who they are representing
+     */
+    @GetMapping ( BASE_PATH + "/patients/{patient}/{represented}/removerepresented" )
+    public ResponseEntity undeclareRepresented ( @PathVariable ( "patient" ) final String patient,
+            @PathVariable ( "representative" ) final String represented ) {
+        final Patient patientBeingChanged = Patient.getByName( patient );
+        if ( patient == null ) {
+            return new ResponseEntity( errorResponse( "No Patient found for username " + patient ),
+                    HttpStatus.NOT_FOUND );
+        }
+        else {
+            Patient.undeclareRepresented( patient, represented );
+            LoggerUtil.log( TransactionType.DECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(), patient,
+                    "Patient  " + patient + "undeclared " + represented );
+            return new ResponseEntity( patientBeingChanged, HttpStatus.OK );
+        }
+    }
+
+    /**
+     * Declares the representative for patient
+     */
+    @GetMapping ( BASE_PATH + "/patients/{patient}/{represented}/addrepresented" )
+    public ResponseEntity addRepresented ( @PathVariable ( "patient" ) final String patient,
+            @PathVariable ( "represented" ) final String represented ) {
+        final Patient patientBeingChanged = Patient.getByName( patient );
+        if ( patient == null ) {
+            return new ResponseEntity( errorResponse( "No Patient found for username " + patient ),
+                    HttpStatus.NOT_FOUND );
+        }
+        else {
+            Patient.addRepresented( patient, represented );
+            LoggerUtil.log( TransactionType.UNDECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(), patient,
+                    "Patient " + patient + "declared representative  + representative" );
+            return new ResponseEntity( patientBeingChanged, HttpStatus.OK );
+        }
+    }
+
 }
