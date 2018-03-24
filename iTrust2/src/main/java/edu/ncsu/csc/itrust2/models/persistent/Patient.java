@@ -5,9 +5,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,6 +19,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -44,7 +50,19 @@ public class Patient extends DomainObject<Patient> implements Serializable {
     /**
      * Randomly generated ID.
      */
-    private static final long serialVersionUID = 4617248041239679701L;
+    private static final long  serialVersionUID        = 4617248041239679701L;
+    /**
+     * Set of personal representatives Following the format of:
+     * https://dzone.com/tutorials/java/hibernate/hibernate-example/hibernate-mapping-many-to-many-using-annotations-1.html
+     */
+    private final Set<Patient> personalRepresentatives = new HashSet<Patient>( 0 );
+
+    /**
+     * Set of patients who this patient is a representative of Following the
+     * format of:
+     * https://dzone.com/tutorials/java/hibernate/hibernate-example/hibernate-mapping-many-to-many-using-annotations-1.html
+     */
+    private final Set<Patient> represented             = new HashSet<Patient>( 0 );
 
     /**
      * Get all patients in the database
@@ -732,54 +750,77 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * @param username
      * @return a List of patients who are this Patient's representatives
      */
-    public static List<Patient> getPatientRepresentatives ( final String username ) {
-        return null;
+    @Column ( name = "personalReps" )
+    public Set<Patient> getPersonalRepresentatives ( final String username ) {
+        return personalRepresentatives;
     }
 
     /**
+     * get the people that the patient represents
+     *
+     * @param username
+     * @return a List of patients who are this Patient's representatives
+     */
+    @Column ( name = "representedPatients" )
+    public Set<Patient> getRepresented ( final String username ) {
+        return represented;
+    }
+
+    /**
+     * creates a many-to-many mapping for the representatives Using format from
+     * here:
+     * http://www.codejava.net/frameworks/hibernate/hibernate-many-to-many-association-annotations-example
+     */
+    @ManyToMany ( cascade = CascadeType.ALL )
+    @JoinTable ( name = "REPS_AND_REPRESENTED", joinColumns = @JoinColumn ( name = "personalReps" ),
+            inverseJoinColumns = @JoinColumn ( name = "representedPatients" ) )
+    /**
      * undeclares the representative for the patient
      *
-     * @param patient
      * @param representative
      * @return
      **/
-    public static void undeclarePersonalRepresentative ( final String patient, final String representative ) {
-        // TODO Auto-generated method stub
-
+    public void undeclarePersonalRepresentative ( final String representative ) {
+        final User rep = User.getByName( representative );
+        final Patient repPatient = Patient.getPatient( rep );
+        personalRepresentatives.remove( repPatient );
     }
 
     /**
      * adds a personal representative
-     * 
-     * @param patient
+     *
      * @param representative
      */
-    public static void addPersonalRepresentative ( final String patient, final String representative ) {
-        // TODO Auto-generated method stub
+    public void addPersonalRepresentative ( final String representative ) {
+        final User rep = User.getByName( representative );
+        final Patient repPatient = Patient.getPatient( rep );
+        personalRepresentatives.add( repPatient );
 
     }
 
     /**
      * adds someone who is represented by the patient
-     * 
-     * @param patient
-     * @param represented
+     *
+     * @param representedUser
      */
-    public static void addRepresented ( final String patient, final String represented ) {
-        // TODO Auto-generated method stub
+    public void addRepresented ( final String representedUser ) {
+        final User rep = User.getByName( representedUser );
+        final Patient repPatient = Patient.getPatient( rep );
+        represented.add( repPatient );
 
     }
 
     /**
      * remove someone who is represented by the patient (remove the patient as a
      * representative for represented)
-     * 
+     *
      * @param patient
-     * @param representative
+     * @param representativeUser
      */
-    public static void undeclareRepresented ( final String patient, final String represented ) {
-        // TODO Auto-generated method stub
-
+    public void undeclareRepresented ( final String representedUser ) {
+        final User rep = User.getByName( representedUser );
+        final Patient repPatient = Patient.getPatient( rep );
+        represented.remove( repPatient );
     }
 
 }
