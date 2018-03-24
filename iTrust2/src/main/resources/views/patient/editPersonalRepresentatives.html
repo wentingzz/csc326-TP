@@ -1,0 +1,108 @@
+<body th:include="layout :: body" th:with="content=~{::content}">
+<div ng-app="myApp" ng-controller="PRCtrl">
+<h1>Edit Personal Representatives:</h1>
+<h3>Your Personal Representatives</h3>
+<form ng-submit="ctrl.submit()" name="AddPRForm">
+	<label>Patient's MID :</label>
+	<input type="text" ng-model="ctrl.recipe.name" id="repName" class="name form-control input-sm" placeholder="Enter name" required="0" />
+	<input type="submit" id="addRepSubmit" value="Add"
+						class="btn btn-primary btn-sm"
+						ng-disabled="addRecipeForm.$invalid" />
+</form>
+
+<table>
+	<td> Name </td>
+	<td> MID</td>
+	<td> Date Added</td>
+<tr ng-repeat="x in PRlist">
+  	<td><input type="radio"  name="recipes"
+                value="{{x.name}}" ng-checked="selected.indexOf(recipe) > -1"
+                ng-click="toggleSelection(recipe)" />{{x.name}}</td>
+  	<td>{{x.MID}}</td>  
+  	<td>{{x.date}}</td>
+</tr>
+</table>
+<input type="submit" id="deleteSubmit" value="Delete"/>
+<h3>You are a Personal Representative to:</h3>
+<table>
+	<td> Name </td>
+	<td> MID</td>
+	<td> Date Added</td>
+<tr ng-repeat="x in PRlist">
+  	<td>{{x.name}}</td>
+  	<td>{{x.MID}}</td>  
+  	<td>{{x.date}}</td>
+</tr>
+</table>
+<input type="submit" id="deleteSubmit" value="Delete"/>
+</div>
+
+
+<script>
+var app = angular.module("myApp", []);
+app.controller("PRCtrl", function($scope) {
+  $scope.PRlist = [
+    {"name" : "A", 
+    	"MID" : "MID_A", 
+        "date" : "01/01/2018"
+    },
+	{"name" : "B", 
+    	"MID" : "MID_B", 
+        "date" : "01/02/2018"
+    },
+	{"name" : "C", 
+    	"MID" : "MID_C", 
+        "date" : "01/03/2018"
+    }
+  ]
+  
+  $scope.selected = [];
+			$scope.toggleSelection = function toggleSelection(recipe) {
+				var idx = $scope.selected.indexOf(recipe);
+				if(idx > -1) {
+					console.log("Removing " + recipe.name);
+					$scope.selected.splice(idx, 1);
+				} else {
+					console.log("Adding " + recipe.name);
+					$scope.selected.push(recipe);
+				}
+				
+			} 
+			
+			function updateRecipes() {
+				console.log("Updating recipes");
+				$http.get("/api/v1/recipes/").then(function (response) {
+	  				$scope.recipes = response.data;
+	  			});
+			}
+			
+			function deleteRecipe(recipe) {
+				var deferred = $q.defer();
+		        $http.delete("/api/v1/recipes/" + recipe)
+		            .then(
+		            function (response) {
+		            		console.log(response);
+		    				$scope.submissionSuccess=true;	
+		    				
+		                deferred.resolve(response.data);
+		                
+		             	updateRecipes();
+		            },
+		            function(rejection){
+		                console.error('Error while deleting recipe');
+		                console.log(rejection);
+		                
+						$scope.submissionSuccess=false;	
+		                deferred.reject(rejection);
+		                
+		             	// Update recipe list
+				        $http.get("/api/v1/recipes").then(function (response) {
+			  				$scope.recipes = response.data;
+			  			});
+		            }
+		        );
+			}
+});
+</script>
+
+</body>
