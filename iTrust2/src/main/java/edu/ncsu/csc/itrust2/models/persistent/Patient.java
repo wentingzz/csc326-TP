@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,6 +19,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -748,7 +752,8 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * @param username
      * @return a List of patients who are this Patient's representatives
      */
-    public Set<Patient> getPersonalRepresentatives ( final String username ) {
+    @Column ( name = "personalReps" )
+    public Set<Patient> getPersonalRepresentatives () {
         return personalRepresentatives;
     }
 
@@ -758,7 +763,8 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * @param username
      * @return a List of patients who are this Patient's representatives
      */
-    public Set<Patient> getRepresented ( final String username ) {
+    @Column ( name = "representedPatients" )
+    public Set<Patient> getRepresented () {
         return represented;
     }
 
@@ -767,6 +773,10 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * here:
      * http://www.codejava.net/frameworks/hibernate/hibernate-many-to-many-association-annotations-example
      */
+    @ManyToMany ( cascade = CascadeType.ALL )
+    @JoinTable ( name = "REPS_AND_REPRESENTED", joinColumns = @JoinColumn ( name = "personalReps" ),
+            inverseJoinColumns = @JoinColumn ( name = "representedPatients" ) )
+
     /**
      * undeclares the representative for the patient
      *
@@ -807,7 +817,6 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * remove someone who is represented by the patient (remove the patient as a
      * representative for represented)
      *
-     * @param patient
      * @param representativeUser
      */
     public void undeclareRepresented ( final String representedUser ) {

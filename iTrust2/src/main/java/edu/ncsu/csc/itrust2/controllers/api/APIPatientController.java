@@ -180,13 +180,23 @@ public class APIPatientController extends APIController {
     }
 
     /**
-     * Gets the personal representatives for the username provided
+     * Gets the personal representatives for the user
      */
-    @GetMapping ( BASE_PATH + "/patient/{username}/representatives" )
-    public Set<Patient> getPersonalRepresentatives ( @PathVariable ( "username" ) final String username ) {
+    @GetMapping ( BASE_PATH + "/patient/representatives" )
+    public Set<Patient> getPersonalRepresentatives () {
         final User self = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
         final Patient patient = Patient.getPatient( self );
-        return patient.getPersonalRepresentatives( username );
+        return patient.getPersonalRepresentatives();
+    }
+
+    /**
+     * Gets the patients this user represents
+     */
+    @GetMapping ( BASE_PATH + "/patient/represented" )
+    public Set<Patient> getRepresented () {
+        final User self = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
+        final Patient patient = Patient.getPatient( self );
+        return patient.getRepresented();
     }
 
     /**
