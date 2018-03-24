@@ -2,7 +2,8 @@
 <div ng-app="myApp" ng-controller="PRCtrl">
 <h1>Edit Personal Representatives:</h1>
 <h3>Your Personal Representatives</h3>
-<form ng-submit="ctrl.submit()" name="AddPRForm">
+<form action="#" th:action="@{/patient/editPersonalRepresentatives}"
+			th:object="${PatientForm}" method="post">
 	<label>Patient's MID :</label>
 	<input type="text" ng-model="ctrl.recipe.name" id="repName" class="name form-control input-sm" placeholder="Enter name" required="0" />
 	<input type="submit" id="addRepSubmit" value="Add"
