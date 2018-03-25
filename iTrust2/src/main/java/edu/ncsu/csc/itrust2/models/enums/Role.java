@@ -25,6 +25,10 @@ public enum Role {
      * ER
      */
     ROLE_ER ( 3, "er/index" ),
+    /**
+     * Lab Tech
+     */
+    ROLE_LABTECH (4, "labtech/index"),
 
     ;
 

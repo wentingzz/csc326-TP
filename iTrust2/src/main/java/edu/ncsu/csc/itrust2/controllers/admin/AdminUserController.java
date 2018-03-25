@@ -94,6 +94,10 @@ public class AdminUserController {
                     er.setSelf( u );
                     er.save();
                     break;
+                case ROLE_LABTECH:
+                	final Personnel labTech = new Personnel();
+                	labTech.setSelf(u);
+                	labTech.save();
                 default:
                     // shouldn't reach
                     break;
