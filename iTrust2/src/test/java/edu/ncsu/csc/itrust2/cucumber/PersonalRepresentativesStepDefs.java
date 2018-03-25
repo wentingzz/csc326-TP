@@ -75,6 +75,7 @@ public class PersonalRepresentativesStepDefs {
         wait.until( ExpectedConditions.not( ExpectedConditions.titleIs( "iTrust2 :: Login" ) ) );
     }
 
+    // This is the editPersonalRepresentatives page
     @When ( "When I go to the Personal Representatives page" )
     public void goToPersonalRepPage () {
         // assuming will be called personalRepresentatives

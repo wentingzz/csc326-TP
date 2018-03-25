@@ -198,9 +198,10 @@ public class PatientTest {
 
     /**
      * tests that the personal representatives methods work
-     * 
+     *
      * @throws ParseException
      */
+    @Test
     public void testRepresentatives () throws ParseException {
         final User patientOne = new User( "patientTestPatient", "123456", Role.ROLE_PATIENT, 1 );
         patientOne.save();

@@ -56,7 +56,7 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * https://dzone.com/tutorials/java/hibernate/hibernate-example/hibernate-mapping-many-to-many-using-annotations-1.html
      *
      */
-    private final HashSet<Patient> personalRepresentatives = new HashSet<Patient>( 0 );
+    private final HashSet<Patient> personalRepresentatives = new HashSet<Patient>();
 
     /**
      * Set of patients who this patient is a representative of Following the
@@ -64,7 +64,8 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      *
      * https://dzone.com/tutorials/java/hibernate/hibernate-example/hibernate-mapping-many-to-many-using-annotations-1.html
      */
-    private final HashSet<Patient> represented             = new HashSet<Patient>( 0 );
+
+    private final HashSet<Patient> represented             = new HashSet<Patient>();
 
     /**
      * Get all patients in the database
