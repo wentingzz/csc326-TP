@@ -21,6 +21,10 @@ public enum Role {
      * Admin
      */
     ROLE_ADMIN ( 3, "admin/index" ),
+    /**
+     * ER
+     */
+    ROLE_ER ( 3, "er/index" ),
 
     ;
 
