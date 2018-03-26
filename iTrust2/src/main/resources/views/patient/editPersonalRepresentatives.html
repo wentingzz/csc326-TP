@@ -1,45 +1,18 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="layout :: head(title=~{::title},links=~{})">
+  <title>View Prescriptions</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+</head>
+
 <body th:include="layout :: body" th:with="content=~{::content}">
-<div ng-app="myApp" ng-controller="PRCtrl">
-<h1>Edit Personal Representatives:</h1>
-<h3>Your Personal Representatives</h3>
-<form action="#" th:action="@{/patient/editPersonalRepresentatives}"
-			th:object="${PatientForm}" method="post">
-	<label>Patient's MID :</label>
-	<input type="text" ng-model="ctrl.recipe.name" id="repName" class="name form-control input-sm" placeholder="Enter name" required="0" />
-	<input type="submit" id="addRepSubmit" value="Add"
-						class="btn btn-primary btn-sm"
-						ng-disabled="addRecipeForm.$invalid" />
-</form>
+  <div th:fragment="content">
 
-<table>
-	<td> Name </td>
-	<td> MID</td>
-	<td> Date Added</td>
-<tr ng-repeat="x in PRlist">
-  	<td><input type="radio"  name="recipes"
-                value="{{x.name}}" ng-checked="selected.indexOf(recipe) > -1"
-                ng-click="toggleSelection(recipe)" />{{x.name}}</td>
-  	<td>{{x.MID}}</td>  
-  	<td>{{x.date}}</td>
-</tr>
-</table>
-<input type="submit" id="deleteSubmit" value="Delete"/>
-<h3>You are a Personal Representative to:</h3>
-<table>
-	<td> Name </td>
-	<td> MID</td>
-	<td> Date Added</td>
-<tr ng-repeat="x in PRlist">
-  	<td>{{x.name}}</td>
-  	<td>{{x.MID}}</td>  
-  	<td>{{x.date}}</td>
-</tr>
-</table>
-<input type="submit" id="deleteSubmit" value="Delete"/>
-</div>
-
-
-<script>
+	<!-- Gets the patient's representatives -->
+    <script th:inline="javascript">
+      /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+      /*<![CDATA[*/
 var app = angular.module("myApp", []);
 app.controller("PRCtrl", function($scope) {
   $scope.PRlist = [
@@ -104,6 +77,57 @@ app.controller("PRCtrl", function($scope) {
 		        );
 			}
 });
+    	  /*]]>*/
+    </script>
+
+
+
+<div ng-app="myApp" ng-controller="PRCtrl">
+<h1>Edit Personal Representatives:</h1>
+<h3>Your Personal Representatives</h3>
+<form action="#" th:action="@{/patient/editPersonalRepresentatives}"
+			th:object="${PatientForm}" method="post">
+	<label>Patient's MID :</label>
+	<input type="text" ng-model="ctrl.recipe.name" id="repName" class="name form-control input-sm" placeholder="Enter name" required="0" />
+	<input type="submit" id="addRepSubmit" value="Add"
+						class="btn btn-primary btn-sm"
+						ng-disabled="addRecipeForm.$invalid" />
+</form>
+
+<table>
+	<td> Name </td>
+	<td> MID</td>
+	<td> Date Added</td>
+<tr ng-repeat="x in PRlist">
+  	<td><input type="radio"  name="recipes"
+                value="{{x.name}}" ng-checked="selected.indexOf(recipe) > -1"
+                ng-click="toggleSelection(recipe)" />{{x.name}}</td>
+  	<td>{{x.MID}}</td>  
+  	<td>{{x.date}}</td>
+</tr>
+</table>
+<input type="submit" id="deleteRepSubmit" value="Delete"
+						class="btn btn-primary btn-sm"
+						ng-disabled="addRecipeForm.$invalid" />
+<h3>You are a Personal Representative to:</h3>
+<table>
+	<td> Name </td>
+	<td> MID</td>
+	<td> Date Added</td>
+<tr ng-repeat="x in PRlist">
+  	<td>{{x.name}}</td>
+  	<td>{{x.MID}}</td>  
+  	<td>{{x.date}}</td>
+</tr>
+</table>
+<input type="submit" id="deleteRepSubmit" value="Delete"
+						class="btn btn-primary btn-sm"
+						ng-disabled="addRecipeForm.$invalid" />
+</div>
+
+
+<script>
+
 </script>
 
 </body>
