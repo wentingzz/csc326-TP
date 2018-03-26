@@ -17,16 +17,25 @@
       app.controller('representativesCtrl', function ($scope, $http) {
         $scope.representatives = [];
         $scope.loadTable = function () {
-          $http.get("/iTrust2/api/v1/patient/representatives").then(
-            function (response) {
-              $scope.representatives = response.data;
-              $scope.message = "";
-            }, function (rejection) {
-              $scope.representatives = [];
-              $scope.message = "Could not display representatives";
-            });
+        		$http.get("/iTrust2/api/v1/patient/represented").then(
+                    function (response) {
+                      $scope.represented = response.data;
+                      $scope.message = "";
+                      
+                    }, function (rejection) {
+                      $scope.representatives = [];
+                      $scope.message = "Could not display representatives";
+                    });
         }
-        $scope.loadTable();
+        $http.get("/iTrust2/api/v1/patient/representatives").then(
+                function (response) {
+                  $scope.representatives = response.data;
+                  $scope.message = "";
+                  $scope.loadTable();
+                }, function (rejection) {
+                  $scope.representatives = [];
+                  $scope.message = "Could not display representatives";
+                });
       });
 			/*]]>*/
     </script>
@@ -35,7 +44,7 @@
         <script th:inline="javascript">
       /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
       /*<![CDATA[*/
-      var app = angular.module("representedApp", []);
+      /* var app = angular.module("representedApp", []);
       app.controller('representativesCtrl', function ($scope, $http) {
         $scope.represented = [];
         $scope.loadTable = function () {
@@ -49,7 +58,7 @@
             });
         }
         $scope.loadTable();
-      });
+      }); */
 			/*]]>*/
     </script>
 	<!-- Displays representatives -->
@@ -64,10 +73,10 @@
               
               <div class="panel-body">
               	<label>Patient's MID :</label>
-				<input type="text" ng-model="ctrl.recipe.name" id="repName" class="name form-control input-sm" placeholder="Enter name" required="0" />
+				<input type="text" ng-model="ctrl.username" id="username" class="name form-control input-sm" placeholder="Enter name" required="0" />
+				<br>
 				<input type="submit" id="addRepSubmit" value="Add"
-						class="btn btn-primary btn-sm"
-						ng-disabled="addRecipeForm.$invalid" />
+						class="btn btn-primary btn-sm" ng-disabled="addRecipeForm.$invalid" />
                 <table class="table table-bordered">
                   <caption>Personal Representatives:</caption>
                   <thead>
@@ -79,9 +88,8 @@
                   </thead>
                   <tbody>
                     <tr name="representativeTableRow" ng-repeat="r in representatives" representativeId={{r.id}}>
-                      <td name="nameCell"><input type="radio"  name="recipes"
-                			value="{{x.name}}" ng-checked="selected.indexOf(recipe) > -1"
-                			ng-click="toggleSelection(recipe)" /> {{r.firstname}} {{r.lastname}}</td>
+                      <td name="nameCell"><input type="radio"  name="recipes" value="{{x.name}}" 
+                      	ng-checked="selected.indexOf(recipe) > -1" ng-click="toggleSelection(recipe)" /> {{r.firstname}} {{r.lastname}}</td>
                       <td name="midCell">{{r.username}}</td>
                       <td name="midCell">{{r.date}}</td>
                     </tr>
@@ -95,9 +103,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <!-- Displays who the patient represents -->
-   <div ng-app="representedApp" ng-controller="representedCtrl">
       <div class="container">
         <div class="row">
           <div class="col-md-12">
@@ -132,6 +137,10 @@
         </div>
       </div>
     </div>
+    <!-- Displays who the patient represents -->
+   <!-- <div ng-app="representedApp" ng-controller="representedCtrl">
+      
+    </div> -->
   </div>
 </body>
 
