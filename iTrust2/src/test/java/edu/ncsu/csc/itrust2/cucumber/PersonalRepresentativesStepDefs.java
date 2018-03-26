@@ -88,12 +88,15 @@ public class PersonalRepresentativesStepDefs {
         patient.click();
     }
 
-    @When ( "I add the patient (+) by typing their name and clicking the 'Add Representative' button" )
+    @When ( "I add the patient (+) by selecting their name and clicking the 'Add Representative' button" )
     public void addPersonalRep ( final String name ) {
         // assuming ID for this will be repName
-        final WebElement personalRepName = driver.findElement( By.id( "repName" ) );
-        personalRepName.clear();
-        personalRepName.sendKeys( name );
+        // final WebElement personalRepName = driver.findElement( By.id(
+        // "repName" ) );
+        // personalRepName.clear();
+        // personalRepName.sendKeys( name );
+        final WebElement patient = driver.findElement( By.id( name ) );
+        patient.click();
         // assuming value for this button will be addRepSubmit
         final WebElement addRepresentative = driver.findElement( By.xpath( "//input[@value='addRepSubmit']" ) );
         addRepresentative.click();
@@ -106,7 +109,8 @@ public class PersonalRepresentativesStepDefs {
 
     @When ( "I remove the representative <patientrep> by selecting <patientrep> and clicking the 'Remove Patient Representative' button" )
     public void removePersonalRep ( final String name ) {
-        final WebElement patientRep = driver.findElement( By.xpath( "//input[@value=name]" ) );
+        final WebElement patientRep = driver
+                .findElement( By.xpath( "/tr[@name='representativeTableRow']/input[@value=" + name + "]" ) );
         patientRep.click();
         // assuming value for this button will be deleteRepSubmit
         final WebElement deleteRepresentative = driver.findElement( By.xpath( "//input[@value='deleteRepSubmit']" ) );

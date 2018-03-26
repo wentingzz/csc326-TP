@@ -1,7 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head th:include="layout :: head(title=~{::title},links=~{})">
-  <title>View Prescriptions</title>
+  <title>Edit Personal Representatives</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 </head>
@@ -9,7 +9,7 @@
 <body th:include="layout :: body" th:with="content=~{::content}">
   <div th:fragment="content">
 
-	<!-- Gets the patient's representatives -->
+
     <script th:inline="javascript">
       /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
       /*<![CDATA[*/
@@ -17,131 +17,221 @@
       app.controller('representativesCtrl', function ($scope, $http) {
         $scope.representatives = [];
         $scope.loadTable = function () {
+          $http.get("/iTrust2/api/v1/patient/representatives").then(
+            function (response) {
+              $scope.represented = response.data;
+              $scope.message = "";
+            }, function (rejection) {
+              $scope.representatives = [];
+              $scope.message = "Could not display representatives";
+            });
+        }
+
+        $scope.addRepresentative = function () {
+
+          $http.post("/iTrust2/api/v1/patient/representatives", $scope.representative).then(
+            function (response) {
+              $scope.loadTable();
+              $scope.representative.name = ""
+              $scope.mid = ""
+            }, function (rejection) {
+              $scope.errorAdding = "Could not add representative";
+            });
+
+        }
+        $scope.deleteRepresentative = function (representative) {
+          var msg = "Are you sure you want to remove representative" + representative.mid "?";
+          if (confirm(msg)) {
+	          $http.delete('/iTrust2/api/v1/patient/' + representative.mid + '/removerepresentative').then(
+	            function (response) {
+	              $scope.loadTable();
+	              $scope.message = "";
+	            }, function (rejection) {
+	              $scope.message = "Could not remove representative";
+	            });
+          };
+        }
+
+        $http.get("/iTrust2/api/v1/patients").then(
+          function (response) {
+            $scope.patients = response.data;
+          });
+
+
+        // gets the template to ng-include for a table row / item
+        $scope.selectedRepresentative = {};
+
+        $scope.getTemplate = function (representative) {
+          if (representative.id === $scope.selectedRepresentative.mid) return 'edit';
+          else return 'view';
+        };
+
+        $scope.resetSelected = function () {
+          $scope.selectedRepresentative = {};
+        };
+        $scope.loadTable();
+      });
+			/*]]>*/
+    </script>
+<script th:inline="javascript">
+      /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+      /*<![CDATA[*/
+      var app = angular.module("representedApp", []);
+      app.controller('representedCtrl', function ($scope, $http) {
+        $scope.represented = [];
+        $scope.loadTable = function () {
         		$http.get("/iTrust2/api/v1/patient/represented").then(
                     function (response) {
                       $scope.represented = response.data;
                       $scope.message = "";
                       
                     }, function (rejection) {
-                      $scope.representatives = [];
+                      $scope.represeted = [];
                       $scope.message = "Could not display representatives";
                     });
         }
-        $http.get("/iTrust2/api/v1/patient/representatives").then(
-                function (response) {
-                  $scope.representatives = response.data;
-                  $scope.message = "";
-                  $scope.loadTable();
-                }, function (rejection) {
-                  $scope.representatives = [];
-                  $scope.message = "Could not display representatives";
-                });
-      });
-			/*]]>*/
-    </script>
-    
-    <!-- Gets who the patient represents -->
-        <script th:inline="javascript">
-      /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
-      /*<![CDATA[*/
-      /* var app = angular.module("representedApp", []);
-      app.controller('representativesCtrl', function ($scope, $http) {
-        $scope.represented = [];
-        $scope.loadTable = function () {
-          $http.get("/iTrust2/api/v1/patient/represented").then(
-            function (response) {
-              $scope.represented = response.data;
-              $scope.message = "";
-            }, function (rejection) {
-              $scope.represented = [];
-              $scope.message = "Could not display represented patients";
-            });
-        }
-        $scope.loadTable();
-      }); */
-			/*]]>*/
-    </script>
-	<!-- Displays representatives -->
+        $scope.deleteRepresented = function (representative) {
+            var msg = "Are you sure you want to remove representative" + representative.mid "?";
+            if (confirm(msg)) {
+  	          $http.delete('/iTrust2/api/v1/patient/' + representative.mid + '/removerepresented').then(
+  	            function (response) {
+  	              $scope.loadTable();
+  	              $scope.message = "";
+  	            }, function (rejection) {
+  	              $scope.message = "Could not remove representative";
+  	            });
+            };
+          }
+      }
+        </script>
+        
     <div ng-app="representativesApp" ng-controller="representativesCtrl">
       <div class="container">
         <div class="row">
           <div class="col-md-12">
             <div class="panel panel-primary">
               <div class="panel-heading">
-                <h3>Personal Representatives:</h3>
+                <h3>Your Personal Representatives</h3>
               </div>
-              
               <div class="panel-body">
-              	<label>Patient's MID :</label>
-				<input type="text" ng-model="ctrl.username" id="username" class="name form-control input-sm" placeholder="Enter name" required="0" />
-				<br>
-				<input type="submit" id="addRepSubmit" value="Add"
-						class="btn btn-primary btn-sm" ng-disabled="addRecipeForm.$invalid" />
                 <table class="table table-bordered">
                   <caption>Personal Representatives:</caption>
                   <thead>
                     <tr>
-                      <th>Name</th>
                       <th>MID</th>
-                      <th>Date Added</th>
+                      <th>Name</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr name="representativeTableRow" ng-repeat="r in representatives" representativeId={{r.id}}>
-                      <td name="nameCell"><input type="radio"  name="recipes" value="{{x.name}}" 
-                      	ng-checked="selected.indexOf(recipe) > -1" ng-click="toggleSelection(recipe)" /> {{r.firstname}} {{r.lastname}}</td>
-                      <td name="midCell">{{r.username}}</td>
-                      <td name="midCell">{{r.date}}</td>
+                    <tr name="representativeTableRow" ng-repeat="r in representatives" ng-include="getTemplate(r)" representativeId={{r.id}}>
                     </tr>
                   </tbody>
                 </table>
-                <input type="submit" id="deleteRepSubmit" value="Delete"
-						class="btn btn-primary btn-sm"
-						ng-disabled="addRecipeForm.$invalid" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="panel panel-primary">
-              <div class="panel-heading">
-                <h3>Patient is a Personal Representative to:</h3>
-              </div>
-              <div class="panel-body">
-                <table class="table table-bordered">
-                  <caption>Patient is a Personal Representative to:</caption>
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>MID</th>
-                      <th>Date Added</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr name="representedTableRow" ng-repeat="r in represented" representedId={{r.id}}>
-                      <td name="nameCell">{{r.firstname}} {{r.lastname}}</td>
-                      <td name="midCell">{{r.username}}</td>
-                      <td name="midCell">{{r.date}}</td>
-                    </tr>
-                  </tbody>
-                </table>
-                <input type="submit" id="deleteRepSubmit" value="Delete"
-						class="btn btn-primary btn-sm"
-						ng-disabled="addRecipeForm.$invalid" />
+
+                <!-- table in view mode -->
+                <script type="text/ng-template" id="view">
+                  <td name="midCell">{{r.mid}}</td>
+                  <td name="nameCell">{{r.name}}</td>
+                  <td>
+                    <div class="row text-center">
+                      <div class="col-md-6">
+                          <input type="button" value="Delete Representative" class="btn btn-danger" name="deleteRepresentative" ng-click="deleteRepresentative(r)" />                          
+                      </div>
+                    </div>                  
+                  </td>
+                </script>
+
+                <br>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="panel panel-default">
+                      <div class="panel-heading ">Add a Representative</div>
+                      <div class="panel-body">
+                        <form class="form-horizontal" role="form" name="addRepresentativeForm" ng-submit="addRepresentative(addRepresentativeForm.$valid)">
+                          <div class="row">
+
+                            <!-- patient -->
+                            <div class="col-md-5 radio-box">
+                              <div class="form-check">
+                                <label>Patient:</label>
+                                <ul style="max-height:15%;overflow:auto;list-style: none;">
+                                  <li ng-repeat="patient in patients">
+                                    <label>
+                                    <!-- not sure what to do here; was 'parent.prescription.patient' -->
+                                      <input type="radio" ng-model="$parent.patients" name="name" value="{{patient.self.username}}" required="true"
+                                      />&nbsp; {{patient.self.username}}
+                                    </label>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                          </div>
+                          <br>
+                          <div class="row">
+                          </div>
+                          <br>
+                          <br>
+                          <div class="row">
+                            <div class="col-md-12 text-center">
+                              <button type="submit" class="btn btn-success" name="submit">Add Representative</button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- Displays who the patient represents -->
-   <!-- <div ng-app="representedApp" ng-controller="representedCtrl">
-      
-    </div> -->
-  </div>
+     <div ng-app="representedApp" ng-controller="representedCtrl">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3>Who You Represent</h3>
+              </div>
+              <div class="panel-body">
+                <table class="table table-bordered">
+                  <caption>Who you Represent:</caption>
+                  <thead>
+                    <tr>
+                      <th>MID</th>
+                      <th>Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr name="representativeTableRow" ng-repeat="r in representatives" ng-include="getTemplate(r)" representativeId={{r.id}}>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <!-- table in view mode -->
+                <script type="text/ng-template" id="view">
+                  <td name="midCell">{{r.mid}}</td>
+                  <td name="nameCell">{{r.name}}</td>
+                  <td>
+                    <div class="row text-center">
+                      <div class="col-md-6">
+                          <input type="button" value="Remove Me as a Representative" class="btn btn-danger" name="deleteRepresentative" ng-click="deleteRepresented(r)" />                          
+                      </div>
+                    </div>                  
+                  </td>
+                </script>
+
+                <br>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
 </body>
 
 </html>

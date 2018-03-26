@@ -21,7 +21,7 @@ Examples:
 Scenario Outline: Test Patient Adding A Personal Representative for Themselves
 Given I am able to log in to iTrust as <user> with password <password>
 When I go to the Personal Representatives page
-When I add the patient <patientrep> by typing their name and clicking the 'Add Representative' button
+When I add the patient <patientrep> by selecting their name and clicking the 'Add Representative' button
 Then <patientrep> is succesfully added as a representative.
 Examples:
 	| user | password | patientrep |
