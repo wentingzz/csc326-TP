@@ -27,7 +27,7 @@
             });
         }
 
-        $scope.addRepresentative = function () {
+        $scope.addRepresentative = function (representative) {
 
           $http.post("/iTrust2/api/v1/patient/representatives", $scope.representative).then(
             function (response) {

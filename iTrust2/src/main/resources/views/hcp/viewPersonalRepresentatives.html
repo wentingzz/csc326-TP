@@ -1,0 +1,156 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="layout :: head(title=~{::title},links=~{})">
+<title>Document Office Visit</title>
+</head>
+<body th:include="layout :: body" th:with="content=~{::content}">
+	<div th:fragment="content">
+
+		<script th:inline="javascript">
+			/* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+			/*<![CDATA[*/
+
+			var app = angular.module('myApp', []);
+			app
+					.controller(
+							'representativesCtrl',
+							function($scope, $http) {
+								$scope.displayName = function(p) {
+									return p.firstName + " " + p.lastName + " (" + p.self.username + ")";
+								}
+								
+								// documentation on Angular filters: https://docs.angularjs.org/api/ng/filter/filter
+								$scope.searchFilter = "";
+								$scope.filterPatients = function(patient) {
+									return ($scope.displayName(patient)).toLowerCase().match($scope.searchFilter.toLowerCase());
+								}
+								
+								$scope.selectPatient = function(patient, override) {
+									if (!override && formDifferent($scope.patientForm, $scope.originalForm)) {
+										if (!confirm("You have made changes to " + $scope.patientForm.self
+												+ ". Would you like to continue? (changes will be lost)")) {
+											$scope.selectedPatient = "";
+											$scope.selectedPatient = $scope.patientForm.self;
+											return;
+										}
+									}
+									
+									var pf = $scope.patientForm = {};
+									var of = $scope.originalForm = {};
+									$scope.selectedPatient = pf.self;
+								}
+								
+								 $scope.addRepresentative = function (representative) {
+
+							          $http.post("/iTrust2/api/v1/patient/representatives", $scope.representative).then(
+							            function (response) {
+							              $scope.loadTable();
+							              $scope.representative.name = ""
+							              $scope.mid = ""
+							            }, function (rejection) {
+							              $scope.errorAdding = "Could not add representative";
+							            });
+
+							        }
+								}
+								
+								$http.get("/iTrust2/api/v1/patients").then(
+										function(response) {
+											$scope.patients = response.data;
+										});
+
+								console.log($scope);
+						
+							});
+
+			/*]]>*/
+		</script>
+
+
+
+		<div ng-app="myApp" ng-controller="representativesCtrl">
+<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<ul class="nav navbar-nav">
+					<li class="dropdown"><a class="dropdown-toggle"
+						data-toggle="dropdown" href="#">Patient<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="/iTrust2/hcp/viewAppointmentRequests"
+								id="viewrequests">View Appointment Requests</a></li>
+							<li><a href="/iTrust2/hcp/viewAppointments"
+								id="upcomingrequests">View Upcoming Appointments</a></li>
+							<li><a href="/iTrust2/hcp/editPatientDemographics"
+								id="editPatientDemographics">Edit Patient</a></li>
+							<li><a href="#">Add Patient -- Not Implemented</a></li>
+							<li><a href="/iTrust2/hcp/documentOfficeVisit.html"
+								id="documentOfficeVisit">Document Office Visit</a></li>
+						</ul></li>
+					<li class="dropdown"><a class="dropdown-toggle"
+						data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="/iTrust2/personnel/editDemographics"
+								id="editdemographics">Edit Demographics</a></li>
+							<li> <a href="/iTrust2/hcp/editOfficeVisit"
+							      id="editOfficeVisit">Edit Office Visit</a></li>
+						</ul></li>
+				</ul>
+			</div>
+		</nav>
+			<div style="float:left;width:30%;height:75%;overflow-y:auto">
+			<h2>Patients:</h2>
+			<!-- info on filtering taken from here: https://www.w3schools.com/angular/angular_filters.asp
+				and https://docs.angularjs.org/api/ng/filter/filter -->
+			<h4>Search: <input type="text" name="search" ng-model="searchFilter"/></h4>
+			<!-- Info on scrolling taken from here: https://www.w3schools.com/cssref/pr_pos_overflow.asp -->
+			<!-- and here: https://stackoverflow.com/questions/9560330/how-to-hide-a-vertical-scroll-bar-when-not-needed -->
+			<ul style="overflow:auto;height=90%;">
+			<!-- Information on how labels wor from here: https://stackoverflow.com/questions/7863251/clicking-the-text-to-select-corresponding-radio-button -->
+							<li ng-repeat="patient in patients | filter:filterPatients"><h4><label>
+									<input type="radio" ng-model="$parent.selectedPatient"
+									name="patient" value="{{patient.self.username}}"
+									ng-click='$parent.selectPatient(patient)' />&nbsp;{{$parent.displayName(patient)}}</label>
+							</h4></li>
+						</ul>
+			</div>
+			<!-- information on vertical rule found here: https://stackoverflow.com/questions/571900/is-there-a-vr-vertical-rule-in-html  -->
+		<div style="float:left;width:70%;border-left:1px solid #bbb;padding-left: 3%;height:75%;overflow-y:auto">
+			<h2 id="header0">Select Patient to Add as a Representative</h2>
+			<div ng-show="selectedPatient">
+				<h3>Username: {{selectedPatient}}</h3>
+				<form class="form-horizontal" role="form" name="addRepresentativeForm" ng-submit="addRepresentative(addRepresentativeForm.$valid)">
+				<table>
+					      <!-- patients -->
+                            <div class="col-md-5 radio-box">
+                              <div class="form-check">
+                                <label>Patient:</label>
+                                <ul style="max-height:15%;overflow:auto;list-style: none;">
+                                  <li ng-repeat="patient in patients">
+                                    <label>
+                                    <!-- not sure what to do here; was 'parent.prescription.patient' -->
+                                      <input type="radio" ng-model="$parent.patients" name="name" value="{{patient.self.username}}" required="true"
+                                      />&nbsp; {{patient.self.username}}
+                                    </label>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+				</table>
+				<button type="submit" class="btn btn-success" name="submit">Add Representative</button>
+				</form>
+	
+				<br />
+	
+				<div name="success">{{message}}</div>
+			</div>
+			</div>
+
+
+
+
+		</div>
+
+
+
+
+	</div>
+</body>
+</html>

@@ -51,4 +51,13 @@ public class HCPController {
         return "/hcp/editPrescriptions";
     }
 
+    /**
+     * Allows the HCP to view and add personal representatives
+     */
+    @GetMapping ( "/hcp/viewPersonalRepresentatives" )
+    @PreAuthorize ( "hasRole('ROLE_HCP')" )
+    public String viewPersonalRepresentatives () {
+        return "/hcp/viewPersonalRepresentatives";
+    }
+
 }
