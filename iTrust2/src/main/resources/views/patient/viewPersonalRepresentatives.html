@@ -1,0 +1,120 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="layout :: head(title=~{::title},links=~{})">
+  <title>View Prescriptions</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+</head>
+
+<body th:include="layout :: body" th:with="content=~{::content}">
+  <div th:fragment="content">
+
+	<!-- Gets the patient's representatives -->
+    <script th:inline="javascript">
+      /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+      /*<![CDATA[*/
+      var app = angular.module("representativesApp", []);
+      app.controller('representativesCtrl', function ($scope, $http) {
+        $scope.representatives = [];
+        $scope.loadTable = function () {
+          $http.get("/iTrust2/api/v1/patient/representatives").then(
+            function (response) {
+              $scope.representatives = response.data;
+              $scope.message = "";
+            }, function (rejection) {
+              $scope.representatives = [];
+              $scope.message = "Could not display representatives";
+            });
+        }
+        $scope.loadTable();
+      });
+			/*]]>*/
+    </script>
+    
+    <!-- Gets who the patient represents -->
+        <script th:inline="javascript">
+      /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+      /*<![CDATA[*/
+      var app = angular.module("representedApp", []);
+      app.controller('representativesCtrl', function ($scope, $http) {
+        $scope.represented = [];
+        $scope.loadTable = function () {
+          $http.get("/iTrust2/api/v1/patient/represented").then(
+            function (response) {
+              $scope.represented = response.data;
+              $scope.message = "";
+            }, function (rejection) {
+              $scope.represented = [];
+              $scope.message = "Could not display represented patients";
+            });
+        }
+        $scope.loadTable();
+      });
+			/*]]>*/
+    </script>
+	<!-- Displays representatives -->
+    <div ng-app="representativesApp" ng-controller="representativesCtrl">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3>Personal Representatives:</h3>
+              </div>
+              <div class="panel-body">
+                <table class="table table-bordered">
+                  <caption>Personal Representatives:</caption>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>MID</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr name="representativeTableRow" ng-repeat="r in representatives" representativeId={{r.id}}>
+                      <td name="nameCell">{{r.firstname}} {{r.lastname}}</td>
+                      <td name="midCell">{{r.username}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Displays who the patient represents -->
+   <div ng-app="representedApp" ng-controller="representedCtrl">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3>Patient is a Personal Representative to:</h3>
+              </div>
+              <div class="panel-body">
+                <table class="table table-bordered">
+                  <caption>Patient is a Personal Representative to:</caption>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>MID</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr name="representedTableRow" ng-repeat="r in represented" representedId={{r.id}}>
+                      <td name="nameCell">{{r.firstname}} {{r.lastname}}</td>
+                      <td name="midCell">{{r.username}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
