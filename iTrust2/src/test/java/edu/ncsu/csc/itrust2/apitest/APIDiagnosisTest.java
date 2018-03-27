@@ -226,6 +226,11 @@ public class APIDiagnosisTest {
         }
         assertTrue( flag );
 
+        //retrieve patient diagnoses
+        content = mvc.perform( get( "/api/v1/patientDiagnoses/" + visit.getPatient().getUsername() )
+                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( codeForm ) ) ).andReturn()
+                .getResponse().getContentAsString();
+
         // edit the office visit and remove a diagnosis
 
         list.remove( d );
@@ -236,6 +241,7 @@ public class APIDiagnosisTest {
         content = mvc.perform( get( "/api/v1/diagnosesforvisit/" + visit.getId() )
                 .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( codeForm ) ) ).andReturn()
                 .getResponse().getContentAsString();
+        
         dlist = gson.fromJson( content, new TypeToken<ArrayList<Diagnosis>>() {
         }.getType() );
         for ( final Diagnosis dd : dlist ) {
