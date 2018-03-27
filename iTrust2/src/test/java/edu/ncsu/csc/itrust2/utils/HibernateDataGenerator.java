@@ -121,6 +121,11 @@ public class HibernateDataGenerator {
         final User patient = new User( "patient", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
                 Role.ROLE_PATIENT, 1 );
         patient.save();
+        // this is Patient object corresponding to the user 'patient'
+        final Patient patientPatient = new Patient();
+        // sync the User 'patient' with the Patient 'patientPatient'
+        patientPatient.setSelf( patient );
+        patientPatient.save();
 
         final User admin = new User( "admin", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
                 Role.ROLE_ADMIN, 1 );
