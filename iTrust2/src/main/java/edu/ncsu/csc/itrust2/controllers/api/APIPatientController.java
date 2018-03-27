@@ -188,6 +188,9 @@ public class APIPatientController extends APIController {
     @GetMapping ( BASE_PATH + "/patient/representatives" )
     public List<Patient> getPersonalRepresentatives () {
         final User self = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
+        if ( self == null ) {
+            return null;
+        }
         final Patient patient = Patient.getPatient( self );
         final List<Patient> list = Lists.newArrayList( patient.getPersonalRepresentatives() );
         return list;
@@ -231,6 +234,7 @@ public class APIPatientController extends APIController {
     @PostMapping ( BASE_PATH + "/patient/{representative}/addrepresentative" )
     public ResponseEntity declarePersonalRepresentative (
             @PathVariable ( "representative" ) final String representative ) {
+        System.out.println( representative );
         final User self = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
         final Patient patient = Patient.getPatient( self );
         if ( patient == null ) {
@@ -239,6 +243,7 @@ public class APIPatientController extends APIController {
         }
         else {
             patient.addPersonalRepresentative( representative );
+            patient.save();
             LoggerUtil.log( TransactionType.UNDECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(),
                     "Patient " + patient + "declared representative  + representative" );
             return new ResponseEntity( patient, HttpStatus.OK );

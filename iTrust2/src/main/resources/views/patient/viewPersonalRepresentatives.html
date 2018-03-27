@@ -16,6 +16,7 @@
       var app = angular.module("representativesApp", []);
       app.controller('representativesCtrl', function ($scope, $http) {
         $scope.representatives = [];
+        $scope.selected = "";
         $scope.loadTable1 = function () {
           $http.get("/iTrust2/api/v1/patient/representatives").then(
             function (response) {
@@ -38,8 +39,8 @@
         	    });
         	};
         
-        $scope.addRepresentative = function (representative) {
-          $http.post("/iTrust2/api/v1/patient/addrepresentative", representative.mid).then(
+        $scope.addRepresentative = function () {
+          $http.post("/iTrust2/api/v1/patient/" + $scope.selected + "/addrepresentative").then(
             function (response) {
               $scope.loadTable1();
               $scope.representative.name = ""
@@ -139,6 +140,7 @@
                   </td>
                 </script>
                 <label>{{message}}</label>
+                <label>{{selected}}</label>
 
                 <br>
                 <div class="row">
@@ -148,19 +150,24 @@
                       <div class="panel-body">
                         <form class="form-horizontal" role="form" name="addRepresentativeForm" ng-submit="addRepresentative(addRepresentativeForm.$valid)">
                           <div class="row">
+                          <label>Patient:</label>
+                                <ul style="max-height:15%;overflow:auto;list-style: none;">
+                                  <select ng-model="selected">
+                                  	<option ng-repeat="patient in patients" value="{{patient.self.username}}"> {{patient.self.username}}
+                                     </option>
+                                  </select>
 
                             <!-- patient -->
                             <div class="col-md-5 radio-box">
                               <div class="form-check">
-                                <label>Patient:</label>
-                                <ul style="max-height:15%;overflow:auto;list-style: none;">
-                                  <li ng-repeat="patient in patients">
+                                
+                                  <!-- <li ng-repeat="patient in patients">
                                     <label>
-                                    <!-- not sure what to do here; was 'parent.prescription.patient' -->
-                                      <input type="radio" ng-model="$parent.patients" name="name" value="{{patient.self.username}}" required="true"
+                                    not sure what to do here; was 'parent.prescription.patient'
+                                      <input type="radio" ng-model="selected" name="name" value="{{patient.self.username}}" required="true"
                                       />&nbsp; {{patient.self.username}}
                                     </label>
-                                  </li>
+                                  </li> -->
                                 </ul>
                               </div>
                             </div>
@@ -173,7 +180,7 @@
                           <br>
                           <div class="row">
                             <div class="col-md-12 text-center">
-                              <button type="submit" class="btn btn-success" name="submit">Add Representative</button>
+                              <button ng-click="addRepresentative(selected)" type="submit" class="btn btn-success" name="submit">Add Representative</button>
                             </div>
                           </div>
                         </form>
@@ -184,11 +191,8 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-     <div ng-app="representedApp" ng-controller="representedCtrl">
-      <div class="container">
+          
+          <div class="container">
         <div class="row">
           <div class="col-md-12">
             <div class="panel panel-primary">
@@ -229,6 +233,8 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
         </div>
       </div>
     </div>
