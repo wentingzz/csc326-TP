@@ -231,7 +231,7 @@ public class APIPatientController extends APIController {
      * Declares the representative for patient
      */
     @PreAuthorize ( "hasRole('ROLE_PATIENT')" )
-    @PostMapping ( BASE_PATH + "/patient/{representative}/addrepresentative" )
+    @PutMapping ( BASE_PATH + "/patient/{representative}/addrepresentative" )
     public ResponseEntity declarePersonalRepresentative (
             @PathVariable ( "representative" ) final String representative ) {
         System.out.println( representative );

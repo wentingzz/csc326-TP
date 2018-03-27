@@ -40,7 +40,7 @@
         	};
         
         $scope.addRepresentative = function () {
-          $http.post("/iTrust2/api/v1/patient/" + $scope.selected + "/addrepresentative").then(
+          $http.put("/iTrust2/api/v1/patient/" + $scope.selected + "/addrepresentative").then(
             function (response) {
               $scope.loadTable1();
               $scope.representative.name = ""
