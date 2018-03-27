@@ -16,7 +16,7 @@
       var app = angular.module("representativesApp", []);
       app.controller('representativesCtrl', function ($scope, $http) {
         $scope.representatives = [];
-        $scope.loadTable = function () {
+        $scope.loadTable1 = function () {
           $http.get("/iTrust2/api/v1/patient/representatives").then(
             function (response) {
               $scope.represented = response.data;
@@ -25,38 +25,51 @@
               $scope.representatives = [];
               $scope.message = "Could not display representatives";
             });
-        }
-
+        };
+        
+        $scope.loadTable2 = function() {
+        	  $http.get("/iTrust2/api/v1/patient/represented").then(
+        	    function (response) {
+        	      $scope.represented = response.data;
+        	      $scope.message = "";
+        	    }, function (rejection) {
+        	      $scope.representatives = [];
+        	      $scope.message = "Could not display representatives";
+        	    });
+        	};
+        
         $scope.addRepresentative = function (representative) {
-
-          $http.post("/iTrust2/api/v1/patient/representatives", $scope.representative).then(
+          $http.post("/iTrust2/api/v1/patient/addrepresentative", representative.mid).then(
             function (response) {
-              $scope.loadTable();
+              $scope.loadTable1();
               $scope.representative.name = ""
               $scope.mid = ""
             }, function (rejection) {
-              $scope.errorAdding = "Could not add representative";
+              $scope.message = "Could not add representative";
             });
 
-        }
+        };
+        
         $scope.deleteRepresentative = function (representative) {
-          var msg = "Are you sure you want to remove representative" + representative.mid "?";
-          if (confirm(msg)) {
-	          $http.delete('/iTrust2/api/v1/patient/' + representative.mid + '/removerepresentative').then(
-	            function (response) {
-	              $scope.loadTable();
-	              $scope.message = "";
-	            }, function (rejection) {
-	              $scope.message = "Could not remove representative";
-	            });
-          };
-        }
+         	$http.delete('/iTrust2/api/v1/patient/' + representative.mid).then(
+    	            function (response) {
+    	            	  $scope.loadTable1();
+    	              $scope.message = "";
+    	            }, function (rejection) {
+    	              $scope.message = "Could not remove representative";
+    	            });  
+       /*  	var msg = "Are you sure you want to remove representative" + representative.mid "?";
+         if (confirm(msg)) {
+	          
+          }; */
+        };
 
         $http.get("/iTrust2/api/v1/patients").then(
           function (response) {
             $scope.patients = response.data;
+            loadTable1();
+            loadTable2();
           });
-
 
         // gets the template to ng-include for a table row / item
         $scope.selectedRepresentative = {};
@@ -69,41 +82,24 @@
         $scope.resetSelected = function () {
           $scope.selectedRepresentative = {};
         };
-        $scope.loadTable();
-      });
-			/*]]>*/
-    </script>
-<script th:inline="javascript">
-      /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
-      /*<![CDATA[*/
-      var app = angular.module("representedApp", []);
-      app.controller('representedCtrl', function ($scope, $http) {
-        $scope.represented = [];
-        $scope.loadTable = function () {
-        		$http.get("/iTrust2/api/v1/patient/represented").then(
-                    function (response) {
-                      $scope.represented = response.data;
-                      $scope.message = "";
-                      
-                    }, function (rejection) {
-                      $scope.represeted = [];
-                      $scope.message = "Could not display representatives";
-                    });
-        }
+
         $scope.deleteRepresented = function (representative) {
-            var msg = "Are you sure you want to remove representative" + representative.mid "?";
-            if (confirm(msg)) {
+           
   	          $http.delete('/iTrust2/api/v1/patient/' + representative.mid + '/removerepresented').then(
   	            function (response) {
-  	              $scope.loadTable();
+  	              $scope.loadTable2();
   	              $scope.message = "";
   	            }, function (rejection) {
   	              $scope.message = "Could not remove representative";
   	            });
-            };
-          }
-      }
-        </script>
+  	        /* var msg = "Are you sure you want to remove representative" + representative.mid "?";
+            if (confirm(msg)) {
+            	
+            }; */
+          } 
+      });
+			/*]]>*/
+    </script>
         
     <div ng-app="representativesApp" ng-controller="representativesCtrl">
       <div class="container">
@@ -120,6 +116,7 @@
                     <tr>
                       <th>MID</th>
                       <th>Name</th>
+                      <th>Date Added</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -132,6 +129,7 @@
                 <script type="text/ng-template" id="view">
                   <td name="midCell">{{r.mid}}</td>
                   <td name="nameCell">{{r.name}}</td>
+                  <td name="dateCell">{{r.date}}</td>
                   <td>
                     <div class="row text-center">
                       <div class="col-md-6">
@@ -140,6 +138,7 @@
                     </div>                  
                   </td>
                 </script>
+                <label>{{message}}</label>
 
                 <br>
                 <div class="row">
@@ -203,6 +202,7 @@
                     <tr>
                       <th>MID</th>
                       <th>Name</th>
+                      <th>Date Added</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -215,6 +215,7 @@
                 <script type="text/ng-template" id="view">
                   <td name="midCell">{{r.mid}}</td>
                   <td name="nameCell">{{r.name}}</td>
+                  <td name="dateCell">{{r.date}}</td>
                   <td>
                     <div class="row text-center">
                       <div class="col-md-6">
