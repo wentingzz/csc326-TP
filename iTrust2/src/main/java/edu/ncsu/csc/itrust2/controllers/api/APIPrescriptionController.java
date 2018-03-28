@@ -1,5 +1,8 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -30,134 +33,176 @@ import edu.ncsu.csc.itrust2.utils.LoggerUtil;
 @SuppressWarnings ( { "rawtypes", "unchecked" } )
 public class APIPrescriptionController extends APIController {
 
-    /**
-     * Adds a new prescription to the system. Requires HCP permissions.
-     *
-     * @param form
-     *            details of the new prescription
-     * @return the created prescription
-     */
-    @PreAuthorize ( "hasRole('ROLE_HCP')" )
-    @PostMapping ( BASE_PATH + "/prescriptions" )
-    public ResponseEntity addPrescription ( @RequestBody final PrescriptionForm form ) {
-        try {
-            final Prescription p = new Prescription( form );
-            p.save();
-            LoggerUtil.log( TransactionType.PRESCRIPTION_CREATE, LoggerUtil.currentUser(), p.getPatient().getUsername(),
-                    "Created prescription with id " + p.getId() );
-            return new ResponseEntity( p, HttpStatus.OK );
-        }
-        catch ( final Exception e ) {
-            LoggerUtil.log( TransactionType.PRESCRIPTION_CREATE, LoggerUtil.currentUser(),
-                    "Failed to create prescription" );
-            return new ResponseEntity( errorResponse( "Could not save the prescription: " + e.getMessage() ),
-                    HttpStatus.BAD_REQUEST );
-        }
-    }
+	/**
+	 * Adds a new prescription to the system. Requires HCP permissions.
+	 *
+	 * @param form
+	 *            details of the new prescription
+	 * @return the created prescription
+	 */
+	@PreAuthorize ( "hasRole('ROLE_HCP')" )
+	@PostMapping ( BASE_PATH + "/prescriptions" )
+	public ResponseEntity addPrescription ( @RequestBody final PrescriptionForm form ) {
+		try {
+			final Prescription p = new Prescription( form );
+			p.save();
+			LoggerUtil.log( TransactionType.PRESCRIPTION_CREATE, LoggerUtil.currentUser(), p.getPatient().getUsername(),
+					"Created prescription with id " + p.getId() );
+			return new ResponseEntity( p, HttpStatus.OK );
+		}
+		catch ( final Exception e ) {
+			LoggerUtil.log( TransactionType.PRESCRIPTION_CREATE, LoggerUtil.currentUser(),
+					"Failed to create prescription" );
+			return new ResponseEntity( errorResponse( "Could not save the prescription: " + e.getMessage() ),
+					HttpStatus.BAD_REQUEST );
+		}
+	}
 
-    /**
-     * Edits an existing prescription in the system. Matches prescriptions by
-     * ids. Requires HCP permissions.
-     *
-     * @param form
-     *            the form containing the details of the new prescription
-     * @return the edited prescription
-     */
-    @PreAuthorize ( "hasRole('ROLE_HCP')" )
-    @PutMapping ( BASE_PATH + "/prescriptions" )
-    public ResponseEntity editPrescription ( @RequestBody final PrescriptionForm form ) {
-        try {
-            final Prescription p = new Prescription( form );
-            final Prescription saved = Prescription.getById( p.getId() );
-            if ( saved == null ) {
-                LoggerUtil.log( TransactionType.PRESCRIPTION_EDIT, LoggerUtil.currentUser(),
-                        "No prescription found with id " + p.getId() );
-                return new ResponseEntity( errorResponse( "No prescription found with id " + p.getId() ),
-                        HttpStatus.NOT_FOUND );
-            }
-            p.save(); /* Overwrite existing */
-            LoggerUtil.log( TransactionType.PRESCRIPTION_EDIT, LoggerUtil.currentUser(), p.getPatient().getUsername(),
-                    "Edited prescription with id " + p.getId() );
-            return new ResponseEntity( p, HttpStatus.OK );
-        }
-        catch ( final Exception e ) {
-            LoggerUtil.log( TransactionType.PRESCRIPTION_EDIT, LoggerUtil.currentUser(),
-                    "Failed to edit prescription" );
-            return new ResponseEntity( errorResponse( "Failed to update prescription: " + e.getMessage() ),
-                    HttpStatus.BAD_REQUEST );
-        }
-    }
+	/**
+	 * Edits an existing prescription in the system. Matches prescriptions by
+	 * ids. Requires HCP permissions.
+	 *
+	 * @param form
+	 *            the form containing the details of the new prescription
+	 * @return the edited prescription
+	 */
+	@PreAuthorize ( "hasRole('ROLE_HCP')" )
+	@PutMapping ( BASE_PATH + "/prescriptions" )
+	public ResponseEntity editPrescription ( @RequestBody final PrescriptionForm form ) {
+		try {
+			final Prescription p = new Prescription( form );
+			final Prescription saved = Prescription.getById( p.getId() );
+			if ( saved == null ) {
+				LoggerUtil.log( TransactionType.PRESCRIPTION_EDIT, LoggerUtil.currentUser(),
+						"No prescription found with id " + p.getId() );
+				return new ResponseEntity( errorResponse( "No prescription found with id " + p.getId() ),
+						HttpStatus.NOT_FOUND );
+			}
+			p.save(); /* Overwrite existing */
+			LoggerUtil.log( TransactionType.PRESCRIPTION_EDIT, LoggerUtil.currentUser(), p.getPatient().getUsername(),
+					"Edited prescription with id " + p.getId() );
+			return new ResponseEntity( p, HttpStatus.OK );
+		}
+		catch ( final Exception e ) {
+			LoggerUtil.log( TransactionType.PRESCRIPTION_EDIT, LoggerUtil.currentUser(),
+					"Failed to edit prescription" );
+			return new ResponseEntity( errorResponse( "Failed to update prescription: " + e.getMessage() ),
+					HttpStatus.BAD_REQUEST );
+		}
+	}
 
-    /**
-     * Deletes the prescription with the given id.
-     *
-     * @param id
-     *            the id
-     * @return the id of the deleted prescription
-     */
-    @PreAuthorize ( "hasRole('ROLE_HCP')" )
-    @DeleteMapping ( BASE_PATH + "/prescriptions/{id}" )
-    public ResponseEntity deletePrescription ( @PathVariable final Long id ) {
-        final Prescription p = Prescription.getById( id );
-        if ( p == null ) {
-            return new ResponseEntity( errorResponse( "No prescription found with id " + id ), HttpStatus.NOT_FOUND );
-        }
-        try {
-            p.delete();
-            LoggerUtil.log( TransactionType.PRESCRIPTION_DELETE, LoggerUtil.currentUser(), p.getPatient().getUsername(),
-                    "Deleted prescription with id " + p.getId() );
-            return new ResponseEntity( p.getId(), HttpStatus.OK );
-        }
-        catch ( final Exception e ) {
-            LoggerUtil.log( TransactionType.PRESCRIPTION_DELETE, LoggerUtil.currentUser(), p.getPatient().getUsername(),
-                    "Failed to delete prescription" );
-            return new ResponseEntity( errorResponse( "Failed to delete prescription: " + e.getMessage() ),
-                    HttpStatus.BAD_REQUEST );
-        }
-    }
+	/**
+	 * Deletes the prescription with the given id.
+	 *
+	 * @param id
+	 *            the id
+	 * @return the id of the deleted prescription
+	 */
+	@PreAuthorize ( "hasRole('ROLE_HCP')" )
+	@DeleteMapping ( BASE_PATH + "/prescriptions/{id}" )
+	public ResponseEntity deletePrescription ( @PathVariable final Long id ) {
+		final Prescription p = Prescription.getById( id );
+		if ( p == null ) {
+			return new ResponseEntity( errorResponse( "No prescription found with id " + id ), HttpStatus.NOT_FOUND );
+		}
+		try {
+			p.delete();
+			LoggerUtil.log( TransactionType.PRESCRIPTION_DELETE, LoggerUtil.currentUser(), p.getPatient().getUsername(),
+					"Deleted prescription with id " + p.getId() );
+			return new ResponseEntity( p.getId(), HttpStatus.OK );
+		}
+		catch ( final Exception e ) {
+			LoggerUtil.log( TransactionType.PRESCRIPTION_DELETE, LoggerUtil.currentUser(), p.getPatient().getUsername(),
+					"Failed to delete prescription" );
+			return new ResponseEntity( errorResponse( "Failed to delete prescription: " + e.getMessage() ),
+					HttpStatus.BAD_REQUEST );
+		}
+	}
 
-    /**
-     * Returns a collection of all the prescriptions in the system.
-     *
-     * @return all saved prescriptions
-     */
-    @PreAuthorize ( "hasAnyRole('ROLE_HCP', 'ROLE_PATIENT')" )
-    @GetMapping ( BASE_PATH + "/prescriptions" )
-    public List<Prescription> getPrescriptions () {
-        final boolean isHCP = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
-                .contains( new SimpleGrantedAuthority( "ROLE_HCP" ) );
-        if ( isHCP ) {
-            // Return all prescriptions in system
-            LoggerUtil.log( TransactionType.PRESCRIPTION_VIEW, LoggerUtil.currentUser(),
-                    "HCP viewed a list of all prescriptions" );
-            return Prescription.getPrescriptions();
-        }
-        else {
-            // Return only prescriptions assigned to the patient
-            return Prescription.getForPatient( LoggerUtil.currentUser() );
-        }
-    }
+	/**
+	 * Returns a collection of all the prescriptions in the system.
+	 *
+	 * @return all saved prescriptions
+	 */
+	@PreAuthorize ( "hasAnyRole('ROLE_HCP', 'ROLE_PATIENT')" )
+	@GetMapping ( BASE_PATH + "/prescriptions" )
+	public List<Prescription> getPrescriptions () {
+		final boolean isHCP = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains( new SimpleGrantedAuthority( "ROLE_HCP" ) );
+		if ( isHCP ) {
+			// Return all prescriptions in system
+			LoggerUtil.log( TransactionType.PRESCRIPTION_VIEW, LoggerUtil.currentUser(),
+					"HCP viewed a list of all prescriptions" );
+			return Prescription.getPrescriptions();
+		}
+		else {
+			// Return only prescriptions assigned to the patient
+			return Prescription.getForPatient( LoggerUtil.currentUser() );
+		}
+	}
 
-    /**
-     * Returns a single prescription using the given id.
-     *
-     * @param id
-     *            the id of the desired prescription
-     * @return the requested prescription
-     */
-    @PreAuthorize ( "hasRole('ROLE_HCP')" )
-    @GetMapping ( BASE_PATH + "/prescriptions/{id}" )
-    public ResponseEntity getPrescription ( @PathVariable final Long id ) {
-        final Prescription p = Prescription.getById( id );
-        if ( p == null ) {
-            LoggerUtil.log( TransactionType.PRESCRIPTION_VIEW, LoggerUtil.currentUser(),
-                    "Failed to find prescription with id " + id );
-            return new ResponseEntity( errorResponse( "No prescription found for " + id ), HttpStatus.NOT_FOUND );
-        }
-        else {
-            LoggerUtil.log( TransactionType.PRESCRIPTION_VIEW, LoggerUtil.currentUser(), "Viewed prescription  " + id );
-            return new ResponseEntity( p, HttpStatus.OK );
-        }
-    }
+	/**
+	 * Returns a single prescription using the given id.
+	 *
+	 * @param id
+	 *            the id of the desired prescription
+	 * @return the requested prescription
+	 */
+	@PreAuthorize ( "hasRole('ROLE_HCP')" )
+	@GetMapping ( BASE_PATH + "/prescriptions/{id}" )
+	public ResponseEntity getPrescription ( @PathVariable final Long id ) {
+		final Prescription p = Prescription.getById( id );
+		if ( p == null ) {
+			LoggerUtil.log( TransactionType.PRESCRIPTION_VIEW, LoggerUtil.currentUser(),
+					"Failed to find prescription with id " + id );
+			return new ResponseEntity( errorResponse( "No prescription found for " + id ), HttpStatus.NOT_FOUND );
+		}
+		else {
+			LoggerUtil.log( TransactionType.PRESCRIPTION_VIEW, LoggerUtil.currentUser(), "Viewed prescription  " + id );
+			return new ResponseEntity( p, HttpStatus.OK );
+		}
+	}
+
+	/**
+	 * Returns a collection of all the prescriptions in the system.
+	 *
+	 * @return all saved prescriptions
+	 */
+	@PreAuthorize ( "hasAnyRole('ROLE_HCP', 'ROLE_ER')" )
+	@GetMapping ( BASE_PATH + "/patientPrescriptions/{username}" )
+	public List<Prescription> getPatientPrescriptions ( @PathVariable ( "username" ) final String username ) {
+		final boolean isHCP = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains( new SimpleGrantedAuthority( "ROLE_HCP" ) );
+		final boolean isER = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains( new SimpleGrantedAuthority( "ROLE_ER" ) );
+		List<Prescription> pres = Prescription.getForPatient(username);
+		List<Prescription> between = new ArrayList<Prescription>();
+		Calendar endDate = Calendar.getInstance();
+		Calendar startDate = Calendar.getInstance();
+		startDate.add(Calendar.DAY_OF_MONTH, -90);
+		for (int i = 0; i < pres.size(); i++) {
+			final Calendar current = pres.get(i).getStartDate();
+			if(current.compareTo(startDate) >= 0 && current.compareTo(endDate) <= 0) {
+				between.add(pres.get(i));
+			}
+		}
+
+		between.sort(new Comparator<Object>() {
+			@Override
+			public int compare( final Object arg0, final Object arg1) {
+				return ((Prescription) arg1).getStartDate().compareTo(((Prescription) arg0).getStartDate());
+			}
+		});
+		if ( username == null ) {
+			return null;
+		}
+
+		if ( isHCP || isER ) {
+			// Return all prescriptions in system
+			LoggerUtil.log( TransactionType.VIEW_ER_REPORT, LoggerUtil.currentUser(), username,
+					LoggerUtil.currentUser() + " viewed the emergency report" );
+		}
+		return between;
+	}
 
 }
