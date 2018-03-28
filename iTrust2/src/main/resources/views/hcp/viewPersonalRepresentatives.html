@@ -10,10 +10,7 @@
 			/*<![CDATA[*/
 
 			var app = angular.module('myApp', []);
-			app
-					.controller(
-							'representativesCtrl',
-							function($scope, $http) {
+			app.controller('representativesCtrl', function($scope, $http) {
 								$scope.displayName = function(p) {
 									return p.firstName + " " + p.lastName + " (" + p.self.username + ")";
 								}
@@ -24,6 +21,28 @@
 									return ($scope.displayName(patient)).toLowerCase().match($scope.searchFilter.toLowerCase());
 								}
 								
+								$scope.loadTable1 = function () {
+							          $http.get("/iTrust2/api/v1/patient/representatives").then(
+							            function (response) {
+							              $scope.represented = response.data;
+							              $scope.message = "";
+							            }, function (rejection) {
+							              $scope.representatives = [];
+							              $scope.message = "Could not display representatives";
+							            });
+							        };
+							        
+							        $scope.loadTable2 = function() {
+							        	  $http.get("/iTrust2/api/v1/patient/represented").then(
+							        	    function (response) {
+							        	      $scope.represented = response.data;
+							        	      $scope.message = "";
+							        	    }, function (rejection) {
+							        	      $scope.representatives = [];
+							        	      $scope.message = "Could not display representatives";
+							        	    });
+							        	};
+							        	
 								$scope.selectPatient = function(patient, override) {
 									if (!override && formDifferent($scope.patientForm, $scope.originalForm)) {
 										if (!confirm("You have made changes to " + $scope.patientForm.self
@@ -37,11 +56,12 @@
 									var pf = $scope.patientForm = {};
 									var of = $scope.originalForm = {};
 									$scope.selectedPatient = pf.self;
+									$scope.loadTable1()
+									$scope.loadTable2()
 								}
 								
-								 $scope.addRepresentative = function (representative) {
-
-							          $http.post("/iTrust2/api/v1/patient/representatives", $scope.representative).then(
+								$scope.addRepresentative = function () {
+							          $http.put("/iTrust2/api/v1/patient/"+ $scope.selectedmid + "/addrepresentative").then(
 							            function (response) {
 							              $scope.loadTable();
 							              $scope.representative.name = ""
@@ -50,8 +70,7 @@
 							              $scope.errorAdding = "Could not add representative";
 							            });
 
-							        }
-								}
+							        };
 								
 								$http.get("/iTrust2/api/v1/patients").then(
 										function(response) {
@@ -68,42 +87,10 @@
 
 
 		<div ng-app="myApp" ng-controller="representativesCtrl">
-<nav class="navbar navbar-default">
-			<div class="container-fluid">
-				<ul class="nav navbar-nav">
-					<li class="dropdown"><a class="dropdown-toggle"
-						data-toggle="dropdown" href="#">Patient<span class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a href="/iTrust2/hcp/viewAppointmentRequests"
-								id="viewrequests">View Appointment Requests</a></li>
-							<li><a href="/iTrust2/hcp/viewAppointments"
-								id="upcomingrequests">View Upcoming Appointments</a></li>
-							<li><a href="/iTrust2/hcp/editPatientDemographics"
-								id="editPatientDemographics">Edit Patient</a></li>
-							<li><a href="#">Add Patient -- Not Implemented</a></li>
-							<li><a href="/iTrust2/hcp/documentOfficeVisit.html"
-								id="documentOfficeVisit">Document Office Visit</a></li>
-						</ul></li>
-					<li class="dropdown"><a class="dropdown-toggle"
-						data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a href="/iTrust2/personnel/editDemographics"
-								id="editdemographics">Edit Demographics</a></li>
-							<li> <a href="/iTrust2/hcp/editOfficeVisit"
-							      id="editOfficeVisit">Edit Office Visit</a></li>
-						</ul></li>
-				</ul>
-			</div>
-		</nav>
 			<div style="float:left;width:30%;height:75%;overflow-y:auto">
 			<h2>Patients:</h2>
-			<!-- info on filtering taken from here: https://www.w3schools.com/angular/angular_filters.asp
-				and https://docs.angularjs.org/api/ng/filter/filter -->
 			<h4>Search: <input type="text" name="search" ng-model="searchFilter"/></h4>
-			<!-- Info on scrolling taken from here: https://www.w3schools.com/cssref/pr_pos_overflow.asp -->
-			<!-- and here: https://stackoverflow.com/questions/9560330/how-to-hide-a-vertical-scroll-bar-when-not-needed -->
 			<ul style="overflow:auto;height=90%;">
-			<!-- Information on how labels wor from here: https://stackoverflow.com/questions/7863251/clicking-the-text-to-select-corresponding-radio-button -->
 							<li ng-repeat="patient in patients | filter:filterPatients"><h4><label>
 									<input type="radio" ng-model="$parent.selectedPatient"
 									name="patient" value="{{patient.self.username}}"
@@ -120,6 +107,23 @@
 				<table>
 					      <!-- patients -->
                             <div class="col-md-5 radio-box">
+                              <table class="table table-bordered">
+                                <caption>Personal Representatives:</caption>
+                                <thead>
+                    				  <tr>
+                      				<th>MID</th>
+                      				<th>Name</th>
+                     				<th>Date Added</th>
+                   				  </tr>
+                  			   </thead>
+                  			   <tbody>
+                    				 <tr ng-repeat="r in representatives">
+                    				 	<th>{{r.mid}}</th>
+                      				<th>{{r.name}}</th>
+                     				<th>{{r.date}}</th>
+                    				 </tr>
+                 			   </tbody>
+                				 </table>
                               <div class="form-check">
                                 <label>Patient:</label>
                                 <ul style="max-height:15%;overflow:auto;list-style: none;">
@@ -132,11 +136,29 @@
                                   </li>
                                 </ul>
                               </div>
+                              <button type="submit" class="btn btn-success" name="submit">Add Representative</button>
+                              <br />
+                              <br />
+                              <table class="table table-bordered">
+                                <caption>Who you Represent:</caption>
+                                <thead>
+                    				  <tr>
+                      				<th>MID</th>
+                      				<th>Name</th>
+                     				<th>Date Added</th>
+                   				  </tr>
+                  			   </thead>
+                  			   <tbody>
+                    				 <tr ng-repeat="r in represented">
+                    				 	<th>{{r.mid}}</th>
+                      				<th>{{r.name}}</th>
+                     				<th>{{r.date}}</th>
+                    				 </tr>
+                 			   </tbody>
+                				 </table>
                             </div>
 				</table>
-				<button type="submit" class="btn btn-success" name="submit">Add Representative</button>
 				</form>
-	
 				<br />
 	
 				<div name="success">{{message}}</div>
