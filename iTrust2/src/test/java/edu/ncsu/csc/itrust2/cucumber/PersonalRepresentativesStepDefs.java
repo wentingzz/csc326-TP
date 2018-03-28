@@ -40,7 +40,7 @@ public class PersonalRepresentativesStepDefs {
         options.addArguments( "window-size=1200x600" );
         options.addArguments( "blink-settings=imagesEnabled=false" );
         driver = new ChromeDriver( options );
-        wait = new WebDriverWait( driver, 10 );
+        wait = new WebDriverWait( driver, 20 );
 
     }
 
@@ -77,9 +77,26 @@ public class PersonalRepresentativesStepDefs {
 
     @When ( "I select patient with the name (.+)" )
     public void selectPatientOnPersonalRepresentativesPage ( final String name ) {
-        final WebElement patientRep = driver
-                .findElement( By.xpath( "/tr[@name='representativeTableRow']/input[@value=" + name + "]" ) );
-        patientRep.click();
+        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "patientToGetRep" ) ) );
+        // final WebElement patient = driver
+        // .findElement( By.xpath( "//input[@name='patientToGetRep' and @value="
+        // + name + "]" ) );
+        final WebElement patient = driver
+                .findElement( By.xpath( "//input[@name='patientToGetRep' and @value='" + name + "']" ) );
+        patient.click();
+    }
+
+    @When ( "I select the representative (.+)" )
+    public void HCPPickRep ( final String name ) {
+        final WebElement selectElement = driver.findElement( By.id( "reps" ) );
+        final Select patientDropdown = new Select( selectElement );
+        patientDropdown.selectByVisibleText( name );
+    }
+
+    @When ( "When I click the 'Add Representative' button" )
+    public void ClickAdd () {
+        final WebElement addRepresentative = driver.findElement( By.xpath( "//button[@name='submit']" ) );
+        addRepresentative.click();
     }
 
     /*
@@ -91,10 +108,10 @@ public class PersonalRepresentativesStepDefs {
     public void addPersonalRep ( final String name ) {
         // final WebElement patient = driver.findElement( By.id( name ) );
         // patient.click();
+        wait.until( ExpectedConditions.visibilityOfElementLocated( By.id( "reps" ) ) );
         final WebElement selectElement = driver.findElement( By.id( "reps" ) );
         final Select patientDropdown = new Select( selectElement );
         patientDropdown.selectByVisibleText( name );
-        // assuming value for this button will be addRepSubmit
         final WebElement addRepresentative = driver.findElement( By.xpath( "//button[@name='submit']" ) );
         addRepresentative.click();
     }
@@ -106,7 +123,7 @@ public class PersonalRepresentativesStepDefs {
 
     @When ( "I remove the representative (.+) by clicking the 'Delete' button for that representative." )
     public void removePersonalRep ( final String name ) {
-        // assuming value for this button will be deleteRepSubmit
+        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "deleteRepresentative" ) ) );
         final WebElement deleteRepresentative = driver.findElement( By.name( "deleteRepresentative" ) );
         deleteRepresentative.click();
 

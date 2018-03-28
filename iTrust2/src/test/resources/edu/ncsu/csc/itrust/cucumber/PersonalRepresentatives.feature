@@ -12,11 +12,12 @@ Scenario Outline: Test HCP Adding A Personal Representative for A Patient
 Given I am able to log in to iTrust as <user> with password <password>
 When I go to the Personal Representatives page
 When I select patient with the name <patient>
-When I add the patient <patientrep> by typing their name and clicking the 'Add Representative' button
+When I select the representative <patientrep>
+When I click the 'Add Representative' button
 Then <patientrep> is successfully added as a representative.
 Examples:
 	| user | password | patient | patientrep |
-	| hcp | 123456 | csc326  | pwtest1 |
+	| hcp | 123456 | csc326  | patient |
 	
 Scenario Outline: Test Patient Adding A Personal Representative for Themselves
 Given I am able to log in to iTrust as <user> with password <password>

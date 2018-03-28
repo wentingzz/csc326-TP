@@ -77,7 +77,7 @@
 			<ul style="overflow:auto;height=90%;">
 							<li ng-repeat="patient in patients | filter:filterPatients"><h4><label>
 									<input type="radio" ng-model="$parent.selectedPatient"
-									name="patient" value="{{patient.self.username}}"
+									name="patientToGetRep" value="{{patient.self.username}}"
 									ng-click='$parent.selectPatient(patient)' />&nbsp;{{$parent.displayName(patient)}}</label>
 							</h4></li>
 						</ul>
@@ -111,7 +111,7 @@
                                 <label>Patient:</label>
                                 <ul style="max-height:15%;overflow:auto;list-style: none;">
                                   <li>
-                                    <select ng-model="selected">
+                                    <select ng-model="selected" id="reps">
                                   	<option ng-repeat="patient in patients" value="{{patient.self.username}}"> {{patient.self.username}}
                                      </option>
                                   </select>
