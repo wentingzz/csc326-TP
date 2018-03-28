@@ -50,13 +50,13 @@ public class Patient extends DomainObject<Patient> implements Serializable {
     /**
      * Randomly generated ID.
      */
-    private static final long      serialVersionUID        = 4617248041239679701L;
+    private static final long     serialVersionUID        = 4617248041239679701L;
     /**
      * // * Set of personal representatives Following the format of: // *
      * https://dzone.com/tutorials/java/hibernate/hibernate-example/hibernate-mapping-many-to-many-using-annotations-1.html
      *
      */
-    private final HashSet<String>  personalRepresentatives = new HashSet<String>();
+    private final HashSet<String> personalRepresentatives = new HashSet<String>();
 
     /**
      * Set of patients who this patient is a representative of Following the
@@ -65,7 +65,7 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * https://dzone.com/tutorials/java/hibernate/hibernate-example/hibernate-mapping-many-to-many-using-annotations-1.html
      */
 
-    private final HashSet<Patient> represented             = new HashSet<Patient>();
+    private final HashSet<String> represented             = new HashSet<String>();
 
     /**
      * Get all patients in the database
@@ -765,7 +765,7 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * @return a List of patients who are this Patient's representatives
      */
     @Column ( name = "representedPatients" )
-    public Set<Patient> getRepresented () {
+    public Set<String> getRepresented () {
         return represented;
     }
 
@@ -785,9 +785,9 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * @return
      **/
     public void undeclarePersonalRepresentative ( final String representative ) {
-        final User rep = User.getByName( representative );
-        final Patient repPatient = Patient.getPatient( rep );
-        personalRepresentatives.remove( repPatient );
+        // final User rep = User.getByName( representative );
+        // final Patient repPatient = Patient.getPatient( rep );
+        personalRepresentatives.remove( representative );
     }
 
     /**
@@ -796,10 +796,12 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * @param representative
      */
     public void addPersonalRepresentative ( final String representative ) {
-        final User rep = User.getByName( representative );
-        final Patient repPatient = Patient.getPatient( rep );
-        personalRepresentatives.add( representative );
-
+        // final User rep = User.getByName( representative );
+        // final Patient repPatient = Patient.getPatient( rep );
+        if ( !personalRepresentatives.contains( representative ) ) {
+            personalRepresentatives.add( representative );
+            // repPatient.addRepresented( rep.getUsername() );
+        }
     }
 
     /**
@@ -808,10 +810,11 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * @param representedUser
      */
     public void addRepresented ( final String representedUser ) {
-        final User rep = User.getByName( representedUser );
-        final Patient repPatient = Patient.getPatient( rep );
-        represented.add( repPatient );
-
+        // final User rep = User.getByName( representedUser );
+        // final Patient repPatient = Patient.getPatient( rep );
+        if ( !represented.contains( representedUser ) ) {
+            represented.add( representedUser );
+        }
     }
 
     /**
@@ -821,9 +824,9 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * @param representativeUser
      */
     public void undeclareRepresented ( final String representedUser ) {
-        final User rep = User.getByName( representedUser );
-        final Patient repPatient = Patient.getPatient( rep );
-        represented.remove( repPatient );
+        // final User rep = User.getByName( representedUser );
+        // final Patient repPatient = Patient.getPatient( rep );
+        represented.remove( representedUser );
     }
 
 }
