@@ -135,7 +135,7 @@
                           <div class="row">
                           <label>Patient:</label>
                                 <ul style="max-height:15%;overflow:auto;list-style: none;">
-                                  <select ng-model="selected">
+                                  <select ng-model="selected" id = "reps">
                                   	<option ng-repeat="patient in patients" value="{{patient.self.username}}"> {{patient.self.username}}
                                      </option>
                                   </select>

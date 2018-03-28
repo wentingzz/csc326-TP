@@ -1,4 +1,4 @@
-Author: Hannah Morrison (hmorris3)
+#Author: Hannah Morrison (hmorris3)
 Feature: ER User
 	As an admin
 	I want to create ER Users
