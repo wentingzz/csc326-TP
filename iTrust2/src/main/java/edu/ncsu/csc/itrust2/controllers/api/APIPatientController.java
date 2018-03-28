@@ -279,13 +279,11 @@ public class APIPatientController extends APIController {
         final String Username = SecurityContextHolder.getContext().getAuthentication().getName();
         final User self = User.getByName( Username );
         Patient patient = Patient.getPatient( self );
-        System.out.println( "\n\n\n\n\n\nIN the controller: " + represented );
         if ( patient == null ) {
             return new ResponseEntity( errorResponse( "No Patient found for username " + self.getUsername() ),
                     HttpStatus.NOT_FOUND );
         }
         else {
-            System.out.println( "\n\n\n\n\n\nGOOD " );
             patient.undeclareRepresented( represented );
             patient.save();
             patient = Patient.getPatient( User.getByName( represented ) );
@@ -293,6 +291,66 @@ public class APIPatientController extends APIController {
             patient.save();
             LoggerUtil.log( TransactionType.DECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(),
                     self.getUsername(), "Patient  " + patient + "undeclared " + represented );
+            return new ResponseEntity( patient, HttpStatus.OK );
+        }
+    }
+
+    /**
+     * Gets the personal representatives for a user. HCP view
+     */
+    @PreAuthorize ( "hasRole('ROLE_HCP')" )
+    @GetMapping ( BASE_PATH + "/patient/representatives/{user}" )
+    public List<Patient> getUserRepresentatives ( @PathVariable ( "user" ) final String user ) {
+        final User self = User.getByName( user );
+        if ( self == null ) {
+            return null;
+        }
+        final Patient patient = Patient.getPatient( self );
+        final List<String> list1 = Lists.newArrayList( patient.getPersonalRepresentatives() );
+        final List<Patient> list = Lists.newArrayList();
+        for ( int i = 0; i < list1.size(); i++ ) {
+            list.add( Patient.getByName( list1.get( i ) ) );
+        }
+        return list;
+    }
+
+    /**
+     * Gets the patients this user represents. HCP view
+     */
+    @PreAuthorize ( "hasRole('ROLE_HCP')" )
+    @GetMapping ( BASE_PATH + "/patient/represented/{user}" )
+    public List<Patient> getUserRepresented ( @PathVariable ( "user" ) final String user ) {
+        final User self = User.getByName( user );
+        final Patient patient = Patient.getPatient( self );
+        final List<String> names = Lists.newArrayList( patient.getRepresented() );
+        final List<Patient> list = Lists.newArrayList();
+        for ( int i = 0; i < names.size(); i++ ) {
+            list.add( Patient.getByName( names.get( i ) ) );
+        }
+        return list;
+    }
+
+    /**
+     * HCP declares the representative for a patient
+     */
+    @PreAuthorize ( "hasRole('ROLE_HCP')" )
+    @PutMapping ( BASE_PATH + "/patient/{user}/{representative}/addrepresentative" )
+    public ResponseEntity declarePersonalRepresentativeHCP ( @PathVariable ( "user" ) final String Username,
+            @PathVariable ( "representative" ) final String representative ) {
+        final User self = User.getByName( Username );
+        Patient patient = Patient.getPatient( self );
+        if ( patient == null ) {
+            return new ResponseEntity( errorResponse( "No Patient found for username " + self.getUsername() ),
+                    HttpStatus.NOT_FOUND );
+        }
+        else {
+            patient.addPersonalRepresentative( representative );
+            patient.save();
+            patient = Patient.getPatient( User.getByName( representative ) );
+            patient.addRepresented( Username );
+            patient.save();
+            LoggerUtil.log( TransactionType.UNDECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(),
+                    "Patient " + patient + "declared representative  + representative" );
             return new ResponseEntity( patient, HttpStatus.OK );
         }
     }
