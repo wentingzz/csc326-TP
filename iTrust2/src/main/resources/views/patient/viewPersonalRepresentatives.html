@@ -43,7 +43,7 @@
           $http.put("/iTrust2/api/v1/patient/" + $scope.selected + "/addrepresentative").then(
             function (response) {
               $scope.loadTable1();
-              $scope.representative.name = ""
+              /* $scope.representative.name = "" */
               $scope.mid = ""
             }, function (rejection) {
               $scope.message = "Could not add representative";
@@ -75,10 +75,10 @@
         // gets the template to ng-include for a table row / item
         $scope.selectedRepresentative = {};
 
-        $scope.getTemplate = function (representative) {
+        /* $scope.getTemplate = function (representative) {
           if (representative.id === $scope.selectedRepresentative.mid) return 'edit';
           else return 'view';
-        };
+        }; */
 
         $scope.resetSelected = function () {
           $scope.selectedRepresentative = {};
@@ -120,10 +120,6 @@
                       <th>Date Added</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr name="representativeTableRow" ng-repeat="r in representatives" ng-include="getTemplate(r)" representativeId={{r.id}}>
-                    </tr>
-                  </tbody>
                 </table>
 
                 <!-- table in view mode -->
@@ -160,14 +156,6 @@
                             <!-- patient -->
                             <div class="col-md-5 radio-box">
                               <div class="form-check">
-                                
-                                  <!-- <li ng-repeat="patient in patients">
-                                    <label>
-                                    not sure what to do here; was 'parent.prescription.patient'
-                                      <input type="radio" ng-model="selected" name="name" value="{{patient.self.username}}" required="true"
-                                      />&nbsp; {{patient.self.username}}
-                                    </label>
-                                  </li> -->
                                 </ul>
                               </div>
                             </div>
@@ -209,10 +197,6 @@
                       <th>Date Added</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr name="representativeTableRow" ng-repeat="r in represented" ng-include="getTemplate(r)" representativeId={{r.id}}>
-                    </tr>
-                  </tbody>
                 </table>
 
                 <!-- table in view mode -->
