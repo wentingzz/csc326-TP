@@ -68,8 +68,8 @@
         $http.get("/iTrust2/api/v1/patients").then(
           function (response) {
             $scope.patients = response.data;
-            loadTable1();
-            loadTable2();
+            $scope.loadTable1();
+            $scope.loadTable2();
           });
 
         // gets the template to ng-include for a table row / item
@@ -118,23 +118,27 @@
                       <th>MID</th>
                       <th>Name</th>
                       <th>Date Added</th>
+                      <th>Manage</th>
                     </tr>
                   </thead>
+                  <thead ng-repeat="r in representatives">
+                    <tr>
+                      <td>{{r.self.username}}</td>
+                      <td>{{r.firstName}} {{r.lastName}}</td>
+                      <td>{{r.email}}</td>
+                      <td>
+                        <div class="row text-center">
+                          <div class="col-md-6">
+                            <input type="button" value="Delete Representative" class="btn btn-danger" name="deleteRepresentative" ng-click="deleteRepresentative(r)" />                          
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </thead>
+                  
                 </table>
 
                 <!-- table in view mode -->
-                <script type="text/ng-template" id="view">
-                  <td name="midCell">{{r.mid}}</td>
-                  <td name="nameCell">{{r.name}}</td>
-                  <td name="dateCell">{{r.date}}</td>
-                  <td>
-                    <div class="row text-center">
-                      <div class="col-md-6">
-                          <input type="button" value="Delete Representative" class="btn btn-danger" name="deleteRepresentative" ng-click="deleteRepresentative(r)" />                          
-                      </div>
-                    </div>                  
-                  </td>
-                </script>
                 <label>{{message}}</label>
                 <label>{{selected}}</label>
 
@@ -152,23 +156,14 @@
                                   	<option ng-repeat="patient in patients" value="{{patient.self.username}}"> {{patient.self.username}}
                                      </option>
                                   </select>
-
-                            <!-- patient -->
-                            <div class="col-md-5 radio-box">
-                              <div class="form-check">
                                 </ul>
-                              </div>
-                            </div>
-
                           </div>
                           <br>
-                          <div class="row">
-                          </div>
                           <br>
                           <br>
                           <div class="row">
                             <div class="col-md-12 text-center">
-                              <button ng-click="addRepresentative(selected)" type="submit" class="btn btn-success" name="submit">Add Representative</button>
+                              <button ng-click="addRepresentative()" type="submit" class="btn btn-success" name="submit">Add Representative</button>
                             </div>
                           </div>
                         </form>

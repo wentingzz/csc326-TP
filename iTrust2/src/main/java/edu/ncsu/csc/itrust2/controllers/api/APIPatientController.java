@@ -194,10 +194,10 @@ public class APIPatientController extends APIController {
         final Patient patient = Patient.getPatient( self );
         final List<String> list1 = Lists.newArrayList( patient.getPersonalRepresentatives() );
         final List<Patient> list = Lists.newArrayList();
-        for ( int i = 0; i < list1.size(); i++ ) {
+        for (int i = 0; i < list1.size(); i++) {
             list.add( Patient.getByName( list1.get( 0 ) ) );
         }
-
+        
         return list;
     }
 
