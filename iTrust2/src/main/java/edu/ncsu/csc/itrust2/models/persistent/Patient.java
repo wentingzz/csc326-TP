@@ -785,8 +785,6 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * @return
      **/
     public void undeclarePersonalRepresentative ( final String representative ) {
-        // final User rep = User.getByName( representative );
-        // final Patient repPatient = Patient.getPatient( rep );
         personalRepresentatives.remove( representative );
     }
 
@@ -796,11 +794,8 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * @param representative
      */
     public void addPersonalRepresentative ( final String representative ) {
-        // final User rep = User.getByName( representative );
-        // final Patient repPatient = Patient.getPatient( rep );
         if ( !personalRepresentatives.contains( representative ) ) {
             personalRepresentatives.add( representative );
-            // repPatient.addRepresented( rep.getUsername() );
         }
     }
 
@@ -810,8 +805,6 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * @param representedUser
      */
     public void addRepresented ( final String representedUser ) {
-        // final User rep = User.getByName( representedUser );
-        // final Patient repPatient = Patient.getPatient( rep );
         if ( !represented.contains( representedUser ) ) {
             represented.add( representedUser );
         }
@@ -824,8 +817,6 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * @param representativeUser
      */
     public void undeclareRepresented ( final String representedUser ) {
-        // final User rep = User.getByName( representedUser );
-        // final Patient repPatient = Patient.getPatient( rep );
         represented.remove( representedUser );
     }
 

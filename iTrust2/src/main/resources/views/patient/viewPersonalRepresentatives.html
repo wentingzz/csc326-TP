@@ -58,11 +58,17 @@
     	          }, function (rejection) {
     	            $scope.message = "Could not remove representative";
     	          });
-       /*  	var msg = "Are you sure you want to remove representative" + representative.mid "?";
-         if (confirm(msg)) {
-	          
-          }; */
         };
+        
+        $scope.deleteRepresented = function (represented) {
+	          $http.delete('/iTrust2/api/v1/patient/removerepresented/' + represented.self.username).then(
+	            function (response) {
+	              $scope.loadTable2();
+	              $scope.message = "";
+	            }, function (rejection) {
+	              $scope.message = "Could not remove representative";
+	            });
+       };
 
         $http.get("/iTrust2/api/v1/patients").then(
           function (response) {
@@ -74,29 +80,11 @@
         // gets the template to ng-include for a table row / item
         $scope.selectedRepresentative = {};
 
-        /* $scope.getTemplate = function (representative) {
-          if (representative.id === $scope.selectedRepresentative.mid) return 'edit';
-          else return 'view';
-        }; */
-
         $scope.resetSelected = function () {
           $scope.selectedRepresentative = {};
         };
 
-        $scope.deleteRepresented = function (representative) {
-           
-  	          $http.delete('/iTrust2/api/v1/patient/' + representative.mid + '/removerepresented').then(
-  	            function (response) {
-  	              $scope.loadTable2();
-  	              $scope.message = "";
-  	            }, function (rejection) {
-  	              $scope.message = "Could not remove representative";
-  	            });
-  	        /* var msg = "Are you sure you want to remove representative" + representative.mid "?";
-            if (confirm(msg)) {
-            	
-            }; */
-          } 
+        
       });
 			/*]]>*/
     </script>
@@ -124,7 +112,7 @@
                       <td>
                         <div class="row text-right">
                           <div class="col-md-6">
-                            <input type="button" value="Delete Representative" class="btn btn-danger" name="deleteRepresentative" ng-click="deleteRepresentative(r)" />
+                            <input type="button" value="Delete" class="btn btn-danger" name="deleteRepresentative" ng-click="deleteRepresentative(r)" />
                           </div>
                         </div>
                       </td>
@@ -184,25 +172,21 @@
                     <tr>
                       <th>MID</th>
                       <th>Name</th>
-                      <th>Date Added</th>
+                      <th>Manage</th>
+                    </tr>
+                    <tr  ng-repeat="r in represented">
+                      <td>{{r.self.username}}</td>
+                      <td>{{r.firstName}}  {{r.lastName}}</td>
+                      <td>
+                        <div class="row text-right">
+                          <div class="col-md-6">
+                            <input type="button" value="Delete" class="btn btn-danger" name="deleteRepresented" ng-click="deleteRepresented(r)" />
+                          </div>
+                        </div>
+                      </td>
                     </tr>
                   </thead>
                 </table>
-
-                <!-- table in view mode -->
-                <script type="text/ng-template" id="view">
-                  <td name="midCell">{{r.mid}}</td>
-                  <td name="nameCell">{{r.name}}</td>
-                  <td name="dateCell">{{r.date}}</td>
-                  <td>
-                    <div class="row text-center">
-                      <div class="col-md-6">
-                          <input type="button" value="Remove Me as a Representative" class="btn btn-danger" name="deleteRepresentative" ng-click="deleteRepresented(r)" />                          
-                      </div>
-                    </div>                  
-                  </td>
-                </script>
-
                 <br>
               </div>
             </div>

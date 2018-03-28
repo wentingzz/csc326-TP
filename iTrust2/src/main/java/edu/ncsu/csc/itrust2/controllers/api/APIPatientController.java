@@ -225,15 +225,18 @@ public class APIPatientController extends APIController {
     @DeleteMapping ( BASE_PATH + "/patient/{representative}" )
     public ResponseEntity undeclarePersonalRepresentative (
             @PathVariable ( "representative" ) final String representative ) {
-        final User self = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
-        final Patient patient = Patient.getPatient( self );
-        System.out.println( "\n\n\n\n\n\nIN the controller: " + representative );
+        final String Username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final User self = User.getByName( Username );
+        Patient patient = Patient.getPatient( self );
         if ( patient == null ) {
             return new ResponseEntity( errorResponse( "No Patient found for username " + self.getUsername() ),
                     HttpStatus.NOT_FOUND );
         }
         else {
             patient.undeclarePersonalRepresentative( representative );
+            patient.save();
+            patient = Patient.getPatient( User.getByName( representative ) );
+            patient.undeclareRepresented( Username );
             patient.save();
             LoggerUtil.log( TransactionType.DECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(),
                     "Patient  " + patient + "undeclared " + representative );
@@ -248,14 +251,18 @@ public class APIPatientController extends APIController {
     @PutMapping ( BASE_PATH + "/patient/{representative}/addrepresentative" )
     public ResponseEntity declarePersonalRepresentative (
             @PathVariable ( "representative" ) final String representative ) {
-        final User self = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
-        final Patient patient = Patient.getPatient( self );
+        final String Username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final User self = User.getByName( Username );
+        Patient patient = Patient.getPatient( self );
         if ( patient == null ) {
             return new ResponseEntity( errorResponse( "No Patient found for username " + self.getUsername() ),
                     HttpStatus.NOT_FOUND );
         }
         else {
             patient.addPersonalRepresentative( representative );
+            patient.save();
+            patient = Patient.getPatient( User.getByName( representative ) );
+            patient.addRepresented( Username );
             patient.save();
             LoggerUtil.log( TransactionType.UNDECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(),
                     "Patient " + patient + "declared representative  + representative" );
@@ -267,16 +274,23 @@ public class APIPatientController extends APIController {
      * Undeclare who they are representing
      */
     @PreAuthorize ( "hasRole('ROLE_PATIENT')" )
-    @DeleteMapping ( BASE_PATH + "/patient/{represented}/removerepresented" )
-    public ResponseEntity undeclareRepresented ( @PathVariable ( "represeted" ) final String represented ) {
-        final User self = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
-        final Patient patient = Patient.getPatient( self );
+    @DeleteMapping ( BASE_PATH + "/patient/removerepresented/{represented}" )
+    public ResponseEntity undeclareRepresented ( @PathVariable ( "represented" ) final String represented ) {
+        final String Username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final User self = User.getByName( Username );
+        Patient patient = Patient.getPatient( self );
+        System.out.println( "\n\n\n\n\n\nIN the controller: " + represented );
         if ( patient == null ) {
             return new ResponseEntity( errorResponse( "No Patient found for username " + self.getUsername() ),
                     HttpStatus.NOT_FOUND );
         }
         else {
+            System.out.println( "\n\n\n\n\n\nGOOD " );
             patient.undeclareRepresented( represented );
+            patient.save();
+            patient = Patient.getPatient( User.getByName( represented ) );
+            patient.undeclarePersonalRepresentative( Username );
+            patient.save();
             LoggerUtil.log( TransactionType.DECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(),
                     self.getUsername(), "Patient  " + patient + "undeclared " + represented );
             return new ResponseEntity( patient, HttpStatus.OK );
