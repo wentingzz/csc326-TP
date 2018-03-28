@@ -192,7 +192,12 @@ public class APIPatientController extends APIController {
             return null;
         }
         final Patient patient = Patient.getPatient( self );
-        final List<Patient> list = Lists.newArrayList( patient.getPersonalRepresentatives() );
+        final List<String> list1 = Lists.newArrayList( patient.getPersonalRepresentatives() );
+        final List<Patient> list = Lists.newArrayList();
+        for ( int i = 0; i < list1.size(); i++ ) {
+            list.add( Patient.getByName( list1.get( 0 ) ) );
+        }
+
         return list;
     }
 
@@ -243,7 +248,7 @@ public class APIPatientController extends APIController {
         }
         else {
             patient.addPersonalRepresentative( representative );
-            // patient.save();
+            patient.save();
             LoggerUtil.log( TransactionType.UNDECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(),
                     "Patient " + patient + "declared representative  + representative" );
             return new ResponseEntity( patient, HttpStatus.OK );
