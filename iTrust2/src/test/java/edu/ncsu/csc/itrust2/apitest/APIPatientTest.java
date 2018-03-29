@@ -185,6 +185,8 @@ public class APIPatientTest {
         final Patient antti = new Patient( patient );
         antti.save(); // create the patient if they don't exist already
 
+        final Patient ivan = new Patient( patient );
+
         // a patient can edit their own info
         mvc.perform( put( "/api/v1/patients/antti" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isOk() );
@@ -193,6 +195,23 @@ public class APIPatientTest {
         patient.setSelf( "patient" );
         mvc.perform( put( "/api/v1/patients/patient" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isUnauthorized() );
+
+        // test adding a representative
+        mvc.perform( put( "/api/v1/patient/ivan/addrepresentative" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isOk() );
+
+        // test removing a representative
+        mvc.perform( put( "/api/v1/patient/ivan" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isOk() );
+
+        // test getting the representatives
+        mvc.perform( put( "/api/v1/patient/representatives" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isOk() );
+
+        // test getting who the user represents (no one)
+        mvc.perform( put( "/api/v1/patient/represented" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isOk() );
+
     }
 
 }
