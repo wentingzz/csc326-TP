@@ -1,7 +1,6 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +42,10 @@ public class APIPatientController extends APIController {
      */
     @GetMapping ( BASE_PATH + "/patients" )
     public List<Patient> getPatients () {
-        return Patient.getPatients();
+        final List<Patient> list = Patient.getPatients();
+        list.remove( Patient
+                .getPatient( User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() ) ) );
+        return list;
     }
 
     /**
@@ -194,10 +196,10 @@ public class APIPatientController extends APIController {
         final Patient patient = Patient.getPatient( self );
         final List<String> list1 = Lists.newArrayList( patient.getPersonalRepresentatives() );
         final List<Patient> list = Lists.newArrayList();
-        for (int i = 0; i < list1.size(); i++) {
-            list.add( Patient.getByName( list1.get( 0 ) ) );
+        for ( int i = 0; i < list1.size(); i++ ) {
+            list.add( Patient.getByName( list1.get( i ) ) );
         }
-        
+
         return list;
     }
 
@@ -205,10 +207,15 @@ public class APIPatientController extends APIController {
      * Gets the patients this user represents
      */
     @GetMapping ( BASE_PATH + "/patient/represented" )
-    public Set<Patient> getRepresented () {
+    public List<Patient> getRepresented () {
         final User self = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
         final Patient patient = Patient.getPatient( self );
-        return patient.getRepresented();
+        final List<String> names = Lists.newArrayList( patient.getRepresented() );
+        final List<Patient> list = Lists.newArrayList();
+        for ( int i = 0; i < names.size(); i++ ) {
+            list.add( Patient.getByName( names.get( i ) ) );
+        }
+        return list;
     }
 
     /**
@@ -218,14 +225,19 @@ public class APIPatientController extends APIController {
     @DeleteMapping ( BASE_PATH + "/patient/{representative}" )
     public ResponseEntity undeclarePersonalRepresentative (
             @PathVariable ( "representative" ) final String representative ) {
-        final User self = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
-        final Patient patient = Patient.getPatient( self );
+        final String Username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final User self = User.getByName( Username );
+        Patient patient = Patient.getPatient( self );
         if ( patient == null ) {
             return new ResponseEntity( errorResponse( "No Patient found for username " + self.getUsername() ),
                     HttpStatus.NOT_FOUND );
         }
         else {
             patient.undeclarePersonalRepresentative( representative );
+            patient.save();
+            patient = Patient.getPatient( User.getByName( representative ) );
+            patient.undeclareRepresented( Username );
+            patient.save();
             LoggerUtil.log( TransactionType.DECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(),
                     "Patient  " + patient + "undeclared " + representative );
             return new ResponseEntity( patient, HttpStatus.OK );
@@ -239,15 +251,18 @@ public class APIPatientController extends APIController {
     @PutMapping ( BASE_PATH + "/patient/{representative}/addrepresentative" )
     public ResponseEntity declarePersonalRepresentative (
             @PathVariable ( "representative" ) final String representative ) {
-        System.out.println( "\n\n\n\n\n\n" + representative );
-        final User self = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
-        final Patient patient = Patient.getPatient( self );
+        final String Username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final User self = User.getByName( Username );
+        Patient patient = Patient.getPatient( self );
         if ( patient == null ) {
             return new ResponseEntity( errorResponse( "No Patient found for username " + self.getUsername() ),
                     HttpStatus.NOT_FOUND );
         }
         else {
             patient.addPersonalRepresentative( representative );
+            patient.save();
+            patient = Patient.getPatient( User.getByName( representative ) );
+            patient.addRepresented( Username );
             patient.save();
             LoggerUtil.log( TransactionType.UNDECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(),
                     "Patient " + patient + "declared representative  + representative" );
@@ -259,43 +274,84 @@ public class APIPatientController extends APIController {
      * Undeclare who they are representing
      */
     @PreAuthorize ( "hasRole('ROLE_PATIENT')" )
-    @DeleteMapping ( BASE_PATH + "/patient/{represented}/removerepresented" )
-    public ResponseEntity undeclareRepresented ( @PathVariable ( "represeted" ) final String represented ) {
-        final User self = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
-        final Patient patient = Patient.getPatient( self );
+    @DeleteMapping ( BASE_PATH + "/patient/removerepresented/{represented}" )
+    public ResponseEntity undeclareRepresented ( @PathVariable ( "represented" ) final String represented ) {
+        final String Username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final User self = User.getByName( Username );
+        Patient patient = Patient.getPatient( self );
         if ( patient == null ) {
             return new ResponseEntity( errorResponse( "No Patient found for username " + self.getUsername() ),
                     HttpStatus.NOT_FOUND );
         }
         else {
             patient.undeclareRepresented( represented );
+            patient.save();
+            patient = Patient.getPatient( User.getByName( represented ) );
+            patient.undeclarePersonalRepresentative( Username );
+            patient.save();
             LoggerUtil.log( TransactionType.DECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(),
                     self.getUsername(), "Patient  " + patient + "undeclared " + represented );
             return new ResponseEntity( patient, HttpStatus.OK );
         }
     }
 
-    // /**
-    // * Declares the representative for patient
-    // */
-    // @GetMapping ( BASE_PATH + "/patient/{represented}/addrepresented" )
-    // public ResponseEntity addRepresented ( @PathVariable ( "represented" )
-    // final String represented ) {
-    // final User self = User.getByName(
-    // SecurityContextHolder.getContext().getAuthentication().getName() );
-    // final Patient patient = Patient.getPatient( self );
-    // if ( patient == null ) {
-    // return new ResponseEntity( errorResponse( "No Patient found for username
-    // " + self.getUsername() ),
-    // HttpStatus.NOT_FOUND );
-    // }
-    // else {
-    // patient.addRepresented( represented );
-    // LoggerUtil.log( TransactionType.UNDECLARE_PERSONAL_REPRESENTATIVES,
-    // LoggerUtil.currentUser(),
-    // "Patient " + self.getUsername() + "represents " + represented );
-    // return new ResponseEntity( patient, HttpStatus.OK );
-    // }
-    // }
+    /**
+     * Gets the personal representatives for a user. HCP view
+     */
+    @PreAuthorize ( "hasRole('ROLE_HCP')" )
+    @GetMapping ( BASE_PATH + "/patient/representatives/{user}" )
+    public List<Patient> getUserRepresentatives ( @PathVariable ( "user" ) final String user ) {
+        final User self = User.getByName( user );
+        if ( self == null ) {
+            return null;
+        }
+        final Patient patient = Patient.getPatient( self );
+        final List<String> list1 = Lists.newArrayList( patient.getPersonalRepresentatives() );
+        final List<Patient> list = Lists.newArrayList();
+        for ( int i = 0; i < list1.size(); i++ ) {
+            list.add( Patient.getByName( list1.get( i ) ) );
+        }
+        return list;
+    }
 
+    /**
+     * Gets the patients this user represents. HCP view
+     */
+    @PreAuthorize ( "hasRole('ROLE_HCP')" )
+    @GetMapping ( BASE_PATH + "/patient/represented/{user}" )
+    public List<Patient> getUserRepresented ( @PathVariable ( "user" ) final String user ) {
+        final User self = User.getByName( user );
+        final Patient patient = Patient.getPatient( self );
+        final List<String> names = Lists.newArrayList( patient.getRepresented() );
+        final List<Patient> list = Lists.newArrayList();
+        for ( int i = 0; i < names.size(); i++ ) {
+            list.add( Patient.getByName( names.get( i ) ) );
+        }
+        return list;
+    }
+
+    /**
+     * HCP declares the representative for a patient
+     */
+    @PreAuthorize ( "hasRole('ROLE_HCP')" )
+    @PutMapping ( BASE_PATH + "/patient/{user}/{representative}/addrepresentative" )
+    public ResponseEntity declarePersonalRepresentativeHCP ( @PathVariable ( "user" ) final String Username,
+            @PathVariable ( "representative" ) final String representative ) {
+        final User self = User.getByName( Username );
+        Patient patient = Patient.getPatient( self );
+        if ( patient == null ) {
+            return new ResponseEntity( errorResponse( "No Patient found for username " + self.getUsername() ),
+                    HttpStatus.NOT_FOUND );
+        }
+        else {
+            patient.addPersonalRepresentative( representative );
+            patient.save();
+            patient = Patient.getPatient( User.getByName( representative ) );
+            patient.addRepresented( Username );
+            patient.save();
+            LoggerUtil.log( TransactionType.UNDECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(),
+                    "Patient " + patient + "declared representative  + representative" );
+            return new ResponseEntity( patient, HttpStatus.OK );
+        }
+    }
 }

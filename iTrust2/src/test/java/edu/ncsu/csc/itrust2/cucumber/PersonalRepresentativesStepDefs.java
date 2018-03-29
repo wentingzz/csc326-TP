@@ -1,8 +1,7 @@
 package edu.ncsu.csc.itrust2.cucumber;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.util.NoSuchElementException;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -11,6 +10,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import cucumber.api.java.After;
@@ -40,7 +40,7 @@ public class PersonalRepresentativesStepDefs {
         options.addArguments( "window-size=1200x600" );
         options.addArguments( "blink-settings=imagesEnabled=false" );
         driver = new ChromeDriver( options );
-        wait = new WebDriverWait( driver, 10 );
+        wait = new WebDriverWait( driver, 20 );
 
     }
 
@@ -59,13 +59,6 @@ public class PersonalRepresentativesStepDefs {
     @Given ( "I am able to log in to iTrust as (.+) with password (.+)" )
     public void login ( final String username, final String password ) {
         driver.get( baseUrl );
-        try {
-            driver.findElement( By.id( "logout" ) ).click();
-        }
-        catch ( final NoSuchElementException nsee ) {
-            // user is not logged in, continue
-        }
-
         wait.until( ExpectedConditions.titleIs( "iTrust2 :: Login" ) );
         setTextField( By.name( "username" ), username );
         setTextField( By.name( "password" ), password );
@@ -75,8 +68,8 @@ public class PersonalRepresentativesStepDefs {
         wait.until( ExpectedConditions.not( ExpectedConditions.titleIs( "iTrust2 :: Login" ) ) );
     }
 
-    // This is the editPersonalRepresentatives page
-    @When ( "When I go to the Personal Representatives page" )
+    // This is the viewPersonalRepresentatives page
+    @When ( "I go to the Personal Representatives page" )
     public void goToPersonalRepPage () {
         // assuming will be called personalRepresentatives
         ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('personalRepresentatives').click();" );
@@ -84,21 +77,42 @@ public class PersonalRepresentativesStepDefs {
 
     @When ( "I select patient with the name (.+)" )
     public void selectPatientOnPersonalRepresentativesPage ( final String name ) {
-        final WebElement patient = driver.findElement( By.xpath( "//input[@value=name]" ) );
+        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "patientToGetRep" ) ) );
+        // final WebElement patient = driver
+        // .findElement( By.xpath( "//input[@name='patientToGetRep' and @value="
+        // + name + "]" ) );
+        final WebElement patient = driver
+                .findElement( By.xpath( "//input[@name='patientToGetRep' and @value='" + name + "']" ) );
         patient.click();
     }
 
-    @When ( "I add the patient (+) by selecting their name and clicking the 'Add Representative' button" )
+    @When ( "I select the representative (.+)" )
+    public void HCPPickRep ( final String name ) {
+        final WebElement selectElement = driver.findElement( By.id( "reps" ) );
+        final Select patientDropdown = new Select( selectElement );
+        patientDropdown.selectByVisibleText( name );
+    }
+
+    @When ( "When I click the 'Add Representative' button" )
+    public void ClickAdd () {
+        final WebElement addRepresentative = driver.findElement( By.xpath( "//button[@name='submit']" ) );
+        addRepresentative.click();
+    }
+
+    /*
+     * Used this for selecting dropdown items:
+     * https://loadfocus.com/blog/2016/06/13/how-to-select-a-dropdown-in-
+     * selenium-webdriver-using-java/
+     */
+    @When ( "I add the patient (.+) by selecting their name and clicking the 'Add Representative' button" )
     public void addPersonalRep ( final String name ) {
-        // assuming ID for this will be repName
-        // final WebElement personalRepName = driver.findElement( By.id(
-        // "repName" ) );
-        // personalRepName.clear();
-        // personalRepName.sendKeys( name );
-        final WebElement patient = driver.findElement( By.id( name ) );
-        patient.click();
-        // assuming value for this button will be addRepSubmit
-        final WebElement addRepresentative = driver.findElement( By.xpath( "//input[@value='addRepSubmit']" ) );
+        // final WebElement patient = driver.findElement( By.id( name ) );
+        // patient.click();
+        wait.until( ExpectedConditions.visibilityOfElementLocated( By.id( "reps" ) ) );
+        final WebElement selectElement = driver.findElement( By.id( "reps" ) );
+        final Select patientDropdown = new Select( selectElement );
+        patientDropdown.selectByVisibleText( name );
+        final WebElement addRepresentative = driver.findElement( By.xpath( "//button[@name='submit']" ) );
         addRepresentative.click();
     }
 
@@ -107,14 +121,21 @@ public class PersonalRepresentativesStepDefs {
         assertTrue( driver.getPageSource().contains( "Representative added successfully" ) );
     }
 
-    @When ( "I remove the representative <patientrep> by selecting <patientrep> and clicking the 'Remove Patient Representative' button" )
+    @When ( "I remove the representative (.+) by clicking the 'Delete' button for that representative." )
     public void removePersonalRep ( final String name ) {
-        final WebElement patientRep = driver
-                .findElement( By.xpath( "/tr[@name='representativeTableRow']/input[@value=" + name + "]" ) );
-        patientRep.click();
-        // assuming value for this button will be deleteRepSubmit
-        final WebElement deleteRepresentative = driver.findElement( By.xpath( "//input[@value='deleteRepSubmit']" ) );
+        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "deleteRepresentative" ) ) );
+        final WebElement deleteRepresentative = driver.findElement( By.name( "deleteRepresentative" ) );
         deleteRepresentative.click();
 
+    }
+
+    @Then ( "(.+) is succesfully added as a representative." )
+    public void checkRepIsAdded ( final String name ) {
+        assertTrue( driver.getPageSource().contains( name ) );
+    }
+
+    @Then ( "Then that representative (.+) does not appear." )
+    public void checkDeletedRepIsGone ( final String name ) {
+        assertFalse( driver.getPageSource().contains( name ) );
     }
 }

@@ -11,75 +11,59 @@
 
 			var app = angular.module('myApp', []);
 			app.controller('representativesCtrl', function($scope, $http) {
-								$scope.displayName = function(p) {
-									return p.firstName + " " + p.lastName + " (" + p.self.username + ")";
-								}
-								
-								// documentation on Angular filters: https://docs.angularjs.org/api/ng/filter/filter
-								$scope.searchFilter = "";
-								$scope.filterPatients = function(patient) {
-									return ($scope.displayName(patient)).toLowerCase().match($scope.searchFilter.toLowerCase());
-								}
-								
-								$scope.loadTable1 = function () {
-							          $http.get("/iTrust2/api/v1/patient/representatives").then(
-							            function (response) {
-							              $scope.represented = response.data;
-							              $scope.message = "";
-							            }, function (rejection) {
-							              $scope.representatives = [];
-							              $scope.message = "Could not display representatives";
-							            });
-							        };
-							        
-							        $scope.loadTable2 = function() {
-							        	  $http.get("/iTrust2/api/v1/patient/represented").then(
-							        	    function (response) {
-							        	      $scope.represented = response.data;
-							        	      $scope.message = "";
-							        	    }, function (rejection) {
-							        	      $scope.representatives = [];
-							        	      $scope.message = "Could not display representatives";
-							        	    });
-							        	};
-							        	
-								$scope.selectPatient = function(patient, override) {
-									if (!override && formDifferent($scope.patientForm, $scope.originalForm)) {
-										if (!confirm("You have made changes to " + $scope.patientForm.self
-												+ ". Would you like to continue? (changes will be lost)")) {
-											$scope.selectedPatient = "";
-											$scope.selectedPatient = $scope.patientForm.self;
-											return;
-										}
-									}
-									
-									var pf = $scope.patientForm = {};
-									var of = $scope.originalForm = {};
-									$scope.selectedPatient = pf.self;
-									$scope.loadTable1()
-									$scope.loadTable2()
-								}
-								
-								$scope.addRepresentative = function () {
-							          $http.put("/iTrust2/api/v1/patient/"+ $scope.selectedmid + "/addrepresentative").then(
-							            function (response) {
-							              $scope.loadTable();
-							              $scope.representative.name = ""
-							              $scope.mid = ""
-							            }, function (rejection) {
-							              $scope.errorAdding = "Could not add representative";
-							            });
-
-							        };
-								
-								$http.get("/iTrust2/api/v1/patients").then(
-										function(response) {
-											$scope.patients = response.data;
-										});
-
-								console.log($scope);
-						
+				$scope.displayName = function(p) {
+					return p.firstName + " " + p.lastName + " (" + p.self.username + ")";
+				}
+				// documentation on Angular filters: https://docs.angularjs.org/api/ng/filter/filter
+				$scope.searchFilter = "";
+				$scope.filterPatients = function(patient) {
+					return ($scope.displayName(patient)).toLowerCase().match($scope.searchFilter.toLowerCase());
+				}
+				$scope.loadTable1 = function () {
+					$http.get("/iTrust2/api/v1/patient/representatives/" + $scope.selectedPatient.username).then(
+							function (response) {
+								$scope.representatives = response.data;
+								$scope.message = "";
+							}, function (rejection) {
+								$scope.representatives = [];
+								$scope.message = "Could not display representatives";
 							});
+				};
+							        
+				$scope.loadTable2 = function() {
+					$http.get("/iTrust2/api/v1/patient/represented/" + $scope.selectedPatient.username).then(
+							function (response) {
+								$scope.represented = response.data;
+								$scope.message = "";
+							}, function (rejection) {
+								$scope.representatives = [];
+								$scope.message = "Could not display representatives";
+							});
+				};
+				
+				$scope.selectPatient = function(patient) {
+					$scope.selectedPatient = patient.self;
+					$scope.loadTable1()
+					$scope.loadTable2()
+				}
+				$scope.selected = "";
+				$scope.addRepresentative = function () {
+					$http.put("/iTrust2/api/v1/patient/"+ $scope.selectedPatient.username + "/" + $scope.selected + "/addrepresentative").then(
+							function (response) {
+								$scope.loadTable1();
+								$scope.loadTable2();
+								$scope.mid = ""
+							}, function (rejection) {
+								$scope.errorAdding = "Could not add representative";
+							});
+				};
+				
+				$http.get("/iTrust2/api/v1/patients").then(
+						function(response) {
+							$scope.patients = response.data;
+						});
+				console.log($scope);
+			});
 
 			/*]]>*/
 		</script>
@@ -93,7 +77,7 @@
 			<ul style="overflow:auto;height=90%;">
 							<li ng-repeat="patient in patients | filter:filterPatients"><h4><label>
 									<input type="radio" ng-model="$parent.selectedPatient"
-									name="patient" value="{{patient.self.username}}"
+									name="patientToGetRep" value="{{patient.self.username}}"
 									ng-click='$parent.selectPatient(patient)' />&nbsp;{{$parent.displayName(patient)}}</label>
 							</h4></li>
 						</ul>
@@ -102,7 +86,7 @@
 		<div style="float:left;width:70%;border-left:1px solid #bbb;padding-left: 3%;height:75%;overflow-y:auto">
 			<h2 id="header0">Select Patient to Add as a Representative</h2>
 			<div ng-show="selectedPatient">
-				<h3>Username: {{selectedPatient}}</h3>
+				<h3>Username: {{selectedPatient.username}}</h3>
 				<form class="form-horizontal" role="form" name="addRepresentativeForm" ng-submit="addRepresentative(addRepresentativeForm.$valid)">
 				<table>
 					      <!-- patients -->
@@ -113,30 +97,28 @@
                     				  <tr>
                       				<th>MID</th>
                       				<th>Name</th>
-                     				<th>Date Added</th>
                    				  </tr>
                   			   </thead>
                   			   <tbody>
                     				 <tr ng-repeat="r in representatives">
-                    				 	<th>{{r.mid}}</th>
-                      				<th>{{r.name}}</th>
-                     				<th>{{r.date}}</th>
+                    				 	<td>{{r.self.username}}</td>
+                      				<td>{{r.firstName}}  {{r.lastName}}</td>
                     				 </tr>
                  			   </tbody>
                 				 </table>
+                				 
                               <div class="form-check">
                                 <label>Patient:</label>
                                 <ul style="max-height:15%;overflow:auto;list-style: none;">
-                                  <li ng-repeat="patient in patients">
-                                    <label>
-                                    <!-- not sure what to do here; was 'parent.prescription.patient' -->
-                                      <input type="radio" ng-model="$parent.patients" name="name" value="{{patient.self.username}}" required="true"
-                                      />&nbsp; {{patient.self.username}}
-                                    </label>
+                                  <li>
+                                    <select ng-model="selected" id="reps">
+                                  	<option ng-repeat="patient in patients" value="{{patient.self.username}}"> {{patient.self.username}}
+                                     </option>
+                                  </select>
                                   </li>
                                 </ul>
                               </div>
-                              <button type="submit" class="btn btn-success" name="submit">Add Representative</button>
+                              <button ng-click="addRepresentative()" type="submit" class="btn btn-success" name="submit">Add Representative</button>
                               <br />
                               <br />
                               <table class="table table-bordered">
@@ -145,14 +127,12 @@
                     				  <tr>
                       				<th>MID</th>
                       				<th>Name</th>
-                     				<th>Date Added</th>
                    				  </tr>
                   			   </thead>
                   			   <tbody>
                     				 <tr ng-repeat="r in represented">
-                    				 	<th>{{r.mid}}</th>
-                      				<th>{{r.name}}</th>
-                     				<th>{{r.date}}</th>
+                    				 	<td>{{r.self.username}}</td>
+                      				<td>{{r.firstName}}  {{r.lastName}}</td>
                     				 </tr>
                  			   </tbody>
                 				 </table>

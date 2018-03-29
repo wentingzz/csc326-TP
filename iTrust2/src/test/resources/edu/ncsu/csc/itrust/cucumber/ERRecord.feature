@@ -1,4 +1,4 @@
-Author: Wenting Zheng(wzheng8)
+#Author: Wenting Zheng(wzheng8)
 Feature: Emergency Record
 	As an HCP
 	I want to view emergency record
