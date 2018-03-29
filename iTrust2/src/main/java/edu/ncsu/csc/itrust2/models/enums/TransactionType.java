@@ -291,7 +291,12 @@ public enum TransactionType {
     /**
      * Patient undeclared who they represented
      */
-    UNDECLARE_REPRESENTED ( 1604, "Patiented undeclared who they represented", true );
+    UNDECLARE_REPRESENTED ( 1604, "Patiented undeclared who they represented", true ),
+
+    /**
+     * Emergency Report was viewed
+     */
+    VIEW_ER_REPORT ( 1501, "Emergency report was viewed", true );
 
     /**
      * Creates a TransactionType for logging events
