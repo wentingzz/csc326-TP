@@ -202,7 +202,7 @@ public class APIPatientTest {
                 .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isUnauthorized() );
 
         // test adding a representative
-        mvc.perform( put( "/api/v1/patient/ivan/addrepresentative" ).contentType( MediaType.APPLICATION_JSON )
+        mvc.perform( put( "/api/v1/patient/addrepresentative/ivan" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isOk() );
 
         // test removing a representative

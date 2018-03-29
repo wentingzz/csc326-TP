@@ -225,7 +225,7 @@ public class APIPatientController extends APIController {
     @DeleteMapping ( BASE_PATH + "/patient/{representative}" )
     public ResponseEntity undeclarePersonalRepresentative (
             @PathVariable ( "representative" ) final String representative ) {
-        final String Username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final String Username = LoggerUtil.currentUser();
         final User self = User.getByName( Username );
         Patient patient = Patient.getPatient( self );
         if ( patient == null ) {
@@ -248,10 +248,10 @@ public class APIPatientController extends APIController {
      * Declares the representative for patient
      */
     @PreAuthorize ( "hasRole('ROLE_PATIENT')" )
-    @PutMapping ( BASE_PATH + "/patient/{representative}/addrepresentative" )
+    @PutMapping ( BASE_PATH + "/patient/addrepresentative/{representative}" )
     public ResponseEntity declarePersonalRepresentative (
             @PathVariable ( "representative" ) final String representative ) {
-        final String Username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final String Username = LoggerUtil.currentUser();
         final User self = User.getByName( Username );
         Patient patient = Patient.getPatient( self );
         if ( patient == null ) {
