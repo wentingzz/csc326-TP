@@ -1,5 +1,8 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -158,6 +161,50 @@ public class APIPrescriptionController extends APIController {
             LoggerUtil.log( TransactionType.PRESCRIPTION_VIEW, LoggerUtil.currentUser(), "Viewed prescription  " + id );
             return new ResponseEntity( p, HttpStatus.OK );
         }
+    }
+
+    /**
+     * Returns a collection of all the prescriptions in the system.
+     *
+     * @param username
+     *            of the patient
+     * @return all saved prescriptions
+     */
+    @PreAuthorize ( "hasAnyRole('ROLE_HCP', 'ROLE_ER')" )
+    @GetMapping ( BASE_PATH + "/patientPrescriptions/{username}" )
+    public List<Prescription> getPatientPrescriptions ( @PathVariable ( "username" ) final String username ) {
+        final boolean isHCP = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .contains( new SimpleGrantedAuthority( "ROLE_HCP" ) );
+        final boolean isER = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .contains( new SimpleGrantedAuthority( "ROLE_ER" ) );
+        final List<Prescription> pres = Prescription.getForPatient( username );
+        final List<Prescription> between = new ArrayList<Prescription>();
+        final Calendar endDate = Calendar.getInstance();
+        final Calendar startDate = Calendar.getInstance();
+        startDate.add( Calendar.DAY_OF_MONTH, -90 );
+        for ( int i = 0; i < pres.size(); i++ ) {
+            final Calendar current = pres.get( i ).getStartDate();
+            if ( current.compareTo( startDate ) >= 0 && current.compareTo( endDate ) <= 0 ) {
+                between.add( pres.get( i ) );
+            }
+        }
+
+        between.sort( new Comparator<Object>() {
+            @Override
+            public int compare ( final Object arg0, final Object arg1 ) {
+                return ( (Prescription) arg1 ).getStartDate().compareTo( ( (Prescription) arg0 ).getStartDate() );
+            }
+        } );
+        if ( username == null ) {
+            return null;
+        }
+
+        if ( isHCP || isER ) {
+            // Return all prescriptions in system
+            LoggerUtil.log( TransactionType.VIEW_ER_REPORT, LoggerUtil.currentUser(), username,
+                    LoggerUtil.currentUser() + " viewed the emergency report" );
+        }
+        return between;
     }
 
 }
