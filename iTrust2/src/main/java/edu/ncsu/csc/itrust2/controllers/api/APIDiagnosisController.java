@@ -82,40 +82,41 @@ public class APIDiagnosisController extends APIController {
 
         return Diagnosis.getForPatient( self );
     }
-    
+
     /**
      * Returns a list of diagnoses for the logged in patient
      *
+     * @param username
+     *            of the patient
      * @return List of Diagnoses for the patient
      */
     @GetMapping ( BASE_PATH + "/patientDiagnoses/{username}" )
     public List<Diagnosis> getPatientDiagnoses ( @PathVariable ( "username" ) final String username ) {
-    		final User patient = User.getByName(username);
-    		List<Diagnosis> diagnosis = Diagnosis.getForPatient(patient);
-    		List<Diagnosis> between = new ArrayList<Diagnosis>();
-    		Calendar endDate = Calendar.getInstance();
-    		Calendar startDate = Calendar.getInstance();
-    		startDate.add(Calendar.DAY_OF_MONTH, -60);
-    		for (int i = 0; i < diagnosis.size(); i++) {
-    			final Calendar current = diagnosis.get(i).getVisit().getDate();
-    			if(current.compareTo(startDate) >= 0 && current.compareTo(endDate) <= 0) {
-    				between.add(diagnosis.get(i));
-    			}
-    		}
-    		
-    		between.sort(new Comparator<Object>() {
-    			@Override
-    			public int compare( final Object arg0, final Object arg1) {
-    				return ((Diagnosis) arg1).getVisit().getDate().compareTo(((Diagnosis) arg0).getVisit().getDate());
-    			}
-    		});
-    		if ( patient == null ) {
+        final User patient = User.getByName( username );
+        final List<Diagnosis> diagnosis = Diagnosis.getForPatient( patient );
+        final List<Diagnosis> between = new ArrayList<Diagnosis>();
+        final Calendar endDate = Calendar.getInstance();
+        final Calendar startDate = Calendar.getInstance();
+        startDate.add( Calendar.DAY_OF_MONTH, -60 );
+        for ( int i = 0; i < diagnosis.size(); i++ ) {
+            final Calendar current = diagnosis.get( i ).getVisit().getDate();
+            if ( current.compareTo( startDate ) >= 0 && current.compareTo( endDate ) <= 0 ) {
+                between.add( diagnosis.get( i ) );
+            }
+        }
+
+        between.sort( new Comparator<Object>() {
+            @Override
+            public int compare ( final Object arg0, final Object arg1 ) {
+                return ( (Diagnosis) arg1 ).getVisit().getDate().compareTo( ( (Diagnosis) arg0 ).getVisit().getDate() );
+            }
+        } );
+        if ( patient == null ) {
             return null;
         }
         LoggerUtil.log( TransactionType.VIEW_ER_REPORT, LoggerUtil.currentUser() + " viewed the emergency report" );
-        
 
-       // Collections.reverse(between);
+        // Collections.reverse(between);
         return between;
     }
 
