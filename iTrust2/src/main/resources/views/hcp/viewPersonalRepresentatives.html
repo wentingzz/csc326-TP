@@ -76,7 +76,7 @@
 			<h4>Search: <input type="text" name="search" ng-model="searchFilter"/></h4>
 			<ul style="overflow:auto;height=90%;">
 							<li ng-repeat="patient in patients | filter:filterPatients"><h4><label>
-									<input type="radio" ng-model="$parent.selectedPatient"
+									<input type="radio" 
 									name="patientToGetRep" value="{{patient.self.username}}"
 									ng-click='$parent.selectPatient(patient)' />&nbsp;{{$parent.displayName(patient)}}</label>
 							</h4></li>
