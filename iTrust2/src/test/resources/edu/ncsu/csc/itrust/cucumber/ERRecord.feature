@@ -11,7 +11,7 @@ Scenario Outline: HCP views valid emergency record
 Given The required ERRecord facilities exist
 When I log in to iTrust2 as an HCP
 When I go to the Emergency Health Records page
-When I fill in user type with <usesrtype>
+When I fill in user type with <usertype>
 Then The <name>, <age>, <birthday>, <gender>, and <blood> are correct
 And I see the list of diagnoses codes for the patient
 Examples:
@@ -22,7 +22,7 @@ Scenario Outline: HCP views invalid emergency record
 Given The required ERRecord facilities exist
 When I log in to iTrust2 as an HCP
 When I go to the Emergency Health Records page
-When I fill in user type with <usesrtype>
+When I fill in user type with <usertype>
 Then an error message is shown
 Examples:
 	| usertype |
@@ -32,7 +32,7 @@ Scenario Outline: ER user views valid emergency record
 Given The required ERRecord facilities exist
 When I log in to iTrust2 as an ER
 When I go to the Emergency Health Records page
-When I fill in user type with <usesrtype>
+When I fill in user type with <usertype>
 Then The <name>, <age>, <birthday>, <gender>, and <blood> are correct
 And I see the list of diagnoses codes for the patient
 Examples:

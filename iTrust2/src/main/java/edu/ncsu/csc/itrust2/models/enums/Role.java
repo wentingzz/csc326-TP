@@ -25,7 +25,7 @@ public enum Role {
     /**
      * ER User (ER)
      */
-    ROLE_ER ( 4, "eruser/index" ),
+    ROLE_ER ( 4, "er/index" ),
 
     /**
      * Lab Tech

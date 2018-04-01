@@ -157,6 +157,20 @@ public class APIPrescriptionTest {
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
         final Prescription fetched = gson.fromJson( getContent, Prescription.class );
         assertEquals( p1.getId(), fetched.getId() );
+        
+        // Get list of all patient prescriptions
+        @SuppressWarnings("unused")
+		String pres = mvc
+                .perform( get( "/api/v1/patientPrescriptions/" + p1.getPatient().getUsername() ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new PrescriptionForm( p1 ) ) )).andReturn()
+                        .getResponse().getContentAsString(); 
+        
+        //get a single prescription with an id
+        
+        pres = mvc
+        		.perform( put( "/api/v1/prescriptions" + p1.getId() ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new PrescriptionForm( p1 ) ) ) )
+        .andExpect( status().isNotFound() ).andReturn().getResponse().getContentAsString();
 
         // Attempt invalid edit
         p2.setRenewals( -1 );

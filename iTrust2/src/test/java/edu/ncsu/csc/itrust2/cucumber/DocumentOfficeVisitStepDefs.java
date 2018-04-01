@@ -45,7 +45,7 @@ public class DocumentOfficeVisitStepDefs {
     private final String    hospitalName = "Office Visit Hospital" + ( new Random() ).nextInt();
     BasicHealthMetrics      expectedBhm;
 
-    WebDriverWait           wait         = new WebDriverWait( driver, 2 );
+    WebDriverWait           wait         = new WebDriverWait( driver, 10 );
 
     @Given ( "The required facilities exist" )
     public void personnelExists () throws Exception {

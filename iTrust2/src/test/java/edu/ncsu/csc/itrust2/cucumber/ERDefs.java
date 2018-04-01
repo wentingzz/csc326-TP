@@ -24,7 +24,7 @@ public class ERDefs {
 
     private final WebDriver driver      = new HtmlUnitDriver( true );
     private final String    baseUrl     = "http://localhost:8080/iTrust2";
-    WebDriverWait           wait        = new WebDriverWait( driver, 2 );
+    WebDriverWait           wait        = new WebDriverWait( driver, 10 );
 
     @Before
     public void setup () {
@@ -82,15 +82,15 @@ public class ERDefs {
 
     @When ( "I go to the Emergency Health Records page" )
     public void navigateToEmergencyHealthRecord () {
-        ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('emergencyhealthrecord').click();" );
+        ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('viewEmegencyRecords').click();" );
     }
 
     @When ( "I fill in user type with (.+)" )
     public void fillInfo ( final String userType ) {
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "notes" ) ) );
-        setTextField( By.name( "usertype" ), userType );
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "submit" ) ) );
-        driver.findElement( By.name( "submit" ) ).click();
+        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "patient" ) ) );
+        final WebElement patient = driver
+                .findElement( By.xpath( "//input[@name='patient' and @value='" + userType + "']" ) );
+        patient.click();
     }
 
     @Then ( "user's information is shown successfully" )

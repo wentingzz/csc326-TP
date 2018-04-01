@@ -47,4 +47,14 @@ public class LoginIT {
     public void adminShouldLogIn () {
         testLogin( "admin" );
     }
+    
+    @Test
+    public void erShouldLogIn () {
+        testLogin( "er" );
+    }
+
+    @Test
+    public void labtechShouldLogIn () {
+        testLogin( "labtech" );
+    }
 }

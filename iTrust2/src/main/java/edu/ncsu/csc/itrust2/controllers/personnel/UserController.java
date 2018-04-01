@@ -36,7 +36,7 @@ public class UserController {
      * @return response
      */
     @GetMapping ( value = "personnel/editDemographics" )
-    @PreAuthorize ( "hasRole('ROLE_HCP') or hasRole('ROLE_ADMIN')" )
+    @PreAuthorize ( "hasRole('ROLE_HCP') or hasRole('ROLE_ADMIN') or hasRole('ROLE_ER') or hasRole('ROLE_LABTECH')" )
     public String viewDemographics ( final Model model ) {
         final User self = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
         final PersonnelForm form = new PersonnelForm( Personnel.getByName( self.getUsername() ) );
@@ -58,7 +58,7 @@ public class UserController {
      * @return The page to display for the user
      */
     @PostMapping ( "/personnel/editDemographics" )
-    @PreAuthorize ( "hasRole('ROLE_HCP') or hasRole('ROLE_ADMIN')" )
+    @PreAuthorize ( "hasRole('ROLE_HCP') or hasRole('ROLE_ADMIN') or hasRole('ROLE_ER') or hasRole('ROLE_LABTECH')" )
     public String demographicsSubmit ( @Valid @ModelAttribute ( "PersonnelForm" ) final PersonnelForm form,
             final BindingResult result, final Model model ) {
         Personnel p = null;

@@ -90,33 +90,48 @@ a {
 </head>
 <body th:fragment="body">
 	<script th:inline="javascript">
-			$(function() {
-				$http = angular.injector(["ng"]).get("$http");
-				$http.get("/iTrust2/api/v1/role").then(
-						function(response) {
-							console.log(response);
-							var role = response.data.message; //contains user role
-							var navbarparent = document.getElementById('navbar-parent');
-							var admindropdown = document.getElementById('admin-dropdown');
-							var patientdropdown = document.getElementById('patient-dropdown');
-							var hcpdropdown = document.getElementById('hcp-dropdown');
-							if (!role.includes('PATIENT')) {
-								navbarparent.removeChild(patientdropdown);
-							}
-							if (!role.includes('ADMIN')) {
-								navbarparent.removeChild(admindropdown);
-							}
-							if (!role.includes('HCP')) {
-								navbarparent.removeChild(hcpdropdown);
-							}
-						});
-				/* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
-				/*<![CDATA[*/
-				
-			})
-			
-			/*]]>*/
-		</script>
+		$(function() {
+			$http = angular.injector([ "ng" ]).get("$http");
+			$http.get("/iTrust2/api/v1/role")
+					.then(
+							function(response) {
+								console.log(response);
+								var role = response.data.message; //contains user role
+								var navbarparent = document
+										.getElementById('navbar-parent');
+								var admindropdown = document
+										.getElementById('admin-dropdown');
+								var patientdropdown = document
+										.getElementById('patient-dropdown');
+								var hcpdropdown = document
+										.getElementById('hcp-dropdown');
+								var erdropdown = document
+										.getElementById('er-dropdown');
+								var labtechdropdown = document
+										.getElementById('labtech-dropdown');
+								if (!role.includes('PATIENT')) {
+									navbarparent.removeChild(patientdropdown);
+								}
+								if (!role.includes('ADMIN')) {
+									navbarparent.removeChild(admindropdown);
+								}
+								if (!role.includes('HCP')) {
+									navbarparent.removeChild(hcpdropdown);
+								}
+								if (!role.includes('ER')) {
+									navbarparent.removeChild(erdropdown);
+								}
+								if (!role.includes('LABTECH')) {
+									navbarparent.removeChild(labtechdropdown);
+								}
+							});
+			/* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+			/*<![CDATA[*/
+
+		})
+
+		/*]]>*/
+	</script>
 	<div id="wrap">
 
 		<!-- Navbar -->
@@ -176,11 +191,8 @@ a {
 							<li><a href="#">Add Patient -- Not Implemented</a></li>
 							<li><a href="/iTrust2/hcp/documentOfficeVisit.html"
 								id="documentOfficeVisit">Document Office Visit</a></li>
-							<li> <a href="/iTrust2/hcp/viewPersonalRepresentatives"
-							      id="personalRepresentatives">Edit Personal Representatives</a></li>
-						</ul>
-					</li>
-
+							<li><a href="/iTrust2/hcp/viewPersonalRepresentatives"
+								id="personalRepresentatives">Edit Personal Representatives</a></li>
 							<li><a href="/iTrust2/personnel/emergencyRecords"
 								id="viewEmegencyRecords">View Emergency Records</a></li>
 						</ul></li>
@@ -218,10 +230,8 @@ a {
 								id="editdemographics-patient">Edit Demographics</a></li>
 							<li><a href="/iTrust2/patient/viewPersonalRepresentatives"
 								id="personalRepresentatives">Personal Representatives</a></li>
-						</ul>
-					</li>
-					
 						</ul></li>
+
 				</ul>
 				<ul id="labtech-dropdown" class="nav navbar-nav">
 					<li class="dropdown"><a class="dropdown-toggle"
