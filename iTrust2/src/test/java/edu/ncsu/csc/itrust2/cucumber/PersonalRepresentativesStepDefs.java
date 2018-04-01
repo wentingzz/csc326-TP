@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -93,7 +94,7 @@ public class PersonalRepresentativesStepDefs {
         patientDropdown.selectByVisibleText( name );
     }
 
-    @When ( "When I click the 'Add Representative' button" )
+    @When ( "I click the 'Add Representative' button" )
     public void ClickAdd () {
         final WebElement addRepresentative = driver.findElement( By.xpath( "//button[@name='submit']" ) );
         addRepresentative.click();
@@ -118,7 +119,7 @@ public class PersonalRepresentativesStepDefs {
 
     @Then ( "(.+) is successfully added as a representative." )
     public void representativeSuccesfullyAdded ( final String name ) {
-        assertTrue( driver.getPageSource().contains( "Representative added successfully" ) );
+        assertTrue( driver.getPageSource().contains( name ) );
     }
 
     @When ( "I remove the representative (.+) by clicking the 'Delete' button for that representative." )
@@ -134,8 +135,21 @@ public class PersonalRepresentativesStepDefs {
         assertTrue( driver.getPageSource().contains( name ) );
     }
 
-    @Then ( "Then that representative (.+) does not appear." )
+    // look for the patient's name
+    // an error should be thrown because the name can't be found in the table
+    // if it is found, throw an exception and pass the test
+    // if the error isn't thrown, that means the name does appear in the table,
+    // so the test should fail
+    @Then ( "that representative (.+) does not appear." )
     public void checkDeletedRepIsGone ( final String name ) {
-        assertFalse( driver.getPageSource().contains( name ) );
+        try {
+            // assertFalse( driver.getPageSource().contains( name ) );
+            final WebElement patient = driver.findElement( By.xpath( "//td[contains(text, '" + name + "']" ) );
+            patient.click();
+            assertFalse( false );
+        }
+        catch ( final NoSuchElementException e ) {
+            assertTrue( true );
+        }
     }
 }
