@@ -89,7 +89,7 @@ a {
 <th:block th:replace="${links}" />
 </head>
 <body th:fragment="body">
-		<script th:inline="javascript">
+	<script th:inline="javascript">
 			$(function() {
 				$http = angular.injector(["ng"]).get("$http");
 				$http.get("/iTrust2/api/v1/role").then(
@@ -125,6 +125,20 @@ a {
 				<div class="navbar-header">
 					<a class="navbar-brand" th:href="@{/}">iTrust2</a>
 				</div>
+				<ul id="er-dropdown" class="nav navbar-nav">
+					<li class="dropdown"><a class="dropdown-toggle"
+						data-toggle="dropdown" href="#">Patient<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="/iTrust2/personnel/emergencyRecords"
+								id="viewEmegencyRecords">View Emergency Records</a></li>
+						</ul></li>
+					<li class="dropdown"><a class="dropdown-toggle"
+						data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="/iTrust2/personnel/editDemographics"
+								id="editdemographics">Edit Demographics</a></li>
+						</ul></li>
+				</ul>
 				<ul id="admin-dropdown" class="nav navbar-nav">
 					<li class="dropdown"><a class="dropdown-toggle"
 						data-toggle="dropdown" href="#">Admin<span class="caret"></span></a>
@@ -137,23 +151,23 @@ a {
 									User</a></li>
 							<li><a href="/iTrust2/admin/deleteUser" id="deleteuser">Delete
 									User</a></li>
-							<li><a href="/iTrust2/admin/drugs" id="drugs">Manage Drugs</a></li>
-							<li><a href="/iTrust2/admin/manageICDCodes" id="manageICDCodes">Manage ICD-10 Codes</a></li>
-						</ul>
-					</li>
+							<li><a href="/iTrust2/admin/drugs" id="drugs">Manage
+									Drugs</a></li>
+							<li><a href="/iTrust2/admin/manageICDCodes"
+								id="manageICDCodes">Manage ICD-10 Codes</a></li>
+						</ul></li>
 					<li class="dropdown"><a class="dropdown-toggle"
 						data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="/iTrust2/personnel/editDemographics"
 								id="editdemographics-personnel">Edit Demographics</a></li>
-						</ul>
-					</li>
+						</ul></li>
 				</ul>
 				<ul id="hcp-dropdown" class="nav navbar-nav">
 					<li class="dropdown"><a class="dropdown-toggle"
 						data-toggle="dropdown" href="#">Patient<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-														<li><a href="/iTrust2/hcp/viewAppointmentRequests"
+							<li><a href="/iTrust2/hcp/viewAppointmentRequests"
 								id="viewrequests">View Appointment Requests</a></li>
 							<li><a href="/iTrust2/hcp/viewAppointments"
 								id="upcomingrequests">View Upcoming Appointments</a></li>
@@ -166,17 +180,20 @@ a {
 							      id="personalRepresentatives">Edit Personal Representatives</a></li>
 						</ul>
 					</li>
+
+							<li><a href="/iTrust2/personnel/emergencyRecords"
+								id="viewEmegencyRecords">View Emergency Records</a></li>
+						</ul></li>
 					<li class="dropdown"><a class="dropdown-toggle"
 						data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="/iTrust2/personnel/editDemographics"
 								id="editdemographics">Edit Demographics</a></li>
-							<li> <a href="/iTrust2/hcp/editOfficeVisit"
-							      id="editOfficeVisit">Edit Office Visit</a></li>
-					      	<li> <a href="/iTrust2/hcp/editPrescriptions"
-							      id="editPrescriptions-personnel">Edit Prescriptions</a></li>
-						</ul>
-					</li>
+							<li><a href="/iTrust2/hcp/editOfficeVisit"
+								id="editOfficeVisit">Edit Office Visit</a></li>
+							<li><a href="/iTrust2/hcp/editPrescriptions"
+								id="editPrescriptions-personnel">Edit Prescriptions</a></li>
+						</ul></li>
 				</ul>
 				<ul id="patient-dropdown" class="nav navbar-nav">
 					<li class="dropdown"><a class="dropdown-toggle"
@@ -187,11 +204,13 @@ a {
 								id="requestappointment">Request Appointment</a></li>
 							<li><a href="/iTrust2/patient/viewAppointmentRequests"
 								id="viewrequests-patient">View Appointment Requests</a></li>
-							<li><a href="/iTrust2/patient/viewOfficeVisits">Past Office Visits</a></li>
-							<li><a href="/iTrust2/patient/viewDiagnoses" id="viewDiagnoses">Diagnoses</a></li>
-							<li><a href="/iTrust2/patient/viewPrescriptions" id="viewPrescriptions">Prescriptions</a></li>
-						</ul>
-					</li>
+							<li><a href="/iTrust2/patient/viewOfficeVisits">Past
+									Office Visits</a></li>
+							<li><a href="/iTrust2/patient/viewDiagnoses"
+								id="viewDiagnoses">Diagnoses</a></li>
+							<li><a href="/iTrust2/patient/viewPrescriptions"
+								id="viewPrescriptions">Prescriptions</a></li>
+						</ul></li>
 					<li class="dropdown"><a class="dropdown-toggle"
 						data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
 						<ul class="dropdown-menu">
@@ -202,15 +221,21 @@ a {
 						</ul>
 					</li>
 					
-					<!-- <li class="dropdown"><a class="dropdown-toggle"
-						data-toggle="dropdown" href="#">Personal Reps<span class="caret"></span></a>
+						</ul></li>
+				</ul>
+				<ul id="labtech-dropdown" class="nav navbar-nav">
+					<li class="dropdown"><a class="dropdown-toggle"
+						data-toggle="dropdown" href="#">Lab Tech<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li><a href="/iTrust2/patient/editDemographics"
-								id="editdemographics-patient">Add Personal Representatives</a></li>
-							<li><a href="/iTrust2/patient/viewPersonalRepresentatives"
-								id="personalRepresentatives">View Personal Representatives</a></li>
-						</ul>
-					</li> -->
+							<li><a href="/iTrust2/personnel/labprocedures"
+								id="viewLabProcedures">View Lab Procedures</a></li>
+						</ul></li>
+					<li class="dropdown"><a class="dropdown-toggle"
+						data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="/iTrust2/personnel/editDemographics"
+								id="editdemographics">Edit Demographics</a></li>
+						</ul></li>
 				</ul>
 				<ul id="extra-dropdown" class="nav navbar-nav">
 					<li><a
@@ -222,8 +247,9 @@ a {
 				<div th:if="${#httpServletRequest.remoteUser != null}">
 					<form class="navbar-form navbar-right" th:action="@{/logout}"
 						method="post">
-						<a id="changePassword" style="color:white;" href="/iTrust2/changePassword">Change Password</a>
-						<input type="submit" value="Log out" id="logout" />
+						<a id="changePassword" style="color: white;"
+							href="/iTrust2/changePassword">Change Password</a> <input
+							type="submit" value="Log out" id="logout" />
 					</form>
 					<p class="navbar-text pull-right"
 						th:text="${#httpServletRequest.remoteUser}">sample_user</p>
