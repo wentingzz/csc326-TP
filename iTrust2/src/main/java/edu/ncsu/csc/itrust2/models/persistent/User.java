@@ -367,6 +367,19 @@ public class User extends DomainObject<User> implements Serializable {
         catch ( final Exception e ) {
             // ignore to allow a second attempt at deleting this object
         }
+
+        try {
+            if ( getRole().equals( Role.ROLE_PATIENT ) ) {
+                Patient.getByName( getUsername() ).delete();
+            }
+            else {
+                Personnel.getByName( getUsername() ).delete();
+            }
+        }
+        catch ( final Exception e ) {
+            // nothing there
+        }
+
         super.delete();
     }
 
