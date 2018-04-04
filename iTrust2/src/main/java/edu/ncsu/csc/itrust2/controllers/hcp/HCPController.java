@@ -53,6 +53,8 @@ public class HCPController {
 
     /**
      * Allows the HCP to view and add personal representatives
+     * 
+     * @return The page to display
      */
     @GetMapping ( "/hcp/viewPersonalRepresentatives" )
     @PreAuthorize ( "hasRole('ROLE_HCP')" )

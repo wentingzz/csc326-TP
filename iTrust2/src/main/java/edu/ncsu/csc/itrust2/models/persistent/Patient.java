@@ -780,9 +780,9 @@ public class Patient extends DomainObject<Patient> implements Serializable {
 
     /**
      * undeclares the representative for the patient
-     *
+     * 
      * @param representative
-     * @return
+     *            the patient to be undeclared
      **/
     public void undeclarePersonalRepresentative ( final String representative ) {
         personalRepresentatives.remove( representative );
@@ -792,6 +792,7 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * adds a personal representative
      *
      * @param representative
+     *            the patient to be added
      */
     public void addPersonalRepresentative ( final String representative ) {
         if ( !personalRepresentatives.contains( representative ) ) {
@@ -803,6 +804,7 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * adds someone who is represented by the patient
      *
      * @param representedUser
+     *            the user who is represented by the patient
      */
     public void addRepresented ( final String representedUser ) {
         if ( !represented.contains( representedUser ) ) {
@@ -814,7 +816,8 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * remove someone who is represented by the patient (remove the patient as a
      * representative for represented)
      *
-     * @param representativeUser
+     * @param representedUser
+     *            the user who is representated by the patient
      */
     public void undeclareRepresented ( final String representedUser ) {
         represented.remove( representedUser );
