@@ -186,6 +186,8 @@ public class APIPatientController extends APIController {
 
     /**
      * Gets the personal representatives for the user
+     *
+     * @return list of patient representatives
      */
     @GetMapping ( BASE_PATH + "/patient/representatives" )
     public List<Patient> getPersonalRepresentatives () {
@@ -205,6 +207,8 @@ public class APIPatientController extends APIController {
 
     /**
      * Gets the patients this user represents
+     *
+     * @return the list of patients this user represents
      */
     @GetMapping ( BASE_PATH + "/patient/represented" )
     public List<Patient> getRepresented () {
@@ -220,13 +224,17 @@ public class APIPatientController extends APIController {
 
     /**
      * Undeclares the representative for patient
+     *
+     * @param representative
+     *            the username of the patient
+     * @return response entity
      */
     @PreAuthorize ( "hasRole('ROLE_PATIENT')" )
     @DeleteMapping ( BASE_PATH + "/patient/{representative}" )
     public ResponseEntity undeclarePersonalRepresentative (
             @PathVariable ( "representative" ) final String representative ) {
-        final String Username = LoggerUtil.currentUser();
-        final User self = User.getByName( Username );
+        final String username = LoggerUtil.currentUser();
+        final User self = User.getByName( username );
         Patient patient = Patient.getPatient( self );
         if ( patient == null ) {
             return new ResponseEntity( errorResponse( "No Patient found for username " + self.getUsername() ),
@@ -236,7 +244,7 @@ public class APIPatientController extends APIController {
             patient.undeclarePersonalRepresentative( representative );
             patient.save();
             patient = Patient.getPatient( User.getByName( representative ) );
-            patient.undeclareRepresented( Username );
+            patient.undeclareRepresented( username );
             patient.save();
             LoggerUtil.log( TransactionType.DECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(),
                     "Patient  " + patient + "undeclared " + representative );
@@ -246,13 +254,17 @@ public class APIPatientController extends APIController {
 
     /**
      * Declares the representative for patient
+     *
+     * @param representative
+     *            the personal representative to be added
+     * @return response entity
      */
     @PreAuthorize ( "hasRole('ROLE_PATIENT')" )
     @PutMapping ( BASE_PATH + "/patient/addrepresentative/{representative}" )
     public ResponseEntity declarePersonalRepresentative (
             @PathVariable ( "representative" ) final String representative ) {
-        final String Username = LoggerUtil.currentUser();
-        final User self = User.getByName( Username );
+        final String username = LoggerUtil.currentUser();
+        final User self = User.getByName( username );
         Patient patient = Patient.getPatient( self );
         if ( patient == null ) {
             return new ResponseEntity( errorResponse( "No Patient found for username " + self.getUsername() ),
@@ -262,7 +274,7 @@ public class APIPatientController extends APIController {
             patient.addPersonalRepresentative( representative );
             patient.save();
             patient = Patient.getPatient( User.getByName( representative ) );
-            patient.addRepresented( Username );
+            patient.addRepresented( username );
             patient.save();
             LoggerUtil.log( TransactionType.UNDECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(),
                     "Patient " + patient + "declared representative  + representative" );
@@ -272,12 +284,17 @@ public class APIPatientController extends APIController {
 
     /**
      * Undeclare who they are representing
+     *
+     * @param represented
+     *            the patient's representative
+     *
+     * @return response entity
      */
     @PreAuthorize ( "hasRole('ROLE_PATIENT')" )
     @DeleteMapping ( BASE_PATH + "/patient/removerepresented/{represented}" )
     public ResponseEntity undeclareRepresented ( @PathVariable ( "represented" ) final String represented ) {
-        final String Username = SecurityContextHolder.getContext().getAuthentication().getName();
-        final User self = User.getByName( Username );
+        final String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final User self = User.getByName( username );
         Patient patient = Patient.getPatient( self );
         if ( patient == null ) {
             return new ResponseEntity( errorResponse( "No Patient found for username " + self.getUsername() ),
@@ -287,7 +304,7 @@ public class APIPatientController extends APIController {
             patient.undeclareRepresented( represented );
             patient.save();
             patient = Patient.getPatient( User.getByName( represented ) );
-            patient.undeclarePersonalRepresentative( Username );
+            patient.undeclarePersonalRepresentative( username );
             patient.save();
             LoggerUtil.log( TransactionType.DECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(),
                     self.getUsername(), "Patient  " + patient + "undeclared " + represented );
@@ -297,6 +314,10 @@ public class APIPatientController extends APIController {
 
     /**
      * Gets the personal representatives for a user. HCP view
+     *
+     * @param user
+     *            the user whose personal representatives are to be retrieved
+     * @return list of personal representatives for a user
      */
     @PreAuthorize ( "hasRole('ROLE_HCP')" )
     @GetMapping ( BASE_PATH + "/patient/representatives/{user}" )
@@ -316,6 +337,10 @@ public class APIPatientController extends APIController {
 
     /**
      * Gets the patients this user represents. HCP view
+     *
+     * @param user
+     *            the given username
+     * @return the list of patients the given user represents
      */
     @PreAuthorize ( "hasRole('ROLE_HCP')" )
     @GetMapping ( BASE_PATH + "/patient/represented/{user}" )
@@ -332,12 +357,18 @@ public class APIPatientController extends APIController {
 
     /**
      * HCP declares the representative for a patient
+     *
+     * @param username
+     *            the given username
+     * @param representative
+     *            the given personal representative
+     * @return response entity
      */
     @PreAuthorize ( "hasRole('ROLE_HCP')" )
     @PutMapping ( BASE_PATH + "/patient/{user}/{representative}/addrepresentative" )
-    public ResponseEntity declarePersonalRepresentativeHCP ( @PathVariable ( "user" ) final String Username,
+    public ResponseEntity declarePersonalRepresentativeHCP ( @PathVariable ( "user" ) final String username,
             @PathVariable ( "representative" ) final String representative ) {
-        final User self = User.getByName( Username );
+        final User self = User.getByName( username );
         Patient patient = Patient.getPatient( self );
         if ( patient == null ) {
             return new ResponseEntity( errorResponse( "No Patient found for username " + self.getUsername() ),
@@ -347,7 +378,7 @@ public class APIPatientController extends APIController {
             patient.addPersonalRepresentative( representative );
             patient.save();
             patient = Patient.getPatient( User.getByName( representative ) );
-            patient.addRepresented( Username );
+            patient.addRepresented( username );
             patient.save();
             LoggerUtil.log( TransactionType.UNDECLARE_PERSONAL_REPRESENTATIVES, LoggerUtil.currentUser(),
                     "Patient " + patient + "declared representative  + representative" );
