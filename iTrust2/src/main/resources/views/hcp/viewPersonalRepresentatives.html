@@ -1,0 +1,158 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="layout :: head(title=~{::title},links=~{})">
+<title>Document Office Visit</title>
+</head>
+<body th:include="layout :: body" th:with="content=~{::content}">
+	<div th:fragment="content">
+
+		<script th:inline="javascript">
+			/* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+			/*<![CDATA[*/
+
+			var app = angular.module('myApp', []);
+			app.controller('representativesCtrl', function($scope, $http) {
+				$scope.displayName = function(p) {
+					return p.firstName + " " + p.lastName + " (" + p.self.username + ")";
+				}
+				// documentation on Angular filters: https://docs.angularjs.org/api/ng/filter/filter
+				$scope.searchFilter = "";
+				$scope.filterPatients = function(patient) {
+					return ($scope.displayName(patient)).toLowerCase().match($scope.searchFilter.toLowerCase());
+				}
+				$scope.loadTable1 = function () {
+					$http.get("/iTrust2/api/v1/patient/representatives/" + $scope.selectedPatient.username).then(
+							function (response) {
+								$scope.representatives = response.data;
+								$scope.message = "";
+							}, function (rejection) {
+								$scope.representatives = [];
+								$scope.message = "Could not display representatives";
+							});
+				};
+							        
+				$scope.loadTable2 = function() {
+					$http.get("/iTrust2/api/v1/patient/represented/" + $scope.selectedPatient.username).then(
+							function (response) {
+								$scope.represented = response.data;
+								$scope.message = "";
+							}, function (rejection) {
+								$scope.representatives = [];
+								$scope.message = "Could not display representatives";
+							});
+				};
+				
+				$scope.selectPatient = function(patient) {
+					$scope.selectedPatient = patient.self;
+					$scope.loadTable1()
+					$scope.loadTable2()
+				}
+				$scope.selected = "";
+				$scope.addRepresentative = function () {
+					$http.put("/iTrust2/api/v1/patient/"+ $scope.selectedPatient.username + "/" + $scope.selected + "/addrepresentative").then(
+							function (response) {
+								$scope.loadTable1();
+								$scope.loadTable2();
+								$scope.mid = ""
+							}, function (rejection) {
+								$scope.errorAdding = "Could not add representative";
+							});
+				};
+				
+				$http.get("/iTrust2/api/v1/patients").then(
+						function(response) {
+							$scope.patients = response.data;
+						});
+				console.log($scope);
+			});
+
+			/*]]>*/
+		</script>
+
+
+
+		<div ng-app="myApp" ng-controller="representativesCtrl">
+			<div style="float:left;width:30%;height:75%;overflow-y:auto">
+			<h2>Patients:</h2>
+			<h4>Search: <input type="text" name="search" ng-model="searchFilter"/></h4>
+			<ul style="overflow:auto;height=90%;">
+							<li ng-repeat="patient in patients | filter:filterPatients"><h4><label>
+									<input type="radio" 
+									name="patientToGetRep" value="{{patient.self.username}}"
+									ng-click='$parent.selectPatient(patient)' />&nbsp;{{$parent.displayName(patient)}}</label>
+							</h4></li>
+						</ul>
+			</div>
+			<!-- information on vertical rule found here: https://stackoverflow.com/questions/571900/is-there-a-vr-vertical-rule-in-html  -->
+		<div style="float:left;width:70%;border-left:1px solid #bbb;padding-left: 3%;height:75%;overflow-y:auto">
+			<h2 id="header0">Select Patient to Add as a Representative</h2>
+			<div ng-show="selectedPatient">
+				<h3>Username: {{selectedPatient.username}}</h3>
+				<form class="form-horizontal" role="form" name="addRepresentativeForm" ng-submit="addRepresentative(addRepresentativeForm.$valid)">
+				<table>
+					      <!-- patients -->
+                            <div class="col-md-5 radio-box">
+                              <table class="table table-bordered">
+                                <caption>Personal Representatives:</caption>
+                                <thead>
+                    				  <tr>
+                      				<th>MID</th>
+                      				<th>Name</th>
+                   				  </tr>
+                  			   </thead>
+                  			   <tbody>
+                    				 <tr ng-repeat="r in representatives">
+                    				 	<td>{{r.self.username}}</td>
+                      				<td>{{r.firstName}}  {{r.lastName}}</td>
+                    				 </tr>
+                 			   </tbody>
+                				 </table>
+                				 
+                              <div class="form-check">
+                                <label>Patient:</label>
+                                <ul style="max-height:15%;overflow:auto;list-style: none;">
+                                  <li>
+                                    <select ng-model="selected" id="reps">
+                                  	<option ng-repeat="patient in patients" value="{{patient.self.username}}"> {{patient.self.username}}
+                                     </option>
+                                  </select>
+                                  </li>
+                                </ul>
+                              </div>
+                              <button ng-click="addRepresentative()" type="submit" class="btn btn-success" name="submit">Add Representative</button>
+                              <br />
+                              <br />
+                              <table class="table table-bordered">
+                                <caption>Who you Represent:</caption>
+                                <thead>
+                    				  <tr>
+                      				<th>MID</th>
+                      				<th>Name</th>
+                   				  </tr>
+                  			   </thead>
+                  			   <tbody>
+                    				 <tr ng-repeat="r in represented">
+                    				 	<td>{{r.self.username}}</td>
+                      				<td>{{r.firstName}}  {{r.lastName}}</td>
+                    				 </tr>
+                 			   </tbody>
+                				 </table>
+                            </div>
+				</table>
+				</form>
+				<br />
+	
+				<div name="success">{{message}}</div>
+			</div>
+			</div>
+
+
+
+
+		</div>
+
+
+
+
+	</div>
+</body>
+</html>

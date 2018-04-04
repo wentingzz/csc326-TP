@@ -125,4 +125,38 @@ public class PatientController {
         }
     }
 
+    /**
+     * Provides the page for a User to view and edit their representatives
+     *
+     * @param model
+     *            The data for the front end
+     * @return The page to show the user so they can edit representatives
+     */
+    @GetMapping ( value = "/patient/editPersonalRepresentatives" )
+    @PreAuthorize ( "hasRole('ROLE_PATIENT')" )
+    public String editRepresentatives ( final Model model ) {
+        final User self = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
+        final PatientForm form = new PatientForm( Patient.getPatient( self ) );
+        model.addAttribute( "PatientForm", form );
+        LoggerUtil.log( TransactionType.UNDECLARE_PERSONAL_REPRESENTATIVES, self );
+        return "/patient/editPersonalRepresentatives";
+    }
+
+    /**
+     * Provides the page for a User to view their representatives
+     *
+     * @param model
+     *            The data for the front end
+     * @return The page to show the user so they can edit representatives
+     */
+    @GetMapping ( value = "/patient/viewPersonalRepresentatives" )
+    @PreAuthorize ( "hasRole('ROLE_PATIENT')" )
+    public String viewRepresentatives ( final Model model ) {
+        final User self = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
+        final PatientForm form = new PatientForm( Patient.getPatient( self ) );
+        model.addAttribute( "PatientForm", form );
+        LoggerUtil.log( TransactionType.VIEW_PERSONAL_REPRESENTATIVES, self );
+        return "/patient/viewPersonalRepresentatives";
+    }
+
 }

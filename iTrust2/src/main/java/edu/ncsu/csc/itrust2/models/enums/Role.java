@@ -21,16 +21,16 @@ public enum Role {
      * Admin
      */
     ROLE_ADMIN ( 3, "admin/index" ),
+
     /**
-     * ER
+     * ER User (ER)
      */
-    ROLE_ER ( 3, "er/index" ),
+    ROLE_ER ( 4, "er/index" ),
+
     /**
      * Lab Tech
      */
-    ROLE_LABTECH (4, "labtech/index"),
-
-    ;
+    ROLE_LABTECH ( 5, "labtech/index" );
 
     /**
      * Numeric code of the Role

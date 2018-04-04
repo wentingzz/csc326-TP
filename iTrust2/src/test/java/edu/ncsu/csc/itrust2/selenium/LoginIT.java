@@ -50,11 +50,11 @@ public class LoginIT {
     
     @Test
     public void erShouldLogIn () {
-    	testLogin ("er");
+        testLogin( "er" );
     }
-    
+
     @Test
     public void labtechShouldLogIn () {
-    	testLogin ("labtech");
+        testLogin( "labtech" );
     }
 }

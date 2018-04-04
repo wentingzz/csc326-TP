@@ -103,6 +103,16 @@ public class APIUserTest {
         mvc.perform( put( "/api/v1/users/sven_badname" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( sven ) ) ).andExpect( status().isNotFound() );
 
+        // create ER User
+        final UserForm ERUser = new UserForm( "Test ERUSER", "123456", Role.ROLE_ER, 1 );
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( ERUser ) ) ).andExpect( status().isOk() );
+
+        // create Lab Tech User
+        final UserForm labTech = new UserForm( "Test Labtech", "123456", Role.ROLE_LABTECH, 1 );
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( labTech ) ) ).andExpect( status().isOk() );
+
     }
 
 }
