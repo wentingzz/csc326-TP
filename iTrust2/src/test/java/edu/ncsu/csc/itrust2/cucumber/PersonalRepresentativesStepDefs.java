@@ -109,7 +109,9 @@ public class PersonalRepresentativesStepDefs {
     public void addPersonalRep ( final String name ) {
         // final WebElement patient = driver.findElement( By.id( name ) );
         // patient.click();
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.id( "reps" ) ) );
+        // wait.until( ExpectedConditions.visibilityOfElementLocated( By.id(
+        // "reps" ) ) );
+        wait.until( ExpectedConditions.visibilityOfElementLocated( By.xpath( "//select[@id='reps']" ) ) );
         final WebElement selectElement = driver.findElement( By.id( "reps" ) );
         final Select patientDropdown = new Select( selectElement );
         patientDropdown.selectByVisibleText( name );
