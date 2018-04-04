@@ -113,6 +113,7 @@ public class PersonalRepresentativesStepDefs {
         // "reps" ) ) );
         wait.until( ExpectedConditions.visibilityOfElementLocated( By.xpath( "//select[@id='reps']" ) ) );
         final WebElement selectElement = driver.findElement( By.id( "reps" ) );
+        wait.until( ExpectedConditions.elementToBeClickable( By.xpath( "//option[@value='" + name + "']" ) ) );
         final Select patientDropdown = new Select( selectElement );
         patientDropdown.selectByVisibleText( name );
         final WebElement addRepresentative = driver.findElement( By.xpath( "//button[@name='submit']" ) );
