@@ -20,6 +20,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import edu.ncsu.csc.itrust2.models.persistent.PasswordResetToken;
+import edu.ncsu.csc.itrust2.utils.HibernateDataGenerator;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 
 public class PersonalRepresentativesStepDefs {
@@ -34,7 +35,7 @@ public class PersonalRepresentativesStepDefs {
     @Before
     public void setup () {
         // driver = new HtmlUnitDriver( true );
-
+        HibernateDataGenerator.generateUsers();
         ChromeDriverManager.getInstance().setup();
         final ChromeOptions options = new ChromeOptions();
         options.addArguments( "headless" );
