@@ -800,9 +800,6 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * @param representedUser
      *            the user who is represented by the patient
      */
-    @ManyToMany ( cascade = CascadeType.ALL )
-    @JoinTable ( name = "REPS_AND_REPRESENTED", joinColumns = @JoinColumn ( name = "personalReps" ),
-            inverseJoinColumns = @JoinColumn ( name = "representedPatients" ) )
     public void addRepresented ( final String representedUser ) {
         if ( !represented.contains( representedUser ) ) {
             represented.add( representedUser );
