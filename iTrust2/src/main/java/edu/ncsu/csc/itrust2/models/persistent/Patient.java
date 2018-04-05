@@ -765,22 +765,16 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      * @return a List of patients who are this Patient's representatives
      */
     @Column ( name = "representedPatients" )
+    @ManyToMany ( cascade = CascadeType.ALL )
+    @JoinTable ( name = "REPS_AND_REPRESENTED", joinColumns = @JoinColumn ( name = "personalReps" ),
+            inverseJoinColumns = @JoinColumn ( name = "representedPatients" ) )
     public Set<String> getRepresented () {
         return represented;
     }
 
     /**
-     * creates a many-to-many mapping for the representatives Using format from
-     * here:
-     * http://www.codejava.net/frameworks/hibernate/hibernate-many-to-many-association-annotations-example
-     */
-    @ManyToMany ( cascade = CascadeType.ALL )
-    @JoinTable ( name = "REPS_AND_REPRESENTED", joinColumns = @JoinColumn ( name = "personalReps" ),
-            inverseJoinColumns = @JoinColumn ( name = "representedPatients" ) )
-
-    /**
      * Undeclares the given personal representative
-     * 
+     *
      * @param rep
      *            The personal representative to be undeclared
      */

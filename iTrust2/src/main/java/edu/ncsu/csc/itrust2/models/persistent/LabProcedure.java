@@ -1,0 +1,174 @@
+package edu.ncsu.csc.itrust2.models.persistent;
+
+/**
+ * represents a lab procedure that a patient can have
+ *
+ * @author Hannah
+ *
+ */
+public class LabProcedure {
+    // priority ranking for the procedure (1-4)
+    int              priority;
+    // code that corresponds to the procedure
+    LabProcedureCode code;
+    // notes associated with the procedure
+    String           notes;
+    // the lab tech assigned to the procedure
+    User             labtech;
+    // the office visit during which the procedure is performed
+    OfficeVisit      officevisit;
+    // the patient for which the procedure is performed
+    User             patient;
+    // the hcp with which the procedure is associated
+    User             hcp;
+    // the status of the procedure (success or failure)
+    String           status;
+
+    /**
+     * returns the priority of the procedure
+     *
+     * @return
+     */
+    public int getPriority () {
+        return priority;
+    }
+
+    /**
+     * sets the priority of the procedure, throws an exception if this is not an
+     * integer from 1-4
+     *
+     * @param priority
+     */
+    public void setPriority ( final int priority ) {
+        if ( ( priority < 1 ) || ( priority > 4 ) ) {
+            throw new IllegalArgumentException( "Priority must be a number between 1 and 4" );
+        }
+        this.priority = priority;
+    }
+
+    /**
+     * returns the code associated with the procedure
+     *
+     * @return
+     */
+    public LabProcedureCode getCode () {
+        return code;
+    }
+
+    /**
+     * sets the lab procedure code
+     *
+     * @param code
+     */
+    public void setCode ( final LabProcedureCode code ) {
+        this.code = code;
+    }
+
+    /**
+     * returns the lab procedure's notes
+     *
+     * @return
+     */
+    public String getNotes () {
+        return notes;
+    }
+
+    /**
+     * sets the lab procedure's notes
+     *
+     * @param notes
+     */
+    public void setNotes ( final String notes ) {
+        this.notes = notes;
+    }
+
+    /**
+     * returns the lab tech associated with the lab procedure
+     *
+     * @return
+     */
+    public User getLabtech () {
+        return labtech;
+    }
+
+    /**
+     * sets the lab tech associated with the lab procedure
+     *
+     * @param labtech
+     */
+    public void setLabtech ( final User labtech ) {
+        this.labtech = labtech;
+    }
+
+    /**
+     * returns the office visit associated with this lab procedure
+     *
+     * @return
+     */
+    public OfficeVisit getOfficevisit () {
+        return officevisit;
+    }
+
+    /**
+     * sets the office visit associated with this lab procedure
+     *
+     * @param officevisit
+     */
+    public void setOfficevisit ( final OfficeVisit officevisit ) {
+        this.officevisit = officevisit;
+    }
+
+    /**
+     * gets the Patient associated with the lab procedure
+     *
+     * @return
+     */
+    public User getPatient () {
+        return patient;
+    }
+
+    /**
+     * sets the patient associated with this lab procedure
+     *
+     * @param patient
+     */
+    public void setPatient ( final User patient ) {
+        this.patient = patient;
+    }
+
+    /**
+     * returns the HCP associated with the lab procedure
+     *
+     * @return
+     */
+    public User getHcp () {
+        return hcp;
+    }
+
+    /**
+     * sets the HCP associated with the lab procedure
+     *
+     * @param hcp
+     */
+    public void setHcp ( final User hcp ) {
+        this.hcp = hcp;
+    }
+
+    /**
+     * gets the status of the lab procedure
+     *
+     * @return
+     */
+    public String getStatus () {
+        return status;
+    }
+
+    /**
+     * sets the status of the lab procedure
+     *
+     * @param status
+     */
+    public void setStatus ( final String status ) {
+        this.status = status;
+    }
+}
