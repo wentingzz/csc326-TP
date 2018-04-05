@@ -117,15 +117,15 @@ public class HibernateDataGenerator {
         p.setZip( "12345" );
         p.setPhone( "111-222-3333" );
         p.save();
-        
-        final User er = new User( "er", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
-                Role.ROLE_ER, 1 );
+
+        final User er = new User( "er", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", Role.ROLE_ER,
+                1 );
         er.save();
-        
+
         final User labtech = new User( "labtech", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
-                Role.ROLE_LABTECH	, 1 );
+                Role.ROLE_LABTECH, 1 );
         labtech.save();
-        
+
         final User patient = new User( "patient", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
                 Role.ROLE_PATIENT, 1 );
         patient.save();
@@ -183,7 +183,7 @@ public class HibernateDataGenerator {
         csc326.setDateOfBirth( csc326Birth );
         csc326.save();
 
-        final Patient testER = new Patient();
+        final Personnel testER = new Personnel();
         testER.setFirstName( "ER" );
         final User testERUser = new User( "testeruser", "$2a$10$hOCH0uJlfbR6xzKWPQToXu1RP1/yLAngFXbVKhcnteRIQ1r/bGflm",
                 Role.ROLE_ER, 1 );
@@ -193,20 +193,18 @@ public class HibernateDataGenerator {
         testER.setEmail( "csc326s18.203.02@gmail.com" );
         final Calendar testeruserBirth = Calendar.getInstance();
         testeruserBirth.add( Calendar.YEAR, -13 );
-        testER.setDateOfBirth( testeruserBirth );
         testER.save();
 
-        final Patient testTech = new Patient();
+        final Personnel testTech = new Personnel();
         testTech.setFirstName( "csc326" );
         final User testTechUser = new User( "testlabtech",
-                "$2a$10$hOCH0uJlfbR6xzKWPQToXu1RP1/yLAngFXbVKhcnteRIQ1r/bGflm", Role.ROLE_ER, 1 );
+                "$2a$10$hOCH0uJlfbR6xzKWPQToXu1RP1/yLAngFXbVKhcnteRIQ1r/bGflm", Role.ROLE_LABTECH, 1 );
         testTechUser.save();
         testTech.setSelf( testTechUser );
         testTech.setLastName( "User" );
         testTech.setEmail( "csc326s18.203.02@gmail.com" );
         final Calendar testtechBirth = Calendar.getInstance();
-        testeruserBirth.add( Calendar.YEAR, -13 );
-        testTech.setDateOfBirth( testtechBirth );
+        testtechBirth.add( Calendar.YEAR, -13 );
         testTech.save();
 
     }
