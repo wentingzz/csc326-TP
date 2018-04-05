@@ -779,13 +779,13 @@ public class Patient extends DomainObject<Patient> implements Serializable {
             inverseJoinColumns = @JoinColumn ( name = "representedPatients" ) )
 
     /**
-     * undeclares the representative for the patient
+     * Undeclares the given personal representative
      * 
-     * @param representative
-     *            the patient to be undeclared
-     **/
-    public void undeclarePersonalRepresentative ( final String representative ) {
-        personalRepresentatives.remove( representative );
+     * @param rep
+     *            The personal representative to be undeclared
+     */
+    public void undeclarePersonalRepresentative ( final String rep ) {
+        personalRepresentatives.remove( rep );
     }
 
     /**
