@@ -770,46 +770,40 @@ public class Patient extends DomainObject<Patient> implements Serializable {
     }
 
     /**
-     * creates a many-to-many mapping for the representatives Using format from
-     * here:
-     * http://www.codejava.net/frameworks/hibernate/hibernate-many-to-many-association-annotations-example
-     */
-    @ManyToMany ( cascade = CascadeType.ALL )
-    @JoinTable ( name = "REPS_AND_REPRESENTED", joinColumns = @JoinColumn ( name = "personalReps" ),
-            inverseJoinColumns = @JoinColumn ( name = "representedPatients" ) )
-
-    /**
-     * Undeclares the given personal representative
-     * 
-     * @param rep
-     *            The personal representative to be undeclared
-     */
-    public void undeclarePersonalRepresentative ( final String rep ) {
-        personalRepresentatives.remove( rep );
-    }
-
-    /**
-     * adds a personal representative
-     *
-     * @param representative
-     *            the patient to be added
-     */
-    public void addPersonalRepresentative ( final String representative ) {
-        if ( !personalRepresentatives.contains( representative ) ) {
-            personalRepresentatives.add( representative );
-        }
-    }
-
-    /**
      * adds someone who is represented by the patient
      *
      * @param representedUser
      *            the user who is represented by the patient
      */
+    @ManyToMany ( cascade = CascadeType.ALL )
+    @JoinTable ( name = "REPS_AND_REPRESENTED", joinColumns = @JoinColumn ( name = "personalReps" ),
+            inverseJoinColumns = @JoinColumn ( name = "representedPatients" ) )
     public void addRepresented ( final String representedUser ) {
         if ( !represented.contains( representedUser ) ) {
             represented.add( representedUser );
         }
+    }
+
+    /**
+     * adds a personal representative
+     *
+     * @param rep
+     *            the patient to be added
+     */
+    public void addPersonalRepresentative ( final String rep ) {
+        if ( !personalRepresentatives.contains( rep ) ) {
+            personalRepresentatives.add( rep );
+        }
+    }
+
+    /**
+     * Undeclare
+     *
+     * @param rep
+     *            patient to remove
+     */
+    public void undeclarePersonalRepresentative ( final String rep ) {
+        personalRepresentatives.remove( rep );
     }
 
     /**
