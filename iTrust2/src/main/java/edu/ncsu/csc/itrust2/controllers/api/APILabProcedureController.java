@@ -32,7 +32,7 @@ public class APILabProcedureController extends APIController {
      *            of the visit
      * @return list of lab procedures
      */
-    @GetMapping ( BASE_PATH + "/labprocedure" )
+    @GetMapping ( BASE_PATH + "/labprocedures" )
     public List<LabProcedure> getLabProceduresForVisit ( final long id ) {
         return null;
     }
@@ -133,6 +133,16 @@ public class APILabProcedureController extends APIController {
      */
     @DeleteMapping ( BASE_PATH + "/labprocedure/{id}" )
     public ResponseEntity createPersonnel ( @PathVariable final String id ) {
+        return null;
+    }
+
+    /**
+     * View an existing Lab Procedure record
+     *
+     * @return response
+     */
+    @DeleteMapping ( BASE_PATH + "/viewlabprocedure" )
+    public ResponseEntity viewLabProcs () {
         return null;
     }
 }
