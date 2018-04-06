@@ -12,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import edu.ncsu.csc.itrust2.forms.admin.LabProcedureCodeForm;
+
 /**
  * represents the lab procedure codes that a lab procedure will have; these will
  * show up on Office Visit forms to represent a Lab Procedure
@@ -32,6 +34,26 @@ public class LabProcedureCode extends DomainObject<LabProcedureCode> {
     private String property;
     private String longCommonName;
     private Date   dateCreated;
+
+    /**
+     * Empty constructor for Hibernate.
+     */
+    public LabProcedureCode () {
+    }
+
+    /**
+     * Construct a new Prescription using the details in the given form.
+     *
+     * @param form
+     *            the prescription form
+     */
+    public LabProcedureCode ( final LabProcedureCodeForm form ) {
+        setCode( form.getCode() );
+        setComponent( form.getComponent() );
+        setProperty( form.getProperty() );
+        setLongCommonName( form.getLongCommonName() );
+        setDateCreated( form.getDateCreated() );
+    }
 
     /**
      * from LOINC documentation: The component/analyte consists of three main
@@ -150,6 +172,16 @@ public class LabProcedureCode extends DomainObject<LabProcedureCode> {
     @Override
     public Serializable getId () {
         return id;
+    }
+
+    /**
+     * sets the ID
+     *
+     * @param id
+     *            mapped to the table
+     */
+    public void setId ( final long id ) {
+        this.id = id;
     }
 
     /**
