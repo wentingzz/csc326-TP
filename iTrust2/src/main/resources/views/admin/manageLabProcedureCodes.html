@@ -1,0 +1,186 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="layout :: head(title=~{::title},links=~{})">
+<title>Manage Lab Procedure Codes</title>
+</head>
+<body th:include="layout :: body" th:with="content=~{::content}">
+	<div th:fragment="content">
+
+		<script th:inline="javascript">
+		/* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+		/*<![CDATA[*/
+			var app = angular.module("manageLabProcedureCodesApp", []);
+			app.controller('manageLabProcedureCodesCtrl', function($scope, $http) {
+
+				$scope.labProcedureCodes = [];
+				$scope.loadTable = function() {
+					// get list of lab procedure codes from rest api
+					$http.get("/iTrust2/api/v1/labprocedurecodes").then(
+							function(response) {
+								$scope.labProcedureCodes = response.data; // or just response?
+								$scope.message = "";
+							}, function(rejection) {
+								$scope.labProcedureCodes = [];
+								$scope.labProcedureCodes = "Could not display Lab Procedure Codes";
+							});
+				}
+				
+				// handle add code button click
+				$scope.addLabProcedureCodes = function() {
+					$http.post("/iTrust2/api/v1/labprocedurecodes", $scope.code).then(
+							function(response) {
+								$scope.loadTable();
+								$scope.code.code = "";
+								$scope.code.component = "";
+								$scope.code.property = "";
+								$scope.code.longCommonName = "";
+								$scope.errorAdding = "";
+							}, function(rejection) {
+							$scope.errorAdding = "Could not add code";
+					})
+					
+					
+				}
+				
+				$scope.deleteLabProcedureCodes = function(code) {
+					$http.delete('/iTrust2/api/v1/labprocedurecode/' + code.id).then(
+							function(response) {
+								$scope.loadTable();
+								$scope.message = "";
+							}, function(rejection) {
+								$scope.message = "Could not remove lab procedure code";
+							})
+				}
+				
+				$scope.editLabProcedureCodes = function(code) {
+					$http.get("/iTrust2/api/v1/labprocedurecode/").then(
+							function(response) {
+								$scope.loadTable();
+								$scope.code.dateCreated = response.data.dateCreated;
+								$scope.code.code = response.data.code;
+								$scope.code.component = response.data.component;
+								$scope.code.property = response.data.property;
+								$scope.code.longCommonName = response.data.longCommonName;
+								$scope.errorAdding = "";
+							}, function(rejection) {
+								$scope.errorAdding = "Could not edit code";
+							})
+				}
+				
+				// load table upon page loading
+				$scope.loadTable();
+			});
+			/*]]>*/
+		</script>
+		
+		<div ng-app="manageLabProcedureCodesApp" ng-controller="manageLabProcedureCodesCtrl">
+		<!-- Info on tables from https://hello-angularjs.appspot.com/removetablerow -->			
+			<div class="container">
+       		 <div class="row">
+          		<div class="col-md-12">
+         		  <div class="panel panel-primary">
+            		  <div class="panel-heading">
+            		    <h3>Manage Lab Procedure Codes</h3>
+           		  	  </div>
+              	  	  <div class="panel-body">
+                		<table class="table table-bordered">
+                		  <caption>Existing Lab Procedure Codes</caption>
+                		  <thead>
+                    		<tr>
+                    		  <th>Created</th>
+                    		  <th>LOINC</th>
+                    		  <th>Long Common Name</th>
+                    		  <th>Component</th>
+                    		  <th>Property</th>
+                    		  <th>Edit/Delete</th>
+                    	    </tr>
+                   		    <tr  ng-repeat="l in labProcedureCodes">
+                    		  <td>{{l.dateCreated}}</td>
+                    		  <td>{{l.code}}</td>
+                    		  <td>{{l.longCommonName}}</td>
+                    		  <td>{{l.component}}</td>
+                    		  <td>{{l.property}}</td>
+                        	  <td>
+                        	  	 <div class=" text-center">
+                        	  	  <div class="col-md-6">
+                        		    <input type="button" value="Edit" class="btn btn-danger" name="editLabProcedureCodes" ng-click="editLabProcedureCodes(l.code)" />
+                        		  
+                        		    <input type="button" value="Delete" class="btn btn-danger" name="deleteLabProcedureCodes" ng-click="deleteLabProcedureCodes(l.code)" />
+                        		  </div>
+                        	  </div>
+                      		 </td>
+                    		</tr>
+                  		</thead>
+                  
+                	   </table>
+
+                 		<!-- table in view mode -->
+                		<label>{{message}}</label>
+               			 <label>{{selected}}</label>
+
+                		<br>
+               				 <div class="row">
+                  				<div class="col-md-12">
+                    				<div class="panel panel-default">
+                    				  <div class="panel-heading ">Add/Edit Lab Procedure Codes</div>
+                    					  <div class="panel-body">
+                        					<form class="form-horizontal" role="form" name="addEditRepresentativeForm" ng-submit="addEditRepresentative">
+                          						<div class="row">
+                          							<div class="form-group col-md-4">
+                          							<div class="panel-body">
+                         								 <label>LOINC code:</label>
+                            								<div class="form-check"> 
+                            							  		<input type="text" class="form-control" name="code" ng-model="code.code" required/>
+                            							 </div>
+                        							</div>
+                        							</div>
+                        		
+                        							<div class="form-group col-md-4">
+                        							<div class="panel-body">
+                         								 <label>Components:</label>
+                            								  <div class="form-check"> 
+                            							  		 <input type="text" class="form-control" name="component" ng-model="code.component" required/>
+                         									 </div>
+                        							</div></div>
+                        							<div class="form-group col-md-4">
+                        							<div class="panel-body">
+                         								 <label>Property:</label>
+                            									  <div class="form-check"> 
+                            									  		 <input type="text" class="form-control" name="property" ng-model="code.property" required/>
+                            									  </div>
+                        							</div>
+                        							</div>
+                        							<div class="form-group col-md-10">
+                        							<div class="panel-body">
+                         								 <label>Long Common Name:</label>
+                            						    	  <div class="form-check"> 
+                            									  		  <input type="text" class="form-control" name="longCommonName" ng-model="code.longCommonName" required/> 
+                            							   		</div>
+                        							</div>
+                        							</div>
+                          						</div>
+                          						<br>
+                          						<br>
+                          						<br>
+                          						<div class="row">
+                          							<div class="col-md-11 text-center">
+                            						  <button ng-click="editLabProcedureCodes()" type="submit" class="btn btn-success" name="submit">Add</button>
+                         						     
+                            						  <button ng-click="addLabProcedureCodes()" type="submit" class="btn btn-success" name="submit">Edit</button>
+                         						   </div>
+                          						</div>
+                        					</form>
+                      					</div>
+                    				</div>
+                  				</div>
+                			</div>
+              		</div>
+            </div>
+          </div>
+        
+        </div>
+      </div>
+    </div>
+	</div>
+	</div>
+	</body>
+</html>

@@ -22,7 +22,7 @@ import edu.ncsu.csc.itrust2.models.persistent.LabProcedure;
  *
  */
 @RestController
-@SuppressWarnings ( { "rawtypes", "unchecked" } )
+@SuppressWarnings ( { "rawtypes" } )
 public class APILabProcedureController extends APIController {
 
     /**
