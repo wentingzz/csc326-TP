@@ -3,13 +3,24 @@ package edu.ncsu.csc.itrust2.models.persistent;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  * represents a lab procedure that a patient can have
  *
  * @author Hannah
  *
  */
+@Entity
+@Table ( name = "LabProcedure" )
 public class LabProcedure extends DomainObject<LabProcedure> {
+    @Id
+    @GeneratedValue ( strategy = GenerationType.AUTO )
+    private Long     id;
     // priority ranking for the procedure (1-4)
     int              priority;
     // code that corresponds to the procedure
@@ -211,6 +222,6 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     @Override
     public Serializable getId () {
         // TODO Auto-generated method stub
-        return null;
+        return id;
     }
 }
