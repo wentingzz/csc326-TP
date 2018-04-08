@@ -1,12 +1,15 @@
 package edu.ncsu.csc.itrust2.models.persistent;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * represents a lab procedure that a patient can have
  *
  * @author Hannah
  *
  */
-public class LabProcedure {
+public class LabProcedure extends DomainObject<LabProcedure> {
     // priority ranking for the procedure (1-4)
     int              priority;
     // code that corresponds to the procedure
@@ -191,7 +194,23 @@ public class LabProcedure {
             this.status = status;
         }
         else {
-            throw new IllegalArgumentException( "Status must be /'in progress/' or /'complete/'" );
+            throw new IllegalArgumentException( "Status must be 'in progress' or 'complete'" );
         }
+    }
+
+    /**
+     * Gets a collection of all the prescriptions in the system.
+     *
+     * @return the system's prescription
+     */
+    @SuppressWarnings ( "unchecked" )
+    public static List<LabProcedure> getAll () {
+        return (List<LabProcedure>) DomainObject.getAll( LabProcedure.class );
+    }
+
+    @Override
+    public Serializable getId () {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
