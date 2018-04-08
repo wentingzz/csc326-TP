@@ -1,12 +1,15 @@
 package edu.ncsu.csc.itrust2.models.persistent;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * represents a lab procedure that a patient can have
  *
  * @author Hannah
  *
  */
-public class LabProcedure {
+public class LabProcedure extends DomainObject<LabProcedure> {
     // priority ranking for the procedure (1-4)
     int              priority;
     // code that corresponds to the procedure
@@ -16,13 +19,28 @@ public class LabProcedure {
     // the lab tech assigned to the procedure
     User             labtech;
     // the office visit during which the procedure is performed
-    OfficeVisit      officevisit;
+    OfficeVisit      officeVisit;
     // the patient for which the procedure is performed
     User             patient;
     // the hcp with which the procedure is associated
     User             hcp;
     // the status of the procedure (success or failure)
     String           status;
+
+    /**
+     * constructor
+     */
+    public LabProcedure ( final int priority, final LabProcedureCode code, final String notes, final User labtech,
+            final OfficeVisit officeVisit, final User patient, final User hcp, final String status ) {
+        this.priority = priority;
+        this.code = code;
+        this.notes = notes;
+        this.labtech = labtech;
+        this.officeVisit = officeVisit;
+        this.patient = patient;
+        this.hcp = hcp;
+        this.status = status;
+    }
 
     /**
      * returns the priority of the procedure
@@ -106,7 +124,7 @@ public class LabProcedure {
      * @return
      */
     public OfficeVisit getOfficevisit () {
-        return officevisit;
+        return officeVisit;
     }
 
     /**
@@ -115,7 +133,7 @@ public class LabProcedure {
      * @param officevisit
      */
     public void setOfficevisit ( final OfficeVisit officevisit ) {
-        this.officevisit = officevisit;
+        this.officeVisit = officevisit;
     }
 
     /**
@@ -169,6 +187,30 @@ public class LabProcedure {
      * @param status
      */
     public void setStatus ( final String status ) {
-        this.status = status;
+        // if the status is some variation of "in-progress," "in progress," or
+        // "completed" then it is valid; otherwise, it is not a valid status
+        if ( ( status.toLowerCase().contains( "in" ) && status.toLowerCase().contains( "progress" ) )
+                || status.toLowerCase().contains( "complete" ) ) {
+            this.status = status;
+        }
+        else {
+            throw new IllegalArgumentException( "Status must be 'in progress' or 'complete'" );
+        }
+    }
+
+    /**
+     * Gets a collection of all the prescriptions in the system.
+     *
+     * @return the system's prescription
+     */
+    @SuppressWarnings ( "unchecked" )
+    public static List<LabProcedure> getAll () {
+        return (List<LabProcedure>) DomainObject.getAll( LabProcedure.class );
+    }
+
+    @Override
+    public Serializable getId () {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

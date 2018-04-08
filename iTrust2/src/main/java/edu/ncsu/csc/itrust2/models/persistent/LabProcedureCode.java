@@ -23,7 +23,7 @@ import edu.ncsu.csc.itrust2.forms.admin.LabProcedureCodeForm;
  *
  */
 @Entity
-@Table ( name = "LabProcedureCodes" )
+@Table ( name = "LabProcedureCode" )
 public class LabProcedureCode extends DomainObject<LabProcedureCode> {
 
     @Id
@@ -150,11 +150,12 @@ public class LabProcedureCode extends DomainObject<LabProcedureCode> {
      *            the code to set
      */
     public void setCode ( final String code ) {
-        final Pattern p = Pattern.compile( "[^a-z0-9 ]" );
+        final Pattern p = Pattern.compile( "[^a-z0-9 -]" );
         final Matcher m = p.matcher( code );
         final boolean b = m.find();
         if ( b ) {
-            throw new IllegalArgumentException( "The LOINC code may only contain lowercase letters and numerals 0-9" );
+            throw new IllegalArgumentException(
+                    "The LOINC code may only contain lowercase letters, numerals 0-9, and dashes." );
         }
         this.code = code;
     }
