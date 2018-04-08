@@ -114,5 +114,35 @@ public class LabProcedureCodeTest {
         // set status to a valid one
         procedure.setStatus( "completed" );
 
+        // test setting the code
+        final LabProcedureCode codeTwo = new LabProcedureCode( form );
+        codeTwo.setCode( "1111-1" );
+        procedure.setCode( codeTwo );
+
+        // test setting the HCP
+        final User hcpTwo = new User( "secondTestHCP", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
+                Role.ROLE_HCP, 1 );
+        procedure.setHcp( hcpTwo );
+
+        // test setting the lab tech
+        final User labTechTwo = new User( "secondTestLabTech",
+                "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", Role.ROLE_LABTECH, 1 );
+        procedure.setLabtech( labTechTwo );
+
+        // test setting the patient
+        final User testPatientTwo = new User( "secondTestPatient",
+                "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", Role.ROLE_PATIENT, 1 );
+
+        procedure.setPatient( testPatientTwo );
+
+        // check that getters work
+        assertTrue( procedure.getCode().equals( codeTwo ) );
+        assertTrue( procedure.getHcp().equals( hcpTwo ) );
+        assertTrue( procedure.getLabtech().equals( labTechTwo ) );
+        assertTrue( procedure.getPatient().equals( testPatientTwo ) );
+        assertTrue( procedure.getStatus().equals( "completed" ) );
+        assertTrue( procedure.getPriority() == 1 );
+        assertTrue( procedure.getNotes().equals( "updated notes with additional details" ) );
+        assertTrue( procedure.getOfficevisit().equals( testVisit ) );
     }
 }
