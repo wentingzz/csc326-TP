@@ -50,6 +50,17 @@ public class LabProcedureCodeTest {
         assertTrue( code.getProperty().equals( "PrThr" ) );
         assertTrue( code.getDateCreated().equals( testDate ) );
 
+        // try set code to something invalid
+        try {
+            code.setCode( "!!!" );
+            // allowed invalid code; test should fail
+            assertTrue( false );
+        }
+        catch ( final IllegalArgumentException e ) {
+            // didn't allow the invalid code; test should pass
+            assertTrue( true );
+        }
+
         // create the users needed to make a LabProcedure, plus the office visit
         final User labTech = new User( "labTech1", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
                 Role.ROLE_LABTECH, 1 );
@@ -67,6 +78,7 @@ public class LabProcedureCodeTest {
         procedure.setNotes( "updated notes with additional details" );
         // test invalid and valid setting priority
         // priority may only be 1-4
+        // testing lower limit
         try {
             procedure.setPriority( 0 );
             // allowed invalid priority value; test should fail
@@ -76,6 +88,7 @@ public class LabProcedureCodeTest {
             // didn't allow the invalid priority; test should pass
             assertTrue( true );
         }
+        // testing upper limit
         try {
             procedure.setPriority( 5 );
             // allowed invalid priority value; test should fail
@@ -100,5 +113,6 @@ public class LabProcedureCodeTest {
         }
         // set status to a valid one
         procedure.setStatus( "completed" );
+
     }
 }
