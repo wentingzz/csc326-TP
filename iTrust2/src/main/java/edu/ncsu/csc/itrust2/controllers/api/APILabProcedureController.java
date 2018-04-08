@@ -1,18 +1,23 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.itrust2.forms.personnel.PersonnelForm;
 import edu.ncsu.csc.itrust2.models.persistent.LabProcedure;
+import edu.ncsu.csc.itrust2.models.persistent.LabProcedureCode;
+import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
+import edu.ncsu.csc.itrust2.models.persistent.User;
+import edu.ncsu.csc.itrust2.utils.LoggerUtil;
 
 /**
  * Controller responsible for providing various REST API endpoints for the
@@ -26,7 +31,21 @@ import edu.ncsu.csc.itrust2.models.persistent.LabProcedure;
 public class APILabProcedureController extends APIController {
 
     /**
-     * Retrieves and returns a list of all Lab Procedures for a visit
+     * Retrieves and returns a list of all Lab Procedures. Used when an HCP
+     * documents an office visit
+     *
+     * @param id
+     *            of the visit
+     * @return list of lab procedures
+     */
+    @GetMapping ( BASE_PATH + "/viewlabprocedures" )
+    public List<LabProcedure> getAllLabProcedures () {
+        return LabProcedure.getAll();
+    }
+
+    /**
+     * Retrieves and returns a list of all Lab Procedures for a visit. Used when
+     * a Patient or HCP views details of an office visit
      *
      * @param id
      *            of the visit
@@ -38,48 +57,42 @@ public class APILabProcedureController extends APIController {
     }
 
     /**
-     * Retrieves and returns a list of all Lab Procedures for a user
+     * Retrieves and returns a list of all Lab Procedures for a user. Used when
+     * a LabTech views the lab procedures assigned to them
      *
      * @param username
      *            of the user
      * @return list of lab procedures
      */
-    @GetMapping ( BASE_PATH + "/labprocedure/{username}" )
-    public List<LabProcedure> getLabProcedure ( @PathVariable ( "username" ) final String username ) {
-        return null;
+    @GetMapping ( BASE_PATH + "/labtech/labprocedures/" )
+    @PreAuthorize ( "hasRole('ROLE_LABTECH')" )
+    public List<LabProcedure> getLabTechProcedures () {
+        final User user = User.getByName( LoggerUtil.currentUser() );
+        final List<LabProcedure> result = new ArrayList<LabProcedure>();
+        final OfficeVisit ov = OfficeVisit.getOfficeVisits().get( 0 );
+        final User patient = User.getPatients().get( 0 );
+        final User hcp = User.getHCPs().get( 0 );
+        result.add( new LabProcedure( 4, new LabProcedureCode(), "notes", user, ov, User.getPatients().get( 0 ),
+                User.getHCPs().get( 0 ), "NEW" ) );
+        return result;
     }
 
-    /**
-     * Creates a new Lab Procedure record from a Lab Procedure Form
-     *
-     * @param labProcedureF
-     *            the lab Procedure Form to be validated and saved to the
-     *            database
-     * @return response
-     */
-    @PostMapping ( BASE_PATH + "/labprocedure" )
-    public ResponseEntity createPersonnel ( @RequestBody final PersonnelForm labProcedureF ) {
-        return null;
-        // final Personnel personnel = new Personnel( personnelF );
-        // if ( null != Personnel.getByName( personnel.getSelf() ) ) {
-        // return new ResponseEntity(
-        // errorResponse( "Personnel with the id " + personnel.getSelf() + "
-        // already exists" ),
-        // HttpStatus.CONFLICT );
-        // }
-        // try {
-        // personnel.save();
-        // LoggerUtil.log( TransactionType.CREATE_DEMOGRAPHICS,
-        // LoggerUtil.currentUser() );
-        // return new ResponseEntity( personnel, HttpStatus.OK );
-        // }
-        // catch ( final Exception e ) {
-        // return new ResponseEntity(
-        // errorResponse( "Could not create " + personnel.toString() + " because
-        // of " + e.getMessage() ),
-        // HttpStatus.BAD_REQUEST );
-        // }
+    @GetMapping ( BASE_PATH + "/labtechs/" )
+    public List<User> getLabTechs () {
+        return User.getLabtechs();
     }
+
+    // /**
+    // * View an existing Lab Procedure record
+    // *
+    // * @param model
+    // * Date from front end
+    // * @return response
+    // */
+    // @PostMapping ( BASE_PATH + "/viewlabprocedures" )
+    // public ResponseEntity viewLabProcs ( final Model model ) {
+    // return null;
+    // }
 
     /**
      * Updates the Lab Procedure with the id provided by overwriting it with the
@@ -93,7 +106,7 @@ public class APILabProcedureController extends APIController {
      * @return response
      */
     @PutMapping ( BASE_PATH + "/labprocedure/{id}" )
-    public ResponseEntity updatePersonnel ( @PathVariable final String id,
+    public ResponseEntity updateLabProcedure ( @PathVariable final String id,
             @RequestBody final PersonnelForm personnelF ) {
         return null;
         // final Personnel personnel = new Personnel( personnelF );
@@ -132,17 +145,7 @@ public class APILabProcedureController extends APIController {
      * @return response
      */
     @DeleteMapping ( BASE_PATH + "/labprocedure/{id}" )
-    public ResponseEntity createPersonnel ( @PathVariable final String id ) {
-        return null;
-    }
-
-    /**
-     * View an existing Lab Procedure record
-     *
-     * @return response
-     */
-    @DeleteMapping ( BASE_PATH + "/viewlabprocedure" )
-    public ResponseEntity viewLabProcs () {
+    public ResponseEntity deleteLabProcedure ( @PathVariable final String id ) {
         return null;
     }
 }

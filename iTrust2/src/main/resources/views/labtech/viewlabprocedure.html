@@ -13,10 +13,11 @@
       app.controller('labProcedureCtrl', function ($scope, $http) {
         $scope.procedures = [];
         $scope.selected = "";
-        
-        
+        $scope.selectedStatus = "";
+        $scope.allStatus = ["NEW", "IN_PROGRESS", "COMPLETE"];
+        $scope.allLabtech = [];
 
-        $http.get("/iTrust2/api/v1/labprocedures").then(
+        $http.get("/iTrust2/api/v1/labtech/labprocedures/").then(
           function (response) {
             $scope.procedures = response.data;
             $scope.message = "";
@@ -25,6 +26,14 @@
             $scope.message = "Could not display lab procedures";
           });
 
+        $http.get("/iTrust2/api/v1/labtechs").then(
+        		function (response) {
+               $scope.allLabtech = response.data;
+               $scope.message = "";
+            }, function (rejection) {
+               $scope.procedures = [];
+               $scope.message = "Could not display lab procedures";
+            });
         // gets the template to ng-include for a table row / item
         $scope.selectedProcedures = {};
 
@@ -37,71 +46,67 @@
 			/*]]>*/
     </script>
 		<div ng-app="viewLabProcedureApp" ng-controller="labProcedureCtrl">
-                  <!-- <caption>Personal Representatives:</caption>
-                  <thead>
-                    <tr>
-                      <th>MID</th>
-                      <th>Name</th>
-                      <th>Manage</th>
-                    </tr>
-                    <tr  ng-repeat="r in procedures">
-                      <td>{{r.code}}</td>
-                      <td>{{r.firstName}}  {{r.lastName}}</td>
-                      <td>
-                        <div class="row text-right">
-                          <div class="col-md-6">
-                            <input type="button" value="Delete" class="btn btn-danger" name="deleteRepresentative" ng-click="deleteRepresentative(r)" />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </thead>
+        	  <div class="container">
+       		 <div class="row">
+          		<div class="col-md-12">
+         		  <div class="panel panel-primary">
+            		  <div class="panel-heading">
+            		    <h3>View Lab Procedures</h3>
+           		  	  </div>
+              	  	  <div class="panel-body">
+                		<table class="table table-bordered">
+                		  <caption>Lab Procedure Assigned to me</caption>
+                		  <thead>
+                    		<tr>
+                    		  <th>Priority</th>
+                    		  <th>LOINC Code</th>
+                    		  <th>Office Visit</th>
+                    		  <th>HCP</th>
+                    		  <th>Status</th>
+                    		  <th>Lab Tech</th>
+                    		  <th>Comments</th>
+                    	    </tr>
+                   		    <tr  ng-repeat="l in procedures">
+                    		  <td>{{l.priority}}</td>
+                    		  <td>{{l.code.code}}</td>
+                    		  <td>{{l.patient.username}}'s {{l.officevisit.type}} on {{l.officevisit.date}}</td>
+                    		  <td>{{l.hcp.username}}</td>
+                    		  <td>
+                    		  	<select ng-model="l.status" id="stat">
+                               <option ng-repeat="status in allStatus" value="{{status}}"> {{status}}
+                               </option>
+                             </select>
+                    		  </td>
+                    		  <td>{{l.labtech.username}}
+                    		    <select ng-model="l.labtech.username" id="stat">
+                               <option ng-repeat="lb in allLabtech" value="{{lb.username}}"> {{lb.username}}
+                               </option>
+                             </select>
+                    		  </td>
+                    		  <td>{{l.notes}}</td>
+                        	  <!-- <td>
+                        	  	 <div class=" text-center">
+                        	  	  <div class="col-md-6">
+                        		    <input type="button" value="Edit" class="btn btn-danger" name="editLabProcedureCodes" ng-click="editLabProcedureCodes(l.code)" />
+                        		  
+                        		    <input type="button" value="Delete" class="btn btn-danger" name="deleteLabProcedureCodes" ng-click="deleteLabProcedureCodes(l.code)" />
+                        		  </div>
+                        	  </div>
+                      		 </td> -->
+                    		</tr>
+                  		</thead>
                   
-                </table> -->
-		
-			<div ng-repeat ="p in procedures">
-				<strong>Priority: {{p.priority}}</strong>
-					<div th:text="p.priority" style="display: inline-block">
-					</div>
-					<br /> <strong>LOINC Code:</strong>
-					<div th:text="p.code" style="display: inline-block"></div>
-					<br /> <br /> <strong>Office Visit:</strong>
-					<div th:text="p.officevisit" style="display: inline-block"></div>
-					<br /> <br /> <strong>HCP:</strong>
-					<div th:text="p.hcp" style="display: inline-block"></div>
-					<br /> <br /> <strong>Patient:</strong>
-					<div th:text="p.patient" style="display: inline-block"></div>
-					<br />
-				
-			</div>
-				<!-- <input type="radio" th:value="${appointment.id}" name="appointment">
-				<div name="${appointment.name}">
-					<strong>Priority:</strong>
-					<div th:text="${appointment.priority}" style="display: inline-block">
-					</div>
-					<br /> <strong>LOINC Code:</strong>
-					<div th:text="${appointment.code}" style="display: inline-block"></div>
-					<br /> <br /> <strong>Office Visit:</strong>
-					<div th:text="${appointment.officevisit}" style="display: inline-block"></div>
-					<br /> <br /> <strong>HCP:</strong>
-					<div th:text="${appointment.hcp}" style="display: inline-block"></div>
-					<br /> <br /> <strong>Status:</strong>
-					<div th:text="${appointment.patient}" style="display: inline-block"></div>
-					<br />
-				</div>
-				</input>
-			</div>
+                	   </table>
 
-			<span th:if="${appointments!=null and appointments.size() != 0}">
-				<select th:field="*{action}">
-					<option th:each="action : ${allActions}" th:value="${action}"
-						th:text="${action}"></option>
-				</select> 
-				<br /> <br /> <strong>Comment:</strong>
-				<input type="text" th:value="${appointment.comment}"><br>
-				<button type="submit" class="btn btn-default">Submit</button> -->
-			<!-- </span> -->
-		<!-- </form> -->
+                 		<!-- table in view mode -->
+                		<label>{{message}}</label>
+               			 <label>{{selected}}</label>
+              		</div>
+            </div>
+          </div>
+        
+        </div>
+      </div>
 		
 		</div>
 		
