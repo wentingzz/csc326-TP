@@ -1,141 +1,181 @@
 package edu.ncsu.csc.itrust2.forms.admin;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import edu.ncsu.csc.itrust2.models.persistent.LabProcedureCode;
 
 /**
- * A form for REST API communication. Contains fields for constructing
- * LabProcedureCode objects.
+ * Intermediate form for adding or editing Lab Procedrure Codes. Used to create
+ * and serialize Lab Procedure Codes.
+ *
+ * @author Azra Shaikh and Hannah Morrison (hmorris3)
  *
  */
 public class LabProcedureCodeForm {
-    private Serializable id;
-    private String       code;
-    private String       component;
-    private String       property;
-    private String       longCommonName;
-    private Date         dateCreated;
+
+    /** The code of the Lab Procedure */
+    private String code;
+
+    /** The component of the Lab Procedure */
+    private String component;
+
+    /** The property of the Lab Procedure */
+    private String property;
+
+    /** The Lonf Common Name of the Lab Procedure */
+    private String longCommonName;
+
+    /** The creation date of the Lab Procedure */
+    private Date   dateCreated;
+
+    /** The id of the Lab Procedure */
+    private Long   id;
 
     /**
-     * Empty constructor for filling in fields without a LabProcedureCode
-     * object.
+     * Empty constructor for GSON
      */
     public LabProcedureCodeForm () {
+
     }
 
     /**
-     * Constructs a new form with information from the given prescription.
+     * Construct a form off an existing Lab Procedure Code object
      *
-     * @param prescription
-     *            the prescription object
+     * @param code
+     *            The object to fill this form with
      */
-    public LabProcedureCodeForm ( final LabProcedureCode labProcedureCode ) {
-        setId( labProcedureCode.getId() );
-        setComponent( labProcedureCode.getComponent() );
-        setProperty( labProcedureCode.getProperty() );
-        setLongCommonName( labProcedureCode.getLongCommonName() );
-        setDateCreated( labProcedureCode.getDateCreated() );
+    public LabProcedureCodeForm ( final LabProcedureCode code ) {
+        setCode( code.getCode() );
+        setComponent( code.getComponent() );
+        setProperty( code.getProperty() );
+        setLongCommonName( code.getLongCommonName() );
+        setId( code.getId() );
     }
 
     /**
-     * sets the date
+     * Returns the String representation of the code
      *
-     * @param date
-     *            date form is created
-     */
-    private void setDateCreated ( final Date date ) {
-        dateCreated = date;
-
-    }
-
-    /**
-     * sets the long common name of the lab procedure
-     *
-     * @param longCommonName
-     *            name of the procedure
-     */
-    private void setLongCommonName ( final String longCommonName ) {
-        this.longCommonName = longCommonName;
-
-    }
-
-    /**
-     * sets the property attribute of the procedure
-     *
-     * @param property
-     *            property attribute of the lab procedure
-     */
-    private void setProperty ( final String property ) {
-        this.property = property;
-
-    }
-
-    /**
-     * sets the component attribute of the lab procedure
-     *
-     * @param component
-     *            component attribute of the procedure
-     */
-    private void setComponent ( final String component ) {
-        this.component = component;
-
-    }
-
-    /**
-     * sets the id of the procedure
-     *
-     * @param id
-     */
-    private void setId ( final Serializable id ) {
-        this.id = id;
-
-    }
-
-    /**
-     * gets the code attribute of the LabProcedureCode
-     *
-     * @return
+     * @return the code The new code
      */
     public String getCode () {
         return code;
     }
 
     /**
-     * returns the component attribute of the procedure
+     * Sets the String representation of the code
      *
-     * @return component the component attribute of the procedure
+     * @param code
+     *            the code to set
+     */
+    public void setCode ( String code ) {
+        this.code = code;
+    }
+
+    /**
+     * Returns the component of this code
+     *
+     * @return the component of the code
      */
     public String getComponent () {
         return component;
     }
 
     /**
-     * returns the property attribute of the procedure
+     * Sets the component of the code
      *
-     * @return property the property of the procedure
+     * @param component
+     *            the component to set
+     */
+    public void setComponent ( String component ) {
+        this.component = component;
+    }
+
+    /**
+     * Returns the property of this code
+     *
+     * @return the property of the code
+     *
      */
     public String getProperty () {
         return property;
     }
 
     /**
-     * returns the name of the procedure
+     * Sets the property of the code
      *
-     * @return
+     * @param property
+     *            the property to set
+     */
+    public void setProperty ( String property ) {
+        this.property = property;
+    }
+
+    /**
+     * Returns the long common name of this code
+     *
+     * @return the longCommonName
      */
     public String getLongCommonName () {
         return longCommonName;
     }
 
     /**
-     * gets the date of the procedure
+     * Sets the long common name of the code
      *
-     * @return dateCreated date of the procedure
+     * @param longCommonName
+     *            the longCommonName to set
+     */
+    public void setLongCommonName ( String longCommonName ) {
+        this.longCommonName = longCommonName;
+    }
+
+    /**
+     * Returns the date created of this code
+     *
+     * @return the dateCreated
      */
     public Date getDateCreated () {
         return dateCreated;
+    }
+
+    /**
+     * Sets the date created of the code
+     *
+     * @param dateCreated
+     *            the dateCreated to set
+     */
+    public void setDateCreated ( Date dateCreated ) {
+        this.dateCreated = dateCreated;
+    }
+
+    /**
+     * Returns the id of this code
+     *
+     * @return the id
+     */
+    public Long getId () {
+        return id;
+    }
+
+    /**
+     * Sets the id of the code
+     *
+     * @param id
+     *            the id to set
+     */
+    public void setId ( Long id ) {
+        this.id = id;
+    }
+
+    @Override
+    public boolean equals ( final Object o ) {
+        if ( o instanceof LabProcedureCodeForm ) {
+            final LabProcedureCodeForm f = (LabProcedureCodeForm) o;
+            return code.equals( f.getCode() ) && id.equals( f.getId() ) && component.equals( f.getComponent() )
+                    && property.equals( f.getProperty() ) && longCommonName.equals( f.getLongCommonName() )
+                    && dateCreated.equals( f.getDateCreated() );
+        }
+        return false;
     }
 
 }

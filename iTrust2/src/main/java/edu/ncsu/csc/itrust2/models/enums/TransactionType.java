@@ -296,7 +296,32 @@ public enum TransactionType {
     /**
      * Emergency Report was viewed
      */
-    VIEW_ER_REPORT ( 1501, "Emergency report was viewed", true );
+    VIEW_ER_REPORT ( 1501, "Emergency report was viewed", true ),
+
+    /**
+     * Lab Procedure Code created
+     */
+    CREATE_LAB_PROCEDURE_CODE ( 1700, "Lab Procedure Code created", false ),
+
+    /**
+     * Lab Procedure Code edited
+     */
+    EDIT_LAB_PROCEDURE_CODE ( 1701, "Lab Procedure Code edited", false ),
+
+    /**
+     * Lab Procedure Code deleted
+     */
+    DELETE_LAB_PROCEDURE_CODE ( 1702, "Lab Procedure Code deleted", false ),
+
+    /**
+     * Lab Procedure Code viewed all
+     */
+    VIEWALL_LAB_PROCEDURE_CODE ( 1703, "Lab Procedure Code viewed", false ),
+
+    /**
+     * Lab Procedure Code viewed
+     */
+    VIEW_LAB_PROCEDURE_CODE ( 1704, "Lab Procedure Code viewed", false );
 
     /**
      * Creates a TransactionType for logging events

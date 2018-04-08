@@ -1,6 +1,5 @@
 package edu.ncsu.csc.itrust2.models.persistent;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -11,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.hibernate.criterion.Criterion;
 
 import edu.ncsu.csc.itrust2.forms.admin.LabProcedureCodeForm;
 
@@ -96,6 +97,7 @@ public class LabProcedureCode extends DomainObject<LabProcedureCode> {
      * sets the property of the lab procedure
      *
      * @param property
+     *            of the lab procedure
      */
     public void setProperty ( final String property ) {
         this.property = property;
@@ -170,7 +172,7 @@ public class LabProcedureCode extends DomainObject<LabProcedureCode> {
      * gets the ID mapped to the table
      */
     @Override
-    public Serializable getId () {
+    public Long getId () {
         return id;
     }
 
@@ -194,4 +196,32 @@ public class LabProcedureCode extends DomainObject<LabProcedureCode> {
         return (List<LabProcedureCode>) DomainObject.getAll( LabProcedureCode.class );
     }
 
+    /**
+     * Returns the Code with the given ID
+     *
+     * @param id
+     *            The ID to retrieve
+     * @return The LabProcedureCode requested if it exists
+     */
+    public static LabProcedureCode getById ( final Long id ) {
+        try {
+            return getWhere( createCriterionAsList( ID, id ) ).get( 0 );
+        }
+        catch ( final Exception e ) {
+            return null;
+        }
+
+    }
+
+    /**
+     * Returns a List of LabProcedureCode that meet the given WHERE clause
+     *
+     * @param where
+     *            List of Criterion to and together and search for records by
+     * @return The list of Codes selected
+     */
+    @SuppressWarnings ( "unchecked" )
+    private static List<LabProcedureCode> getWhere ( final List<Criterion> where ) {
+        return (List<LabProcedureCode>) getWhere( LabProcedureCode.class, where );
+    }
 }
