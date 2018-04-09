@@ -185,13 +185,13 @@
                 $scope.errorMsg += "Please input a valid date and time\n";
               }
 
-              if (/^[0-9]{1,3}(\.[0-9]?)?$/.test($scope.visit.height) == false) {
+              if (/^(0\.[1-9]|[1-9][0-9]{0,2}(\.[0-9])?)$/.test($scope.visit.height) == false) {
                 $scope.errorMsg += "Height/length can be up to a 3-digit positive number and potentially one digit of decimal precision\n"
               }
-              if (/^[0-9]{1,3}(\.[0-9]?)?$/.test($scope.visit.weight) == false) {
+              if (/^(0\.[1-9]|[1-9][0-9]{0,3}(\.[0-9])?)$/.test($scope.visit.weight) == false) {
                 $scope.errorMsg += "Weight can be up to a 3-digit positive number and potentially one digit of decimal precision\n"
               }
-              if ($scope.three && /^[0-9]{1,3}(\.[0-9]?)?$/.test($scope.visit.headCircumference) == false) {
+              if ($scope.three && /^(0\.[1-9]|[1-9][0-9]{0,2}(\.[0-9])?)$/.test($scope.visit.headCircumference) == false) {
                 $scope.errorMsg += "Head circumference can be up to a 3-digit positive number and potentially one digit of decimal precision\n"
               }
               if ($scope.threeAndUp && /^[0-9]{1,3}$/.test($scope.visit.systolic) == false) {

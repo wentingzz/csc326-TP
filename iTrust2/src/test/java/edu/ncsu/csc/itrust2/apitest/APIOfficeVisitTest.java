@@ -442,6 +442,71 @@ public class APIOfficeVisitTest {
         mvc.perform( delete( "/api/v1/officevisits/" + id ) ).andExpect( status().isOk() );
 
         mvc.perform( delete( "/api/v1/officevisits" ) );
+        
+        //Test zero value for height
+        final OfficeVisitForm form = new OfficeVisitForm();
+        form.setDate( "4/16/2048" );
+        form.setTime( "9:50 AM" );
+        form.setHcp( "hcp" );
+        form.setPatient( "TimTheOneYearOld" );
+        form.setNotes( "Test office visit" );
+        form.setType( AppointmentType.GENERAL_CHECKUP.toString() );
+        form.setHospital( "iTrust Test Hospital 2" );
+        form.setHeight(0.0f);
+        form.setWeight(30.0f);
+        form.setHeadCircumference(5.5f);
+        form.setHouseSmokingStatus(HouseholdSmokingStatus.NONSMOKING);
+   
+
+        /* Create the Office Visit */
+        mvc.perform( post( "/api/v1/officevisits" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( form ) ) ).andExpect( status().isBadRequest() );
+
+      //  mvc.perform( delete( "/api/v1/officevisits/" + id ) ).andExpect( status().isOk() );
+
+        mvc.perform( delete( "/api/v1/officevisits" ) );
+        
+        //Test zero value for weight
+        final OfficeVisitForm form2 = new OfficeVisitForm();
+        form2.setDate( "4/16/2048" );
+        form2.setTime( "9:50 AM" );
+        form2.setHcp( "hcp" );
+        form2.setPatient( "TimTheOneYearOld" );
+        form2.setNotes( "Test office visit" );
+        form2.setType( AppointmentType.GENERAL_CHECKUP.toString() );
+        form2.setHospital( "iTrust Test Hospital 2" );
+        form2.setHeight(20.0f);
+        form2.setWeight(0.0f);
+        form2.setHeadCircumference(5.5f);
+        form2.setHouseSmokingStatus(HouseholdSmokingStatus.NONSMOKING);
+   
+
+        /* Create the Office Visit */
+        mvc.perform( post( "/api/v1/officevisits" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( form2 ) ) ).andExpect( status().isBadRequest() );
+        
+     //   mvc.perform( delete( "/api/v1/officevisits/" + id ) ).andExpect( status().isOk() );
+
+        mvc.perform( delete( "/api/v1/officevisits" ) );
+        
+        //Test zero value for headCircumference
+        final OfficeVisitForm form3 = new OfficeVisitForm();
+        form3.setDate( "4/16/2048" );
+        form3.setTime( "9:50 AM" );
+        form3.setHcp( "hcp" );
+        form3.setPatient( "TimTheOneYearOld" );
+        form3.setNotes( "Test office visit" );
+        form3.setType( AppointmentType.GENERAL_CHECKUP.toString() );
+        form3.setHospital( "iTrust Test Hospital 2" );
+        form3.setHeight(20.0f);
+        form3.setWeight(20.0f);
+        form3.setHeadCircumference(0.0f);
+        form3.setHouseSmokingStatus(HouseholdSmokingStatus.NONSMOKING);
+   
+
+        /* Create the Office Visit */
+        mvc.perform( post( "/api/v1/officevisits" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( form3 ) ) ).andExpect( status().isBadRequest() );
 
     }
 
