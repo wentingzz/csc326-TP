@@ -133,7 +133,7 @@ public class Hospital extends DomainObject<Hospital> implements Serializable {
      * ZIP code of the Hospital
      */
     @NotEmpty
-    @Length ( min = 5, max = 5 )
+    @Length ( min = 5, max = 10 )
     private String zip;
 
     /**
@@ -209,6 +209,9 @@ public class Hospital extends DomainObject<Hospital> implements Serializable {
      *            New ZIP code for the Hospital
      */
     public void setZip ( final String zip ) {
+        if ( zip == null || !zip.matches( "\\d\\d\\d\\d\\d(-\\d\\d\\d\\d)?" ) ) {
+            throw new IllegalArgumentException( "Only 5 or 9 digit zipcode allowed" );
+        }
         this.zip = zip;
     }
 

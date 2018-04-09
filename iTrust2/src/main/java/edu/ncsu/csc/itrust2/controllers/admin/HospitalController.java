@@ -63,8 +63,10 @@ public class HospitalController {
             }
         }
         catch ( final Exception e ) {
-            throw new IllegalArgumentException(
-                    e ); /* This should never happen */
+            e.printStackTrace( System.out );
+            result.rejectValue( "zip", "zip.notvalid", "Incorrect format" );
+            // throw new IllegalArgumentException(
+            // e ); /* This should never happen */
         }
 
         if ( result.hasErrors() ) {

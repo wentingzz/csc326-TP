@@ -32,4 +32,33 @@ public class HospitalFormTest {
         assertEquals( hospital.getState().getName(), form.getState() );
         assertEquals( hospital.getZip(), form.getZip() );
     }
+
+    /**
+     * Invalid zip codes. Reused from Guided Project
+     */
+    @Test
+    public void testInvalidHospital () {
+        final Hospital hospital = new Hospital();
+        hospital.setAddress( "addr" );
+        hospital.setName( "name" );
+        hospital.setState( State.AL );
+        try {
+            hospital.setZip( "12345-67890" );
+        }
+        catch ( final IllegalArgumentException e ) {
+            assertEquals( e.getMessage(), "Only 5 or 9 digit zipcode allowed" );
+        }
+        try {
+            hospital.setZip( null );
+        }
+        catch ( final IllegalArgumentException e ) {
+            assertEquals( e.getMessage(), "Only 5 or 9 digit zipcode allowed" );
+        }
+        try {
+            hospital.setZip( "12345-123" );
+        }
+        catch ( final IllegalArgumentException e ) {
+            assertEquals( e.getMessage(), "Only 5 or 9 digit zipcode allowed" );
+        }
+    }
 }
