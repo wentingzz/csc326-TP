@@ -1,5 +1,6 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.itrust2.forms.admin.LabProcedureCodeForm;
 import edu.ncsu.csc.itrust2.models.enums.TransactionType;
@@ -26,6 +28,8 @@ import edu.ncsu.csc.itrust2.utils.LoggerUtil;
  *
  * @author Azra Shaikh
  */
+@RestController
+@SuppressWarnings ( { "unchecked", "rawtypes" } )
 public class APILabProcedureCodesController extends APIController {
 
     /**
@@ -47,7 +51,6 @@ public class APILabProcedureCodesController extends APIController {
      *            The id of the code to retrieve
      * @return The requested Code
      */
-    @SuppressWarnings ( { "unchecked", "rawtypes" } )
     @GetMapping ( BASE_PATH + "/labprocedurecode/{id}" )
     public ResponseEntity getCode ( @PathVariable ( "id" ) final Long id ) {
         try {
@@ -75,7 +78,6 @@ public class APILabProcedureCodesController extends APIController {
      *            The new values for the Code
      * @return The Response of the action
      */
-    @SuppressWarnings ( { "rawtypes", "unchecked" } )
     @PutMapping ( BASE_PATH + "/labprocedurecode/{id}" )
     @PreAuthorize ( "hasRole('ROLE_ADMIN')" )
     public ResponseEntity editCode ( @PathVariable ( "id" ) final Long id,
@@ -102,7 +104,7 @@ public class APILabProcedureCodesController extends APIController {
         }
         catch ( final Exception e ) {
             return new ResponseEntity(
-                    errorResponse( "Could not update ICD Code " + id + " because of " + e.getMessage() ),
+                    errorResponse( "Could not update Lab Procedure Code " + id + " because of " + e.getMessage() ),
                     HttpStatus.BAD_REQUEST );
         }
     }
@@ -114,13 +116,18 @@ public class APILabProcedureCodesController extends APIController {
      *            The data for the new Code
      * @return The result of the action
      */
-    @SuppressWarnings ( { "rawtypes", "unchecked" } )
     @PostMapping ( BASE_PATH + "/labprocedurecodes" )
     @PreAuthorize ( "hasRole('ROLE_ADMIN')" )
     public ResponseEntity addCode ( @RequestBody final LabProcedureCodeForm form ) {
         try {
+            System.out.println( "\n\n\n\n\n\nworking\n\n\n\n\n" );
             final LabProcedureCode code = new LabProcedureCode( form );
+            code.setDateCreated( Calendar.getInstance().getTime() );
+            System.out.println( "\n\n\n\n\n\nsaving now\n\n\n\n\n" );
+            System.out.println( code.getId() );
             code.save();
+            System.out.println( "\n\n\n\n\n\n" + code.getCode() );
+            System.out.println( "\n" + code.getComponent() + "\n\n\n\n\n" );
             User user = null;
             try {
                 user = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
@@ -149,8 +156,7 @@ public class APILabProcedureCodesController extends APIController {
      *            The id of the code to delete
      * @return The result of the action.
      */
-    @SuppressWarnings ( { "rawtypes", "unchecked" } )
-    @DeleteMapping ( BASE_PATH + "/icdcode/{id}" )
+    @DeleteMapping ( BASE_PATH + "/labprocedurecode/{id}" )
     @PreAuthorize ( "hasRole('ROLE_ADMIN')" )
     public ResponseEntity deleteCode ( @PathVariable ( "id" ) final Long id ) {
         try {

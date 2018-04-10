@@ -53,7 +53,8 @@ public class LabProcedureCode extends DomainObject<LabProcedureCode> {
         setComponent( form.getComponent() );
         setProperty( form.getProperty() );
         setLongCommonName( form.getLongCommonName() );
-        setDateCreated( form.getDateCreated() );
+        // System.out.println( "\n\n\n\n" + form.getId() + "\n\n\n" );
+        setId( form.getId() );
     }
 
     /**
@@ -183,7 +184,7 @@ public class LabProcedureCode extends DomainObject<LabProcedureCode> {
      * @param id
      *            mapped to the table
      */
-    public void setId ( final long id ) {
+    public void setId ( final Long id ) {
         this.id = id;
     }
 

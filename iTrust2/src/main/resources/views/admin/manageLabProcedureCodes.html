@@ -12,6 +12,7 @@
 			app.controller('manageLabProcedureCodesCtrl', function($scope, $http) {
 
 				$scope.labProcedureCodes = [];
+				
 				$scope.loadTable = function() {
 					// get list of lab procedure codes from rest api
 					$http.get("/iTrust2/api/v1/labprocedurecodes").then(
@@ -51,13 +52,31 @@
 							})
 				}
 				
-				$scope.editLabProcedureCodes = function(code) {
-					$http.get("/iTrust2/api/v1/labprocedurecode/").then(
+				$scope.selected = function(c) {
+					console.log($scope.labProcedureCodes[0].id);
+					console.log($scope.labProcedureCodes[0]);
+					console.log(c.id);
+					for (var i in $scope.labProcesureCodes) {
+						if ($scope.labProcedureCodes[i].id == c.id) {
+							$scope.code.dateCreated = $scope.labProcedureCodes[i].dateCreated;
+							console.log(code.dataCreated);
+							console.log($scope.labProcedureCodes[i].dataCreated);
+							$scope.code.code = $scope.labProcedureCodes[i].code;
+							$scope.code.component = $scope.labProcedureCodes[i].component;
+							$scope.code.property = $scope.labProcedureCodes[i].property;
+							$scope.code.longCommonName = $scope.labProcedureCodes[i].longCommonName;
+							break;
+						}
+					}
+				}
+				
+				$scope.editLabProcedureCodes = function() {
+					$http.put('/iTrust2/api/v1/labprocedurecode/' + $scope.code.id).then(
 							function(response) {
 								$scope.loadTable();
-								$scope.code.dateCreated = response.data.dateCreated;
-								$scope.code.code = response.data.code;
-								$scope.code.component = response.data.component;
+								$scope.code.dateCreated = "";
+								$scope.code.code = "";
+								$scope.code.component = "";
 								$scope.code.property = response.data.property;
 								$scope.code.longCommonName = response.data.longCommonName;
 								$scope.errorAdding = "";
@@ -93,7 +112,7 @@
                     		  <th>Property</th>
                     		  <th>Edit/Delete</th>
                     	    </tr>
-                   		    <tr  ng-repeat="l in labProcedureCodes">
+                   		    <tr name="codeRow" ng-repeat="l in labProcedureCodes | orderBy: 'code' " codeId={{l.id}}>
                     		  <td>{{l.dateCreated}}</td>
                     		  <td>{{l.code}}</td>
                     		  <td>{{l.longCommonName}}</td>
@@ -102,9 +121,9 @@
                         	  <td>
                         	  	 <div class=" text-center">
                         	  	  <div class="col-md-6">
-                        		    <input type="button" value="Edit" class="btn btn-danger" name="editLabProcedureCodes" ng-click="editLabProcedureCodes(l.code)" />
+                        		    <input type="button" value="Edit" class="btn btn-danger" name="editLabProcedureCodes" ng-click="selected(l)" />
                         		  
-                        		    <input type="button" value="Delete" class="btn btn-danger" name="deleteLabProcedureCodes" ng-click="deleteLabProcedureCodes(l.code)" />
+                        		    <input type="button" value="Delete" class="btn btn-danger" name="deleteLabProcedureCodes" ng-click="deleteLabProcedureCodes(l)" />
                         		  </div>
                         	  </div>
                       		 </td>
@@ -115,15 +134,14 @@
 
                  		<!-- table in view mode -->
                 		<label>{{message}}</label>
-               			 <label>{{selected}}</label>
 
                 		<br>
                				 <div class="row">
                   				<div class="col-md-12">
-                    				<div class="panel panel-default">
+                    				<div class="panel panel-default" >
                     				  <div class="panel-heading ">Add/Edit Lab Procedure Codes</div>
                     					  <div class="panel-body">
-                        					<form class="form-horizontal" role="form" name="addEditRepresentativeForm" ng-submit="addEditRepresentative">
+                        					<form class="form-horizontal" role="form" name="addLabProcedureCodesForm" >
                           						<div class="row">
                           							<div class="form-group col-md-4">
                           							<div class="panel-body">
@@ -163,9 +181,8 @@
                           						<br>
                           						<div class="row">
                           							<div class="col-md-11 text-center">
-                            						  <button ng-click="editLabProcedureCodes()" type="submit" class="btn btn-success" name="submit">Add</button>
-                         						     
-                            						  <button ng-click="addLabProcedureCodes()" type="submit" class="btn btn-success" name="submit">Edit</button>
+                            						  <button ng-click="addLabProcedureCodes(addLabProcedureCodesForm.$valid)" class="btn btn-success" name="submit">Submit</button>
+                            						  <button ng-click="editLabProcedureCodes()" class="btn btn-success" name="edit">Update</button>
                          						   </div>
                           						</div>
                         					</form>
@@ -180,7 +197,6 @@
         </div>
       </div>
     </div>
-	</div>
 	</div>
 	</body>
 </html>
