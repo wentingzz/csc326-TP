@@ -89,6 +89,7 @@ public class APILabProcedureCodesController extends APIController {
             }
             form.setId( id );
             final LabProcedureCode updatedCode = new LabProcedureCode( form );
+            updatedCode.setDateCreated( code.getDateCreated() );
             updatedCode.save();
             User user = null;
             try {
@@ -120,14 +121,10 @@ public class APILabProcedureCodesController extends APIController {
     @PreAuthorize ( "hasRole('ROLE_ADMIN')" )
     public ResponseEntity addCode ( @RequestBody final LabProcedureCodeForm form ) {
         try {
-            System.out.println( "\n\n\n\n\n\nworking\n\n\n\n\n" );
             final LabProcedureCode code = new LabProcedureCode( form );
             code.setDateCreated( Calendar.getInstance().getTime() );
-            System.out.println( "\n\n\n\n\n\nsaving now\n\n\n\n\n" );
             System.out.println( code.getId() );
             code.save();
-            System.out.println( "\n\n\n\n\n\n" + code.getCode() );
-            System.out.println( "\n" + code.getComponent() + "\n\n\n\n\n" );
             User user = null;
             try {
                 user = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );

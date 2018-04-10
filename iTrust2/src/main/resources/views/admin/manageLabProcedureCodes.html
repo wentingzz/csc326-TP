@@ -28,16 +28,18 @@
 				// handle add code button click
 				$scope.addLabProcedureCodes = function() {
 					$http.post("/iTrust2/api/v1/labprocedurecodes", $scope.code).then(
-							function(response) {
-								$scope.loadTable();
-								$scope.code.code = "";
-								$scope.code.component = "";
-								$scope.code.property = "";
-								$scope.code.longCommonName = "";
-								$scope.errorAdding = "";
-							}, function(rejection) {
-							$scope.errorAdding = "Could not add code";
-					})
+								function(response) {
+									$scope.loadTable();
+									$scope.code.code = "";
+									$scope.code.component = "";
+									$scope.code.property = "";
+									$scope.code.longCommonName = "";
+									$scope.errorAdding = "";
+								}, function(rejection) {
+								$scope.errorAdding = "Could not add code";
+					
+						})
+					
 					
 					
 				}
@@ -53,32 +55,28 @@
 				}
 				
 				$scope.selected = function(c) {
-					console.log($scope.labProcedureCodes[0].id);
-					console.log($scope.labProcedureCodes[0]);
-					console.log(c.id);
-					for (var i in $scope.labProcesureCodes) {
+					for (var i in $scope.labProcedureCodes) {
 						if ($scope.labProcedureCodes[i].id == c.id) {
-							$scope.code.dateCreated = $scope.labProcedureCodes[i].dateCreated;
-							console.log(code.dataCreated);
-							console.log($scope.labProcedureCodes[i].dataCreated);
-							$scope.code.code = $scope.labProcedureCodes[i].code;
-							$scope.code.component = $scope.labProcedureCodes[i].component;
-							$scope.code.property = $scope.labProcedureCodes[i].property;
-							$scope.code.longCommonName = $scope.labProcedureCodes[i].longCommonName;
+							$scope.code = { 
+									code : $scope.labProcedureCodes[i].code, 
+									component : $scope.labProcedureCodes[i].component, 
+									property : $scope.labProcedureCodes[i].property, 
+									longCommonName : $scope.labProcedureCodes[i].longCommonName,
+									id : $scope.labProcedureCodes[i].id
+							};
 							break;
 						}
 					}
 				}
 				
 				$scope.editLabProcedureCodes = function() {
-					$http.put('/iTrust2/api/v1/labprocedurecode/' + $scope.code.id).then(
+					$http.put('/iTrust2/api/v1/labprocedurecode/' + $scope.code.id,  $scope.code).then(
 							function(response) {
 								$scope.loadTable();
-								$scope.code.dateCreated = "";
 								$scope.code.code = "";
 								$scope.code.component = "";
-								$scope.code.property = response.data.property;
-								$scope.code.longCommonName = response.data.longCommonName;
+								$scope.code.property = "";
+								$scope.code.longCommonName = "";
 								$scope.errorAdding = "";
 							}, function(rejection) {
 								$scope.errorAdding = "Could not edit code";
@@ -93,7 +91,7 @@
 		
 		<div ng-app="manageLabProcedureCodesApp" ng-controller="manageLabProcedureCodesCtrl">
 		<!-- Info on tables from https://hello-angularjs.appspot.com/removetablerow -->			
-			<div class="container">
+			<div class="container"> <h4 style="color:red" ng-model="message"></h4>
        		 <div class="row">
           		<div class="col-md-12">
          		  <div class="panel panel-primary">
@@ -120,8 +118,8 @@
                     		  <td>{{l.property}}</td>
                         	  <td>
                         	  	 <div class=" text-center">
-                        	  	  <div class="col-md-6">
-                        		    <input type="button" value="Edit" class="btn btn-danger" name="editLabProcedureCodes" ng-click="selected(l)" />
+                        	  	  <div class="col-md-11 text-center">
+                        		    <input type="button" value="Edit" class="btn btn-primary" name="editLabProcedureCodes" ng-click="selected(l)" />
                         		  
                         		    <input type="button" value="Delete" class="btn btn-danger" name="deleteLabProcedureCodes" ng-click="deleteLabProcedureCodes(l)" />
                         		  </div>
@@ -177,16 +175,15 @@
                         							</div>
                           						</div>
                           						<br>
-                          						<br>
-                          						<br>
                           						<div class="row">
                           							<div class="col-md-11 text-center">
-                            						  <button ng-click="addLabProcedureCodes(addLabProcedureCodesForm.$valid)" class="btn btn-success" name="submit">Submit</button>
-                            						  <button ng-click="editLabProcedureCodes()" class="btn btn-success" name="edit">Update</button>
+                            						  <button ng-click="addLabProcedureCodes(addLabProcedureCodesForm.$valid)" class="btn btn-success" name="add">Add New</button>
+                            						  <button ng-click="editLabProcedureCodes(addLabProcedureCodesForm.$valid)" class="btn btn-success" name="edit">Update</button>
                          						   </div>
                           						</div>
                         					</form>
-                      					</div>
+                      					<div><p style="color:red" ng-model="errorAdding" id="errP">{{errorAdding}}</p></div>
+                      					</div> 
                     				</div>
                   				</div>
                 			</div>
