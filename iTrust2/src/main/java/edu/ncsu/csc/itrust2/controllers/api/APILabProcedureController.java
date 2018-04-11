@@ -83,8 +83,7 @@ public class APILabProcedureController extends APIController {
     @GetMapping ( BASE_PATH + "/labtechs/" )
     @PreAuthorize ( "hasRole('ROLE_LABTECH')" )
     public List<User> getLabTechs () {
-        final List<User> ls = new ArrayList<User>( User.getPatients() );
-        return ls;
+        return User.getLabtechs();
     }
 
     // /**
