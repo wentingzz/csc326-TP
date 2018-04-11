@@ -31,12 +31,15 @@
                $scope.allLabtech = response.data;
                $scope.message = "";
             }, function (rejection) {
-               $scope.procedures = [];
-               $scope.message = "Could not display lab procedures";
+               $scope.allLabtech = [];
+               $scope.message = "Could not display lab techs";
             });
         // gets the template to ng-include for a table row / item
-        $scope.selectedProcedures = {};
+        $scope.selectedProcedures = "";
 
+        $scope.selectProcedures = function(lab){
+        		$scope.selectedProcedure = lab;
+        }
         $scope.resetSelected = function () {
           $scope.selectedProcedures = {};
         };
@@ -66,48 +69,78 @@
                     		  <th>Lab Tech</th>
                     		  <th>Comments</th>
                     	    </tr>
-                   		    <tr  ng-repeat="l in procedures">
-                    		  <td>{{l.priority}}</td>
+                   		<tr  ng-repeat="l in procedures">
+                    		  <td><input type="radio" 
+									name="labProcedureToEdit" value="{{l}}"
+									ng-click='selectProcedures(l)' />&nbsp;{{l.priority}}</td>
                     		  <td>{{l.code.code}}</td>
                     		  <td>{{l.patient.username}}'s {{l.officevisit.type}} on {{l.officevisit.date}}</td>
                     		  <td>{{l.hcp.username}}</td>
-                    		  <td>
-                    		  	<select ng-model="l.status" id="stat">
-                               <option ng-repeat="status in allStatus" value="{{status}}"> {{status}}
-                               </option>
-                             </select>
-                    		  </td>
-                    		  <td>{{l.labtech.username}}
-                    		    <select ng-model="l.labtech.username" id="stat">
-                               <option ng-repeat="lb in allLabtech" value="{{lb.username}}"> {{lb.username}}
-                               </option>
-                             </select>
-                    		  </td>
+                    		  <td> {{l.status}}</td>
+                    		  <td>{{l.labtech.username}}</td>
                     		  <td>{{l.notes}}</td>
-                        	  <!-- <td>
-                        	  	 <div class=" text-center">
-                        	  	  <div class="col-md-6">
-                        		    <input type="button" value="Edit" class="btn btn-danger" name="editLabProcedureCodes" ng-click="editLabProcedureCodes(l.code)" />
-                        		  
-                        		    <input type="button" value="Delete" class="btn btn-danger" name="deleteLabProcedureCodes" ng-click="deleteLabProcedureCodes(l.code)" />
-                        		  </div>
-                        	  </div>
-                      		 </td> -->
                     		</tr>
                   		</thead>
-                  
                 	   </table>
 
                  		<!-- table in view mode -->
                 		<label>{{message}}</label>
-               			 <label>{{selected}}</label>
-              		</div>
+               		<label>{{selected}}</label>
+              	</div>
             </div>
           </div>
         
         </div>
       </div>
-		
+		<div class="container">
+       		 <div class="row">
+          		<div class="col-md-12">
+         		  <div class="panel panel-primary">
+            		  <div class="panel-heading">
+            		    <h3>Edit Lab Procedures</h3>
+           		  </div>
+              	  <div class="panel-body">
+					<table>
+                            <div class="col-md-5 radio-box">
+                              <table class="table table-bordered">
+                                <caption>Selected Lab Procedure: {{selectedProcedure.labtech.username}}</caption>
+                                <thead>
+                    				  <tr>
+                      				<th>Status</th>
+                      				<th>Lab Tech</th>
+                   				  </tr>
+                  			   </thead>
+                  			   <tbody>
+                    				 <tr>
+                    				 	<td>
+                    				 	  <select ng-model="selectedProcedure.status" id="stat">
+                              	 		<option ng-repeat="status in allStatus" value="{{status}}"> {{status}}
+                               			</option>
+                             		  </select>
+                    				 	</td>
+                      				<td>
+                      				  <select ng-model="selectedProcedure.labtech.username" id="lt">
+                               		  	<option ng-repeat="lb in allLabtech" value="{{lb}}"> {{lb.username}}
+                               		  	</option>
+                             		  </select>
+                             		</td>
+                    				 </tr>
+                 			   </tbody>
+                				 </table>
+                				 
+                              
+                              <button ng-click="addRepresentative()" type="submit" class="btn btn-success" name="submit">Update</button>
+                            </div>
+				</table>
+				<br />
+                		<label>{{message}}</label>
+               			 <label>{{selected}}</label>
+              </div>
+            </div>
+          </div>
+        
+        </div>
+      </div>
 		</div>
 		
 
