@@ -17,31 +17,43 @@
         $scope.allStatus = ["NEW", "IN_PROGRESS", "COMPLETE"];
         $scope.allLabtech = [];
 
-        $http.get("/iTrust2/api/v1/labtech/labprocedures/").then(
-          function (response) {
-            $scope.procedures = response.data;
-            $scope.message = "";
-          }, function (rejection) {
-            $scope.procedures = [];
-            $scope.message = "Could not display lab procedures";
-          });
+        $scope.loadTable = function(){
+        		$http.get("/iTrust2/api/v1/labtech/labprocedures/").then(
+        	          function (response) {
+        	            $scope.procedures = response.data;
+        	            $scope.message = "";
+        	          }, function (rejection) {
+        	            $scope.procedures = [];
+        	            $scope.message = "Could not display lab procedures";
+        	          });
+        };
+        $scope.loadTable();
 
-        $http.get("/iTrust2/api/v1/labtechs").then(
-        		function (response) {
-               $scope.allLabtech = response.data;
-               $scope.message = "";
-            }, function (rejection) {
-               $scope.allLabtech = [];
-               $scope.message = "Could not display lab techs";
-            });
+        
         // gets the template to ng-include for a table row / item
         $scope.selectedProcedures = "";
 
         $scope.selectProcedures = function(lab){
         		$scope.selectedProcedure = lab;
+        		$scope.updateStatus = lab.status;
+        		$scope.updateLabTech = lab.labtech.username;
+        		$http.get("/iTrust2/api/v1/labtechs/").then(
+                		function (response) {
+                       $scope.allLabtech = response.data;
+                       $scope.message = "";
+                    }, function (rejection) {
+                       $scope.allLabtech = [];
+                       $scope.message = "Could not display lab techs";
+                    });
         }
-        $scope.resetSelected = function () {
-          $scope.selectedProcedures = {};
+        
+        $scope.update = function () {
+        		$http.put('/iTrust2/api/v1/labprocedure/' + $scope.selectedProcedure.id + "/" +  $scope.updateStatus+ "/" +  $scope.updateLabTech + "/").then(
+					function(response) {
+						$scope.loadTable();
+					}, function(rejection) {
+						$scope.message = "Could not update lab procedure";
+					})
         };
 
         
@@ -103,7 +115,7 @@
 					<table>
                             <div class="col-md-5 radio-box">
                               <table class="table table-bordered">
-                                <caption>Selected Lab Procedure: {{selectedProcedure.labtech.username}}</caption>
+                                <caption>Selected Lab Procedure:</caption>
                                 <thead>
                     				  <tr>
                       				<th>Status</th>
@@ -113,14 +125,14 @@
                   			   <tbody>
                     				 <tr>
                     				 	<td>
-                    				 	  <select ng-model="selectedProcedure.status" id="stat">
+                    				 	  <select ng-model="updateStatus" id="stat">
                               	 		<option ng-repeat="status in allStatus" value="{{status}}"> {{status}}
                                			</option>
                              		  </select>
                     				 	</td>
                       				<td>
-                      				  <select ng-model="selectedProcedure.labtech.username" id="lt">
-                               		  	<option ng-repeat="lb in allLabtech" value="{{lb}}"> {{lb.username}}
+                      				  <select ng-model="updateLabTech" id="lt">
+                               		  	<option ng-repeat="lb in allLabtech" value="{{lb.username}}"> {{lb.username}}
                                		  	</option>
                              		  </select>
                              		</td>
@@ -129,12 +141,12 @@
                 				 </table>
                 				 
                               
-                              <button ng-click="addRepresentative()" type="submit" class="btn btn-success" name="submit">Update</button>
+                              <button ng-click="update()" type="submit" class="btn btn-success" name="submit">Update</button>
                             </div>
 				</table>
 				<br />
-                		<label>{{message}}</label>
-               			 <label>{{selected}}</label>
+                		<label>{{updateLabTech}}</label>
+               			 <label>{{updateStatus}}</label>
               </div>
             </div>
           </div>

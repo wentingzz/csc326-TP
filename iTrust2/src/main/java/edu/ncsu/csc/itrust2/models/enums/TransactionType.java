@@ -321,7 +321,22 @@ public enum TransactionType {
     /**
      * Lab Procedure Code viewed
      */
-    VIEW_LAB_PROCEDURE_CODE ( 1704, "Lab Procedure Code viewed", false );
+    VIEW_LAB_PROCEDURE_CODE ( 1704, "Lab Procedure Code viewed", false ),
+
+    /**
+     * Lab Procedure viewed
+     */
+    EIDT_LAB_PROCEDURE ( 1705, "Lab Procedure viewed", false ),
+
+    /**
+     * Lab Procedure deleted
+     */
+    Delete_LAB_PROCEDURE ( 1706, "Lab Procedure deleted", false ),
+
+    /**
+     * Lab Procedure deleted
+     */
+    VIEW_LAB_PROCEDURE ( 1707, "Lab Procedure deleted", false );
 
     /**
      * Creates a TransactionType for logging events

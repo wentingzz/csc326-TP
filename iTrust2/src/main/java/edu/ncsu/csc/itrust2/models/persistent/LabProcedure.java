@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.criterion.Criterion;
+
 /**
  * represents a lab procedure that a patient can have
  *
@@ -217,6 +219,35 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     @SuppressWarnings ( "unchecked" )
     public static List<LabProcedure> getAll () {
         return (List<LabProcedure>) DomainObject.getAll( LabProcedure.class );
+    }
+
+    /**
+     * Returns the Code with the given ID
+     *
+     * @param id
+     *            The ID to retrieve
+     * @return The LabProcedureCode requested if it exists
+     */
+    public static LabProcedure getById ( final Long id ) {
+        try {
+            return getWhere( createCriterionAsList( ID, id ) ).get( 0 );
+        }
+        catch ( final Exception e ) {
+            return null;
+        }
+
+    }
+
+    /**
+     * Returns a List of LabProcedureCode that meet the given WHERE clause
+     *
+     * @param where
+     *            List of Criterion to and together and search for records by
+     * @return The list of Codes selected
+     */
+    @SuppressWarnings ( "unchecked" )
+    private static List<LabProcedure> getWhere ( final List<Criterion> where ) {
+        return (List<LabProcedure>) getWhere( LabProcedure.class, where );
     }
 
     @Override
