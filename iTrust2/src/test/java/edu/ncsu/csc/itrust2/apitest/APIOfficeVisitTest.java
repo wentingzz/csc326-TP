@@ -137,7 +137,7 @@ public class APIOfficeVisitTest {
         visit.setPatient( "patient" );
         visit.setNotes( "Test office visit" );
         visit.setType( AppointmentType.GENERAL_CHECKUP.toString() );
-        visit.setHospital( "iTrust Test Hospital 2" );
+        visit.setHospital( "Hospital Two" );
 
         mvc.perform( post( "/api/v1/officevisits" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( visit ) ) ).andExpect( status().isOk() );
@@ -175,7 +175,7 @@ public class APIOfficeVisitTest {
                 .content( TestUtils.asJsonString( patient ) ) );
 
         /* Create a Hospital to use too */
-        final Hospital hospital = new Hospital( "iTrust Test Hospital 2", "1 iTrust Test Street", "27607", "NC" );
+        final Hospital hospital = new Hospital( "Hospital Two", "1 iTrust Test Street", "27607", "NC" );
         mvc.perform( post( "/api/v1/hospitals" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( hospital ) ) );
 
@@ -187,7 +187,7 @@ public class APIOfficeVisitTest {
         visit.setPatient( "patient" );
         visit.setNotes( "Test office visit" );
         visit.setType( AppointmentType.GENERAL_CHECKUP.toString() );
-        visit.setHospital( "iTrust Test Hospital 2" );
+        visit.setHospital( "Hospital Two" );
 
         /* Create the Office Visit */
         mvc.perform( post( "/api/v1/officevisits" ).contentType( MediaType.APPLICATION_JSON )
@@ -451,7 +451,7 @@ public class APIOfficeVisitTest {
         form.setPatient( "TimTheOneYearOld" );
         form.setNotes( "Test office visit" );
         form.setType( AppointmentType.GENERAL_CHECKUP.toString() );
-        form.setHospital( "iTrust Test Hospital 2" );
+        form.setHospital( "Hospital Two" );
         form.setHeight(0.0f);
         form.setWeight(30.0f);
         form.setHeadCircumference(5.5f);
@@ -474,7 +474,7 @@ public class APIOfficeVisitTest {
         form2.setPatient( "TimTheOneYearOld" );
         form2.setNotes( "Test office visit" );
         form2.setType( AppointmentType.GENERAL_CHECKUP.toString() );
-        form2.setHospital( "iTrust Test Hospital 2" );
+        form2.setHospital( "Hospital Two" );
         form2.setHeight(20.0f);
         form2.setWeight(0.0f);
         form2.setHeadCircumference(5.5f);
@@ -497,7 +497,7 @@ public class APIOfficeVisitTest {
         form3.setPatient( "TimTheOneYearOld" );
         form3.setNotes( "Test office visit" );
         form3.setType( AppointmentType.GENERAL_CHECKUP.toString() );
-        form3.setHospital( "iTrust Test Hospital 2" );
+        form3.setHospital( "Hospital Two" );
         form3.setHeight(20.0f);
         form3.setWeight(20.0f);
         form3.setHeadCircumference(0.0f);

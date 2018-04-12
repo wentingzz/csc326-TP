@@ -23,7 +23,7 @@ public class OfficeVisitTest {
     @Test
     public void testOfficeVisit () {
 
-        final Hospital hosp = new Hospital( "Dr. Jenkins' Insane Asylum", "123 Main St", "12345", "NC" );
+        final Hospital hosp = new Hospital( "Dr Jenkins' Asylum", "123 Main St", "12345", "NC" );
         hosp.save();
 
         final OfficeVisit visit = new OfficeVisit();

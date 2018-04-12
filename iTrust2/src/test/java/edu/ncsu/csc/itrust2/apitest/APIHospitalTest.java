@@ -66,10 +66,10 @@ public class APIHospitalTest {
     @Test
     public void testHospitalAPI () throws Exception {
         mvc.perform( delete( "/api/v1/hospitals" ) );
-        final Hospital hospital = new Hospital( "iTrust Test Hospital 2", "1 iTrust Test Street", "27607", "NC" );
+        final Hospital hospital = new Hospital( "Hospital Two", "1 iTrust Test Street", "27607", "NC" );
         mvc.perform( post( "/api/v1/hospitals" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( hospital ) ) );
-        mvc.perform( get( "/api/v1/hospitals/iTrust Test Hospital 2" ) ).andExpect( status().isOk() )
+        mvc.perform( get( "/api/v1/hospitals/Hospital Two" ) ).andExpect( status().isOk() )
                 .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
 
         // Cannot create same hospital twice
@@ -77,16 +77,16 @@ public class APIHospitalTest {
                 .content( TestUtils.asJsonString( hospital ) ) ).andExpect( status().isConflict() );
 
         hospital.setAddress( "2 iTrust Test Street" );
-        mvc.perform( put( "/api/v1/hospitals/iTrust Test Hospital 2" ).contentType( MediaType.APPLICATION_JSON )
+        mvc.perform( put( "/api/v1/hospitals/Hospital Two" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( hospital ) ) ).andExpect( status().isOk() )
                 .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
 
         // Make sure that the put didn't break anything
-        mvc.perform( get( "/api/v1/hospitals/iTrust Test Hospital 2" ) ).andExpect( status().isOk() )
+        mvc.perform( get( "/api/v1/hospitals/Hospital Two" ) ).andExpect( status().isOk() )
                 .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
 
         // Editing a non-existent hospital should not work
-        mvc.perform( put( "/api/v1/hospitals/iTrust Test Hospital 3" ).contentType( MediaType.APPLICATION_JSON )
+        mvc.perform( put( "/api/v1/hospitals/Hospital Three" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( hospital ) ) ).andExpect( status().isNotFound() );
 
     }

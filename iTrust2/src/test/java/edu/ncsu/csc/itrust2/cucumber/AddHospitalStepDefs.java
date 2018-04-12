@@ -24,8 +24,8 @@ public class AddHospitalStepDefs {
 
     private final WebDriver driver       = new HtmlUnitDriver( true );
     private final String    baseUrl      = "http://localhost:8080/iTrust2";
-
-    private final String    hospitalName = "TimHortons" + ( new Random() ).nextInt();
+    String alphabet = "abcdefghijklmnopqrstuvwxyz- '";
+    private final String    hospitalName = "TH" + alphabet.charAt((new Random()).nextInt(26));
 
     /**
      * Hospital doesn't exist
