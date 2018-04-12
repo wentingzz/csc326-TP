@@ -1,18 +1,17 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import edu.ncsu.csc.itrust2.forms.personnel.PersonnelForm;
+import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.models.persistent.LabProcedure;
 import edu.ncsu.csc.itrust2.models.persistent.LabProcedureCode;
 import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
@@ -68,13 +67,13 @@ public class APILabProcedureController extends APIController {
     @PreAuthorize ( "hasRole('ROLE_LABTECH')" )
     public List<LabProcedure> getLabTechProcedures () {
         final User user = User.getByName( LoggerUtil.currentUser() );
-        final List<LabProcedure> result = new ArrayList<LabProcedure>();
         final OfficeVisit ov = OfficeVisit.getOfficeVisits().get( 0 );
-        final User patient = User.getPatients().get( 0 );
-        final User hcp = User.getHCPs().get( 0 );
-        result.add( new LabProcedure( 4, new LabProcedureCode(), "notes", user, ov, User.getPatients().get( 0 ),
-                User.getHCPs().get( 0 ), "NEW" ) );
-        return result;
+        final LabProcedure lp = new LabProcedure( 4, new LabProcedureCode(), "notes", user, ov,
+                User.getPatients().get( 0 ), User.getHCPs().get( 0 ), "NEW" );
+
+        lp.save();
+        System.out.println( "\n\n\nPass\n\n\n" );
+        return LabProcedure.getAll();
     }
 
     /**
@@ -98,6 +97,7 @@ public class APILabProcedureController extends APIController {
     // return null;
     // }
 
+    @SuppressWarnings ( "unchecked" )
     /**
      * Updates the Lab Procedure with the id provided by overwriting it with the
      * new Personnel record that is provided. If the ID provided does not match
@@ -109,36 +109,37 @@ public class APILabProcedureController extends APIController {
      *            The updated Lab Procedure to save
      * @return response
      */
-    @PutMapping ( BASE_PATH + "/labprocedure/{id}" )
-    public ResponseEntity updateLabProcedure ( @PathVariable final String id,
-            @RequestBody final PersonnelForm personnelF ) {
-        return null;
-        // final Personnel personnel = new Personnel( personnelF );
-        // if ( null != personnel.getSelf() && null !=
-        // personnel.getSelf().getUsername()
-        // && !id.equals( personnel.getSelf().getUsername() ) ) {
-        // return new ResponseEntity(
-        // errorResponse( "The ID provided does not match the ID of the
-        // Personnel provided" ),
-        // HttpStatus.CONFLICT );
-        // }
-        // final Personnel dbPersonnel = Personnel.getByName( id );
-        // if ( null == dbPersonnel ) {
-        // return new ResponseEntity( errorResponse( "No personnel found for id
-        // " + id ), HttpStatus.NOT_FOUND );
-        // }
-        // try {
-        // personnel.save();
-        // LoggerUtil.log( TransactionType.EDIT_DEMOGRAPHICS,
-        // LoggerUtil.currentUser() );
-        // return new ResponseEntity( personnel, HttpStatus.OK );
-        // }
-        // catch ( final Exception e ) {
-        // return new ResponseEntity(
-        // errorResponse( "Could not update " + personnel.toString() + " because
-        // of " + e.getMessage() ),
-        // HttpStatus.BAD_REQUEST );
-        // }
+    @PutMapping ( BASE_PATH + "/labprocedure/{id}/{status}/{labtech}/" )
+    @PreAuthorize ( "hasRole('ROLE_ADMIN')" )
+    public ResponseEntity updateLabProcedure ( @PathVariable ( "id" ) final String id,
+            @PathVariable ( "status" ) final String status, @PathVariable ( "labtech" ) final String labtech ) {
+        try {
+            final Long realId = Long.valueOf( id );
+            final LabProcedure procedure = LabProcedure.getById( realId );
+            if ( procedure == null ) {
+                return new ResponseEntity( "No code with id " + id, HttpStatus.NOT_FOUND );
+            }
+            procedure.setStatus( status );
+            procedure.setLabtech( User.getByName( labtech ) );
+            procedure.save();
+            final String username = LoggerUtil.currentUser();
+            // try {
+            // uSer = User.getByName(
+            // SecurityContextHolder.getContext().getAuthentication().getName()
+            // );
+            // }
+            // catch ( final Exception e ) {
+            // // ignore, its was a test that wasn't authenticated properly.
+            // }
+            LoggerUtil.log( TransactionType.EIDT_LAB_PROCEDURE, username, username + " edited an Lab Procedure Code" );
+
+            return new ResponseEntity( procedure, HttpStatus.OK );
+        }
+        catch ( final Exception e ) {
+            return new ResponseEntity(
+                    errorResponse( "Could not update Lab Procedure " + id + " because of " + e.getMessage() ),
+                    HttpStatus.BAD_REQUEST );
+        }
     }
 
     /**
