@@ -27,6 +27,9 @@
 				
 				// handle add code button click
 				$scope.addLabProcedureCodes = function() {
+					if ($scope.code.property.length == 0 || $scope.code.component.length == 0 || $scope.code.longCommonName.length == 0) {
+						$scope.errorAdding = "Could not add code";
+					} else {
 					$http.post("/iTrust2/api/v1/labprocedurecodes", $scope.code).then(
 								function(response) {
 									$scope.loadTable();
@@ -40,7 +43,7 @@
 					
 						})
 					
-					
+					}
 					
 				}
 				
@@ -145,7 +148,7 @@
                           							<div class="panel-body">
                          								 <label>LOINC code:</label>
                             								<div class="form-check"> 
-                            							  		<input type="text" class="form-control" name="code" ng-model="code.code" required/>
+                            							  		<input type="text" class="form-control" name="code" ng-model="code.code" placeholder="xxxxx-x" required/>
                             							 </div>
                         							</div>
                         							</div>
