@@ -171,8 +171,8 @@ public class HibernateDataGenerator {
         lockoutUser2.save();
 
         final Patient csc326 = new Patient();
-        csc326.setFirstName( "csc326" );
-        final User csc326User = new User( "csc326", "$2a$10$hOCH0uJlfbR6xzKWPQToXu1RP1/yLAngFXbVKhcnteRIQ1r/bGflm",
+        csc326.setFirstName( "cscThreeTwentySix" );
+        final User csc326User = new User( "cscThreeTwentySix", "$2a$10$hOCH0uJlfbR6xzKWPQToXu1RP1/yLAngFXbVKhcnteRIQ1r/bGflm",
                 Role.ROLE_PATIENT, 1 );
         csc326User.save();
         csc326.setSelf( csc326User );
@@ -197,7 +197,7 @@ public class HibernateDataGenerator {
         testER.save();
 
         final Patient testTech = new Patient();
-        testTech.setFirstName( "csc326" );
+        testTech.setFirstName( "cscThreeTwentySix" );
         final User testTechUser = new User( "testlabtech",
                 "$2a$10$hOCH0uJlfbR6xzKWPQToXu1RP1/yLAngFXbVKhcnteRIQ1r/bGflm", Role.ROLE_ER, 1 );
         testTechUser.save();

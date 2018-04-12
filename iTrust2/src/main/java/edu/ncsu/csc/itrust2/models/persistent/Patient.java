@@ -425,7 +425,7 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      *            the first name to set this patient to
      */
     public void setFirstName ( final String firstName ) {
-        if ( firstName == null || firstName.length() > 20 || !firstName.matches( "[a-zA-Z\\d' -]+" ) ) {
+        if ( firstName == null || firstName.length() > 20 || !firstName.matches( "[A-Za-z \'-]+$" ) ) {
             throw new IllegalArgumentException(
                     "First name must contain 1-20 characters (alphanumeric, -, ', or space)" );
         }
@@ -472,7 +472,7 @@ public class Patient extends DomainObject<Patient> implements Serializable {
      *            the last name to set this patient to
      */
     public void setLastName ( final String lastName ) {
-        if ( lastName == null || lastName.length() > 30 || !lastName.matches( "[a-zA-Z\\d' -]+" ) ) {
+        if ( lastName == null || lastName.length() > 30 || !lastName.matches( "[A-Za-z \'-]+$" ) ) {
             throw new IllegalArgumentException(
                     "Last name must contain 1-30 characters (alphanumeric, -, ', or space)" );
         }
