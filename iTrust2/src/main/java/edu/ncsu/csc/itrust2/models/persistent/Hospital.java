@@ -2,6 +2,7 @@ package edu.ncsu.csc.itrust2.models.persistent;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -112,7 +113,7 @@ public class Hospital extends DomainObject<Hospital> implements Serializable {
      * Name of the Hospital
      */
     @NotEmpty
-    @Length ( max = 100 )
+    @Length ( min = 1, max = 20 )
     @Id
     private String name;
 
@@ -152,6 +153,9 @@ public class Hospital extends DomainObject<Hospital> implements Serializable {
      *            New Name for the Hospital
      */
     public void setName ( final String name ) {
+    		if ( !Pattern.matches( "[A-Za-z \'-]+$", String.valueOf( name ) ) ) {
+                throw new IllegalArgumentException( "Name can only contain 1 to 20 alpha characters and symbols -, ', and space" );
+            }
         this.name = name;
     }
 

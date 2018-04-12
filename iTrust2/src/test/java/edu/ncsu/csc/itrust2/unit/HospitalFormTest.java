@@ -40,7 +40,8 @@ public class HospitalFormTest {
     public void testInvalidHospital () {
         final Hospital hospital = new Hospital();
         hospital.setAddress( "addr" );
-        hospital.setName( "name" );
+        //test valid name with 20> characters, space, ', and -
+        hospital.setName( "Hello-Bye's hospital" );
         hospital.setState( State.AL );
         try {
             hospital.setZip( "12345-67890" );
@@ -60,5 +61,29 @@ public class HospitalFormTest {
         catch ( final IllegalArgumentException e ) {
             assertEquals( e.getMessage(), "Only 5 or 9 digit zipcode allowed" );
         }
+        
+        //test invalid hospital name longer than 20 letters
+        try {
+            hospital.setName( "This name is longer than twenty characters" );
+        }
+        catch ( final IllegalArgumentException e ) {
+            assertEquals( e.getMessage(), "Name can only contain 1 to 20 alpha characters and symbols -, ', and space" );
+        }
+        
+      //test invalid hospital name with numbers
+        try {
+            hospital.setName( "hospital123" );
+        }
+        catch ( final IllegalArgumentException e ) {
+            assertEquals( e.getMessage(), "Name can only contain 1 to 20 alpha characters and symbols -, ', and space" );
+        }
+      //test invalid hospital with invalid symbols
+        try {
+            hospital.setName( "hospital@$" );
+        }
+        catch ( final IllegalArgumentException e ) {
+            assertEquals( e.getMessage(), "Name can only contain 1 to 20 alpha characters and symbols -, ', and space" );
+        }
+
     }
 }

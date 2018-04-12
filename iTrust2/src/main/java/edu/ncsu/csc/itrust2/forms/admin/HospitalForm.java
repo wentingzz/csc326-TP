@@ -18,7 +18,7 @@ public class HospitalForm {
      * Name of the Hospital
      */
     @NotEmpty
-    @Length ( max = 255 )
+    @Length ( max = 20 )
     private String name;
 
     /**
