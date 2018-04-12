@@ -72,7 +72,7 @@ public class APILabProcedureController extends APIController {
                 User.getPatients().get( 0 ), User.getHCPs().get( 0 ), "NEW" );
 
         lp.save();
-        System.out.println( "\n\n\n\nPass\n\n\n" );
+        System.out.println( "\n\n\nPass\n\n\n" );
         return LabProcedure.getAll();
     }
 

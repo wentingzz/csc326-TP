@@ -47,7 +47,7 @@
                     });
         }
         
-        $scope.update = function () {
+        $scope.update = function ( ) {
         		$http.put('/iTrust2/api/v1/labprocedure/' + $scope.selectedProcedure.id + "/" +  $scope.updateStatus+ "/" +  $scope.updateLabTech + "/").then(
 					function(response) {
 						$scope.loadTable();
