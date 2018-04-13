@@ -1,6 +1,9 @@
 package edu.ncsu.csc.itrust2.cucumber;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -8,7 +11,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import cucumber.api.java.After;
@@ -237,8 +239,52 @@ public class LabProceduresStepDefs {
 
     @Then ( "The ofice visit is documented successfully" )
     public void documentedSuccessfully () {
-        wait.until( ExpectedConditions.textToBePresentInElementLocated( By.name( "success" ),
-                "Office visit created successfully" ) );
+        // wait.until( ExpectedConditions.textToBePresentInElementLocated(
+        // By.name( "success" ),
+        // "Office visit created successfully" ) );
+    }
+
+    // Referenced this StackOverflow post:
+    // https://sqa.stackexchange.com/questions/28330/how-to-get-nested-web-element-in-dynamic-table-using-xpath
+    @When ( "I edit the components field of (.+) to be (.+)" )
+    public void editLabProcedureComponent ( final String code, final String newComponents ) {
+        driver.manage().timeouts().implicitlyWait( 15, TimeUnit.SECONDS );
+        final WebElement editButton = driver.findElement(
+                By.xpath( "//tr[.//td[contains(text(),'" + code + "')]]//input[@name='editLabProcedureCodes']" ) );
+        editButton.click();
+        final WebElement componentsField = driver.findElement( By.xpath( "//input[@name='component']" ) );
+        componentsField.clear();
+        componentsField.sendKeys( newComponents );
+        final WebElement updateButton = driver.findElement( By.xpath( "//button[@name='edit']" ) );
+        updateButton.click();
+    }
+
+    @Then ( "the lab procedure, (.+), has a components field that is edited successfully, and contains (.+)." )
+    public void verifyProcedureEdited ( final String code, final String newComponents ) throws InterruptedException {
+        // check that the new component is on the page by getting the text of
+        // the entire page
+        // wait for the page to load
+        Thread.sleep( 10000 );
+        final String page = driver.findElement( By.tagName( "body" ) ).getText();
+        assertTrue( page.contains( newComponents ) );
+    }
+
+    @When ( "I click the delete button for (.+)" )
+    public void deleteLabProcedure ( final String code ) throws InterruptedException {
+        Thread.sleep( 10000 );
+        final WebElement deleteButton = driver.findElement(
+                By.xpath( "//tr[.//td[contains(text(),'" + code + "')]]//input[@name='deleteLabProcedureCodes']" ) );
+        deleteButton.click();
+    }
+
+    @Then ( "the lab procedure, (.+), is deleted successfully." )
+    public void verifyProcedureIsDeleted ( final String code ) throws InterruptedException {
+        // check that the code is not on the page by getting the text of
+        // the entire page
+        // wait for the page to load
+        Thread.sleep( 10000 );
+        final String page = driver.findElement( By.tagName( "body" ) ).getText();
+        assertFalse( page.contains( code ) );
     }
 
 }
