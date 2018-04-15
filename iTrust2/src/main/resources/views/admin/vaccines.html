@@ -34,7 +34,7 @@
         $scope.loadTable = function () {
           $http.get("/iTrust2/api/v1/vaccines").then(
             function (response) {
-              $scope.vaccine = response.data;
+              $scope.vaccines = response.data;
               $scope.message = "";
             }, function (rejection) {
               $scope.vaccines = [];
@@ -49,12 +49,13 @@
           } else {
             $http.post("/iTrust2/api/v1/vaccines", $scope.vaccine).then(
               function (response) {
-                $scope.loadTable();
-                $scope.vaccine.name = "";
-                $scope.vaccine.code = "";
-                $scope.vaccine.description = "";
-                $scope.errorAdding = "";
+            	  $scope.loadTable();
+                  $scope.vaccine.name = "";
+                  $scope.vaccine.code = "";
+                  $scope.vaccine.description = "";
+                  $scope.errorAdding = "";
               }, function (rejection) {
+
                 $scope.errorAdding = "Could not add vaccine";
               });
           }

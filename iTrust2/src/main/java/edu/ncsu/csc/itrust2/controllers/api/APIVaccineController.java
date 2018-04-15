@@ -40,7 +40,7 @@ public class APIVaccineController extends APIController {
 	public ResponseEntity addVaccine(@RequestBody final VaccineForm form) {
 		try {
 			final Vaccine vaccine = new Vaccine(form);
-
+			
 			// Make sure code does not conflict with existing vaccines
 			if (Vaccine.getByCode(vaccine.getCode()) != null) {
 				LoggerUtil.log(TransactionType.VACCINE_CREATE, LoggerUtil.currentUser(),
@@ -48,7 +48,6 @@ public class APIVaccineController extends APIController {
 				return new ResponseEntity(errorResponse("Vaccine with code " + vaccine.getCode() + " already exists"),
 						HttpStatus.CONFLICT);
 			}
-
 			vaccine.save();
 			LoggerUtil.log(TransactionType.VACCINE_CREATE, LoggerUtil.currentUser(),
 					"Vaccine " + vaccine.getCode() + " created");
