@@ -26,7 +26,6 @@ public class VaccineForm {
 	 * Empty constructor for filling in fields without a Vaccine object
 	 */
 	public VaccineForm() {
-
 	}
 
 	/**

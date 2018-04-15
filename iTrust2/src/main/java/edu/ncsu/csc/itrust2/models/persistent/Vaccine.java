@@ -82,7 +82,7 @@ public class Vaccine extends DomainObject<Vaccine> {
 	 * @param code
 	 *            the CPT code of the vaccine
 	 */
-	public void setCode(String code) {
+	public void setCode(final String code) {
 		this.code = code;
 	}
 
@@ -101,7 +101,7 @@ public class Vaccine extends DomainObject<Vaccine> {
 	 * @param name
 	 *            the name of the vaccine
 	 */
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -120,7 +120,7 @@ public class Vaccine extends DomainObject<Vaccine> {
 	 * @param description
 	 *            the description of the vaccine
 	 */
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -130,7 +130,7 @@ public class Vaccine extends DomainObject<Vaccine> {
 	 * @param id
 	 *            the id of the vaccine
 	 */
-	public void setId(Long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
