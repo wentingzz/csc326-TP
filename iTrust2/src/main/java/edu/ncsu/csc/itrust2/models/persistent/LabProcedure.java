@@ -2,6 +2,7 @@ package edu.ncsu.csc.itrust2.models.persistent;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Vector;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -263,5 +264,31 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     public Serializable getId () {
         // TODO Auto-generated method stub
         return id;
+    }
+
+    /**
+     * Return a list of lab procedure for the specified visit
+     *
+     * @param id
+     *            The ID of the Office Visit to search for
+     * @return The list of Lab Procedure
+     */
+    public static List<LabProcedure> getByVisit ( final Long id ) {
+        return getWhere( createCriterionAsList( "visit", OfficeVisit.getById( id ) ) );
+    }
+
+    /**
+     * Returns a list of lab procedures for the specified Patient
+     *
+     * @param user
+     *            The patient to get lab Procedure for
+     * @return The list of lab procedure
+     */
+    public static List<LabProcedure> getForPatient ( final User user ) {
+        final List<LabProcedure> labProcedure = new Vector<LabProcedure>();
+        OfficeVisit.getForPatient( user.getId() ).stream().map( OfficeVisit::getId )
+                .forEach( e -> labProcedure.addAll( getByVisit( e ) ) );
+        return labProcedure;
+
     }
 }

@@ -337,28 +337,31 @@ public enum TransactionType {
      * Lab Procedure deleted
      */
     VIEW_LAB_PROCEDURE ( 1707, "Lab Procedure deleted", false ),
-    
+
+    /**
+     * User gets lab procedure for an office visit
+     */
+    LAB_PROCEDURE_VIEW_BY_OFFICE_VISIT ( 1708, "Lab Procedure retrived by office visit", false ),
+
     /**
      * Admin created a new vaccine
      */
-    VACCINE_CREATE (1800, "Admin created a new vaccine", true),
-    
+    VACCINE_CREATE ( 1800, "Admin created a new vaccine", true ),
+
     /**
      * Admin edited an existing vaccine
      */
-    VACCINE_EDIT (1801, "Admin edited an existing vaccine", true),
-    
+    VACCINE_EDIT ( 1801, "Admin edited an existing vaccine", true ),
+
     /**
      * Admin deleted an existing vaccine
      */
-    VACCINE_DELETE(1802, "Admin deleted an existing vaccine", true),
-    
+    VACCINE_DELETE ( 1802, "Admin deleted an existing vaccine", true ),
+
     /**
      * Admin views all the vaccines in the system
      */
-    VACCINE_VIEW (1803, "Admin views all the vaccines in the system", true);
-	
-	
+    VACCINE_VIEW ( 1803, "Admin views all the vaccines in the system", true );
 
     /**
      * Creates a TransactionType for logging events

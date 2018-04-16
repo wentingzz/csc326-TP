@@ -80,7 +80,7 @@ public class APILabProcedureController extends APIController {
      * @return
      */
     @GetMapping ( BASE_PATH + "/labtechs/" )
-    @PreAuthorize ( "hasRole('ROLE_LABTECH')" )
+    @PreAuthorize ( "hasRole('ROLE_LABTECH') OR hasRole('ROLE_HCP')" )
     public List<User> getLabTechs () {
         return User.getLabtechs();
     }
@@ -152,5 +152,24 @@ public class APILabProcedureController extends APIController {
     @DeleteMapping ( BASE_PATH + "/labprocedure/{id}" )
     public ResponseEntity deleteLabProcedure ( @PathVariable final String id ) {
         return null;
+    }
+
+    /**
+     * Returns a list of lab procedure for a specified office visit
+     *
+     * @param id
+     *            The ID of the office visit to get lab procedure for
+     * @return List of Lab Procedure objects for the given visit
+     */
+    @GetMapping ( BASE_PATH + "/labProcedureforvisit/{id}" )
+    public List<LabProcedure> getLabProcedureForVisit ( @PathVariable ( "id" ) final Long id ) {
+        // Check if office visit exists
+        if ( OfficeVisit.getById( id ) == null ) {
+            return null;
+        }
+        LoggerUtil.log( TransactionType.LAB_PROCEDURE_VIEW_BY_OFFICE_VISIT, LoggerUtil.currentUser(),
+                OfficeVisit.getById( id ).getPatient().getUsername(),
+                "Retrieved diagnoses for office visit with id " + id );
+        return LabProcedure.getByVisit( id );
     }
 }

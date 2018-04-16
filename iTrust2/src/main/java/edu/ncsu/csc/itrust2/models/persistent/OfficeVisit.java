@@ -208,6 +208,14 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
             }
         }
 
+        // associate all lab procedure with this visit
+        if ( ovf.getLabProcedures() != null ) {
+            setLabProcedures( ovf.getLabProcedures() );
+            for ( final LabProcedure l : labProcedures ) {
+                l.setOfficevisit( this );
+            }
+        }
+
         final Patient p = Patient.getPatient( patient );
         if ( p == null || p.getDateOfBirth() == null ) {
             return; // we're done, patient can't be tested against
@@ -498,6 +506,25 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     }
 
     /**
+     * Returns the list of lab procedures for this visit
+     *
+     * @return The list of lab procedures
+     */
+    public List<LabProcedure> getLabProcedures () {
+        return labProcedures;
+    }
+
+    /**
+     * Sets the list of lab procedures associated with this visit
+     *
+     * @param labProcedures
+     *            The list of lab procedures
+     */
+    public void setLabProcedures ( final List<LabProcedure> labProcedures ) {
+        this.labProcedures = labProcedures;
+    }
+
+    /**
      * Returns the list of prescriptions for this visit
      *
      * @return The list of prescriptions
@@ -564,6 +591,9 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
      */
     @OneToMany ( mappedBy = "visit" )
     public transient List<Diagnosis> diagnoses;
+
+    @OneToMany ( mappedBy = "officeVisit" )
+    private List<LabProcedure>       labProcedures;
 
     /**
      * The notes of this office visit
@@ -723,10 +753,12 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
 
     /**
      * Deletes all Office visits, and all Diagnoses (No diagnoses without an
-     * office visit)
+     * office visit) and all Lab Procedure (No lab procedure without an office
+     * visit)
      */
     public static void deleteAll () {
         DomainObject.deleteAll( Diagnosis.class );
+        DomainObject.deleteAll( LabProcedure.class );
         DomainObject.deleteAll( OfficeVisit.class );
     }
 

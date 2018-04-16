@@ -13,6 +13,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import edu.ncsu.csc.itrust2.models.enums.HouseholdSmokingStatus;
 import edu.ncsu.csc.itrust2.models.enums.PatientSmokingStatus;
 import edu.ncsu.csc.itrust2.models.persistent.Diagnosis;
+import edu.ncsu.csc.itrust2.models.persistent.LabProcedure;
 import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
 import edu.ncsu.csc.itrust2.models.persistent.Prescription;
 
@@ -148,6 +149,8 @@ public class OfficeVisitForm implements Serializable {
     private List<Diagnosis>        diagnoses;
 
     private List<PrescriptionForm> prescriptions;
+
+    private List<LabProcedure>     labProcedures;
 
     /**
      * Creates an OfficeVisitForm from the OfficeVisit provided
@@ -567,5 +570,24 @@ public class OfficeVisitForm implements Serializable {
      */
     public List<PrescriptionForm> getPrescriptions () {
         return prescriptions;
+    }
+
+    /**
+     * Sets the list of prescriptions for this visit.
+     *
+     * @param labProcedures
+     *            the list of prescriptions
+     */
+    public void setLabProcedure ( final List<LabProcedure> labProcedures ) {
+        this.labProcedures = labProcedures;
+    }
+
+    /**
+     * Returns the list of prescriptions associated with this office visit.
+     *
+     * @return prescriptions the list prescriptions
+     */
+    public List<LabProcedure> getLabProcedures () {
+        return labProcedures;
     }
 }
