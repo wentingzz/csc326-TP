@@ -111,6 +111,8 @@ public class APIOfficeVisitController extends APIController {
                         HttpStatus.CONFLICT );
             }
             visit.save();
+            visit.getLabProcedures().get( 0 );
+
             LoggerUtil.log( TransactionType.OFFICE_VISIT_CREATE, LoggerUtil.currentUser(),
                     visit.getPatient().getUsername() );
             return new ResponseEntity( visit, HttpStatus.OK );

@@ -240,6 +240,9 @@
 
               $scope.visit.diagnoses = $scope.diagnoses;
               $scope.visit.labProcedure = $scope.labProcedure;
+              $scope.visit.labProcedure.forEach(function (lp) {
+            	    lp.code = lp.code.code;
+              });
               $scope.visit.prescriptions = $scope.prescriptions;
               $scope.visit.prescriptions.forEach(function (p) {
                 p.patient = $scope.visit.patient;
@@ -261,9 +264,9 @@
             $scope.codeEntry = "";
 
             $scope.labProcedureCode = "";
-        	$scope.priority = "";
-        	$scope.comments = "";
-        	$scope.labTech = "";
+        		$scope.priority = "";
+        		$scope.comments = "";
+        		$scope.labTech = "";
         	
             $scope.drugEntry = "";
             $scope.dosageEntry = "";
@@ -308,13 +311,14 @@
             //capture each lab procedure into an array
             $scope.labProcedure = [];
             $scope.fillLabProcedure = function () {
-            	$scope.labProcedure.push({
-            		code: $scope.labProcedureCode,
-            		priority: $scope.priority,
-            		comments: $scope.comments,
-            		labtech:$scope.labTech
-            	});
-            	resetLabProcedureForm();
+            		var lp = {
+                    		code: $scope.labProcedureCode,
+                    		priority: $scope.priority,
+                    		comments: $scope.comments,
+                    		labtech:$scope.labTech
+                    	}
+            		$scope.labProcedure.push(lp);
+            		resetLabProcedureForm();
             }
 
             //capture each prescription into an array
@@ -786,7 +790,7 @@
                               <ul style="list-style: none;">
                                 <li ng-repeat="i in labprocedurecodes">
                                   <label> 
-                                    <input type="radio" ng-model="$parent.labProcedureCode" id="{{i.code}}" name="{{i.commonLongName}}" ng-value="i" required="true" /> {{i.code}}
+                                    <input type="radio" ng-model="$parent.labProcedureCode" id="{{i.code}}" name="{{i.commonLongName}}" ng-value="i" required /> {{i.code}}
                                   </label>
                                 </li>
                               </ul>
@@ -800,18 +804,18 @@
                           </div>
                           <div class="col-xs-6 radio-box">
                             <div class="form-check">
-                              <ul style="list-style: none;">
+                              <ul style="list-style: none">
                                  <li> <label> 
-                                    <input type="radio" ng-model="priority" ng-value="1" required="true" /> 1 (Highest) 
+                                    <input type="radio" ng-model="priority" ng-value="1" required /> 1 (Highest) 
                                   </label></li>
                                  <li> <label> 
-                                    <input type="radio" ng-model="priority" ng-value="2" required="true" /> 2
+                                    <input type="radio" ng-model="priority" ng-value="2" required /> 2
                                   </label> </li>
                                   <li> <label> 
-                                    <input type="radio" ng-model="priority" ng-value="3" required="true" /> 3
+                                    <input type="radio" ng-model="priority" ng-value="3" required /> 3
                                   </label></li>
                                   <li><label> 
-                                    <input type="radio" ng-model="priority" ng-value="4" required="true" /> 4 (Lowest)
+                                    <input type="radio" ng-model="priority" ng-value="4" required /> 4 (Lowest)
                                   </label></li>
                               </ul>
                             </div>
@@ -836,7 +840,7 @@
                               <ul style="list-style: none;">
                                 <li ng-repeat="i in labTechs">
                                   <label> 
-                                    <input type="radio" ng-model="labtech" name="labTech" ng-value="i" required="true" /> {{i.username}}
+                                    <input type="radio" ng-model="labtech" name="labTech" ng-value="i.username" required="true" /> {{i.username}}
                                   </label>
                                 </li>
                               </ul>

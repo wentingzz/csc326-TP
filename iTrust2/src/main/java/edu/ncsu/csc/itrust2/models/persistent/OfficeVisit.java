@@ -28,6 +28,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.criterion.Criterion;
 
+import edu.ncsu.csc.itrust2.forms.hcp.LabProcedureForm;
 import edu.ncsu.csc.itrust2.forms.hcp.OfficeVisitForm;
 import edu.ncsu.csc.itrust2.forms.hcp.PrescriptionForm;
 import edu.ncsu.csc.itrust2.models.enums.AppointmentType;
@@ -208,14 +209,6 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
             }
         }
 
-        // associate all lab procedure with this visit
-        if ( ovf.getLabProcedures() != null ) {
-            setLabProcedures( ovf.getLabProcedures() );
-            for ( final LabProcedure l : labProcedures ) {
-                l.setOfficevisit( this );
-            }
-        }
-
         final Patient p = Patient.getPatient( patient );
         if ( p == null || p.getDateOfBirth() == null ) {
             return; // we're done, patient can't be tested against
@@ -246,6 +239,19 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
         if ( ps != null ) {
             setPrescriptions( ps.stream().map( ( final PrescriptionForm pf ) -> new Prescription( pf ) )
                     .collect( Collectors.toList() ) );
+        }
+
+        // associate all lab procedure with this visit
+        final List<LabProcedureForm> lpfs = ovf.getLabProcedures();
+        ovf.getLabProcedures().get( 0 );
+        if ( lpfs != null ) {
+            setLabProcedures( lpfs.stream().map( ( final LabProcedureForm lpf ) -> new LabProcedure( lpf ) )
+                    .collect( Collectors.toList() ) );
+            for ( final LabProcedure lp : labProcedures ) {
+                lp.setOfficevisit( this );
+                // lp.save();
+            }
+
         }
     }
 
@@ -701,6 +707,7 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
 
                 }
             }
+
             // delete any previous associations - they were deleted by user.
             for ( final Long oldId : previous ) {
                 final Diagnosis dDie = Diagnosis.getById( oldId );
@@ -710,6 +717,60 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
                         LoggerUtil.log( TransactionType.DIAGNOSIS_DELETE, getHcp().getUsername(),
                                 getPatient().getUsername(),
                                 getHcp().getUsername() + " deleted a diagnosis for " + getPatient().getUsername() );
+                    }
+                    catch ( final Exception e ) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            // get list of ids associated with this visit if this visit already
+            // exists
+            final Set<Long> previousLP = LabProcedure.getByVisit( id ).stream().map( LabProcedure::getId )
+                    .collect( Collectors.toSet() );
+            if ( getLabProcedures() != null ) {
+                for ( final LabProcedure lp : getLabProcedures() ) {
+                    if ( lp == null ) {
+                        continue;
+                    }
+
+                    final boolean had = previousLP.remove( lp.getId() );
+                    try {
+                        if ( !had ) {
+                            // new Diagnosis
+                            LoggerUtil.log( TransactionType.CREATE_LAB_PROCEDURE, getHcp().getUsername(),
+                                    getPatient().getUsername(), getHcp() + " created Lab Procedure " + getPatient() );
+                        }
+                        else {
+                            // already had - check if edited
+                            final LabProcedure old = LabProcedure.getById( lp.getId() );
+                            if ( !old.getCode().getCode().equals( lp.getCode().getCode() )
+                                    || old.getPriority() != lp.getPriority() || !old.getNotes().equals( lp.getNotes() )
+                                    || !old.getLabtech().getUsername().equals( lp.getLabtech().getUsername() ) ) {
+                                // was edited:
+                                LoggerUtil.log( TransactionType.EIDT_LAB_PROCEDURE, getHcp().getUsername(),
+                                        getPatient().getUsername(),
+                                        getHcp() + " edit a lab procedure for " + getPatient() );
+
+                            }
+                        }
+                    }
+                    catch ( final Exception e ) {
+                        e.printStackTrace();
+                    }
+                    lp.save();
+
+                }
+            }
+            // delete any previous associations - they were deleted by user.
+            for ( final Long oldLPId : previousLP ) {
+                final LabProcedure dLPDie = LabProcedure.getById( oldLPId );
+                if ( dLPDie != null ) {
+                    dLPDie.delete();
+                    try {
+                        LoggerUtil.log( TransactionType.Delete_LAB_PROCEDURE, getHcp().getUsername(),
+                                getPatient().getUsername(),
+                                getHcp().getUsername() + " deleted a lab procedure for " + getPatient().getUsername() );
                     }
                     catch ( final Exception e ) {
                         e.printStackTrace();

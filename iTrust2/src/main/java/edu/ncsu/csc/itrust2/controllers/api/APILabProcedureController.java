@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.models.persistent.LabProcedure;
-import edu.ncsu.csc.itrust2.models.persistent.LabProcedureCode;
 import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
 import edu.ncsu.csc.itrust2.models.persistent.User;
 import edu.ncsu.csc.itrust2.utils.LoggerUtil;
@@ -66,13 +65,6 @@ public class APILabProcedureController extends APIController {
     @GetMapping ( BASE_PATH + "/labtech/labprocedures/" )
     @PreAuthorize ( "hasRole('ROLE_LABTECH')" )
     public List<LabProcedure> getLabTechProcedures () {
-        final User user = User.getByName( LoggerUtil.currentUser() );
-        final OfficeVisit ov = OfficeVisit.getOfficeVisits().get( 0 );
-        final LabProcedure lp = new LabProcedure( 4, new LabProcedureCode(), "notes", user, ov,
-                User.getPatients().get( 0 ), User.getHCPs().get( 0 ), "NEW" );
-
-        lp.save();
-        System.out.println( "\n\n\nPass\n\n\n" );
         return LabProcedure.getAll();
     }
 

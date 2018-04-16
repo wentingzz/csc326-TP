@@ -334,9 +334,14 @@ public enum TransactionType {
     Delete_LAB_PROCEDURE ( 1706, "Lab Procedure deleted", false ),
 
     /**
-     * Lab Procedure deleted
+     * Lab Procedure viewed
      */
     VIEW_LAB_PROCEDURE ( 1707, "Lab Procedure deleted", false ),
+
+    /**
+     * Lab Procedure created
+     */
+    CREATE_LAB_PROCEDURE ( 1705, "Lab Procedure viewed", false ),
 
     /**
      * User gets lab procedure for an office visit

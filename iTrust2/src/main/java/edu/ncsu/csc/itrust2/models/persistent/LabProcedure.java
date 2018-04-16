@@ -1,6 +1,5 @@
 package edu.ncsu.csc.itrust2.models.persistent;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 
@@ -10,10 +9,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.criterion.Criterion;
+
+import edu.ncsu.csc.itrust2.forms.hcp.LabProcedureForm;
 
 /**
  * represents a lab procedure that a patient can have
@@ -31,7 +33,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     int              priority;
     // code that corresponds to the procedure
     @NotNull
-    @ManyToOne
+    @OneToOne
     @JoinColumn ( name = "code" )
     LabProcedureCode code;
     // notes associated with the procedure
@@ -41,7 +43,6 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     // the office visit during which the procedure is performed
     @NotNull
     @ManyToOne
-    @JoinColumn ( name = "office_visit" )
     OfficeVisit      officeVisit;
     // the patient for which the procedure is performed
     User             patient;
@@ -63,6 +64,12 @@ public class LabProcedure extends DomainObject<LabProcedure> {
         this.patient = patient;
         this.hcp = hcp;
         this.status = status;
+    }
+
+    public LabProcedure ( final LabProcedureForm lpf ) {
+
+        final LabProcedureCode lpc = LabProcedureCode.getById( id );
+        this.setCode( lpc );
     }
 
     /**
@@ -261,7 +268,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     }
 
     @Override
-    public Serializable getId () {
+    public Long getId () {
         // TODO Auto-generated method stub
         return id;
     }
@@ -274,7 +281,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
      * @return The list of Lab Procedure
      */
     public static List<LabProcedure> getByVisit ( final Long id ) {
-        return getWhere( createCriterionAsList( "visit", OfficeVisit.getById( id ) ) );
+        return getWhere( createCriterionAsList( "officeVisit", OfficeVisit.getById( id ) ) );
     }
 
     /**

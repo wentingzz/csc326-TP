@@ -150,7 +150,7 @@ public class OfficeVisitForm implements Serializable {
 
     private List<PrescriptionForm> prescriptions;
 
-    private List<LabProcedure>     labProcedures;
+    private List<LabProcedureForm> labProcedure;
 
     /**
      * Creates an OfficeVisitForm from the OfficeVisit provided
@@ -169,8 +169,11 @@ public class OfficeVisitForm implements Serializable {
         setId( ov.getId().toString() );
         setPreScheduled( ( (Boolean) ( ov.getAppointment() != null ) ).toString() );
         setDiagnoses( new ArrayList<Diagnosis>() );
-        setPrescriptions( ov.getPrescriptions().stream().map( ( Prescription p ) -> new PrescriptionForm( p ) )
+        setPrescriptions( ov.getPrescriptions().stream().map( ( final Prescription p ) -> new PrescriptionForm( p ) )
                 .collect( Collectors.toList() ) );
+        setLabProcedure( ov.getLabProcedures().stream().map( ( final LabProcedure lp ) -> new LabProcedureForm( lp ) )
+                .collect( Collectors.toList() ) );
+
     }
 
     /**
@@ -578,8 +581,8 @@ public class OfficeVisitForm implements Serializable {
      * @param labProcedures
      *            the list of prescriptions
      */
-    public void setLabProcedure ( final List<LabProcedure> labProcedures ) {
-        this.labProcedures = labProcedures;
+    public void setLabProcedure ( final List<LabProcedureForm> labProcedures ) {
+        this.labProcedure = labProcedures;
     }
 
     /**
@@ -587,7 +590,7 @@ public class OfficeVisitForm implements Serializable {
      *
      * @return prescriptions the list prescriptions
      */
-    public List<LabProcedure> getLabProcedures () {
-        return labProcedures;
+    public List<LabProcedureForm> getLabProcedures () {
+        return labProcedure;
     }
 }
