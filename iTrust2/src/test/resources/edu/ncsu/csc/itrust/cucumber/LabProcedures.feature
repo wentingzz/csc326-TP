@@ -19,6 +19,26 @@ Examples:
 	|name |code| components | property |
 	|urine glucose test |5792-7| Glucose | MCnc  |
 	
+Scenario Outline: Admin edits a lab procedure
+Given I can login as admin
+When I go to the Lab Procedures page
+When I fill in values in the Add Lab Procedure form with <name> and <code> and <components> and <property>
+When I edit the components field of <code> to be <editedComponents>
+Then the lab procedure, <code>, has a components field that is edited successfully, and contains <editedComponents>.
+Examples:
+	|name |code| components | property | editedComponents |
+	|fasting glucose in serum |1558-6 | Glucose^post CFst  | 	MCnc   | Glucose post-fast |
+	
+Scenario Outline: Admin deletes a lab procedure
+Given I can login as admin
+When I go to the Lab Procedures page
+When I fill in values in the Add Lab Procedure form with <name> and <code> and <components> and <property>
+When I click the delete button for <code>
+Then the lab procedure, <code>, is deleted successfully.
+Examples:
+	|name |code| components | property | 
+	|Selenium [Mass/volume] in Serum or Plasma|	5724-0 | Selenium | 	MCnc   | 
+	
 Scenario Outline: HCP adds a lab procedure to an office visit
 Given I log in with username <user> and password <password>
 When I start to fill out the form to document the office visit, including adding a lab procedure with <code> and <priority> and <comments> and <labtech>

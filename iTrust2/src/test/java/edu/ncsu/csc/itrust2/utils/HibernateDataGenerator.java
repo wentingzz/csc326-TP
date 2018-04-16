@@ -14,6 +14,7 @@ import edu.ncsu.csc.itrust2.models.persistent.Hospital;
 import edu.ncsu.csc.itrust2.models.persistent.Patient;
 import edu.ncsu.csc.itrust2.models.persistent.Personnel;
 import edu.ncsu.csc.itrust2.models.persistent.User;
+import edu.ncsu.csc.itrust2.models.persistent.Vaccine;
 
 /**
  * Newly revamped Test Data Generator. This class is used to generate database
@@ -259,5 +260,11 @@ public class HibernateDataGenerator {
         d.setName( "Quetiane Fumarate" );
         d.setDescription( "atypical antipsychotic and antidepressant" );
         d.save();
+        
+        final Vaccine v = new Vaccine();
+        v.setCode("90281");
+        v.setName("IG");
+        v.setDescription("Immune Globulin");
+        v.save();
     }
 }
