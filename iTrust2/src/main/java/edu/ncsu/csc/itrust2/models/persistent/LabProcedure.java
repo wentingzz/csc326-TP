@@ -7,7 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.criterion.Criterion;
 
@@ -26,12 +29,18 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     // priority ranking for the procedure (1-4)
     int              priority;
     // code that corresponds to the procedure
+    @NotNull
+    @ManyToOne
+    @JoinColumn ( name = "code" )
     LabProcedureCode code;
     // notes associated with the procedure
     String           notes;
     // the lab tech assigned to the procedure
     User             labtech;
     // the office visit during which the procedure is performed
+    @NotNull
+    @ManyToOne
+    @JoinColumn ( name = "office_visit" )
     OfficeVisit      officeVisit;
     // the patient for which the procedure is performed
     User             patient;
