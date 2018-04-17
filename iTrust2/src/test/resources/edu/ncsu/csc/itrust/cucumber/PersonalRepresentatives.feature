@@ -26,7 +26,7 @@ When I add the patient <patientrep> by selecting their name and clicking the 'Ad
 Then <patientrep> is succesfully added as a representative.
 Examples:
 	| user | password | patientrep |
-	| csc | redball | patient |
+	| cscThreeTwentySix | redball | AliceThirteen |
 	
 Scenario Outline: Test Patient Removing Their Patient Representative
 Given I am able to log in to iTrust as <user> with password <password>
