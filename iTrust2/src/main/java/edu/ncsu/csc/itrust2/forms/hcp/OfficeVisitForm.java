@@ -16,6 +16,7 @@ import edu.ncsu.csc.itrust2.models.persistent.Diagnosis;
 import edu.ncsu.csc.itrust2.models.persistent.LabProcedure;
 import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
 import edu.ncsu.csc.itrust2.models.persistent.Prescription;
+import edu.ncsu.csc.itrust2.models.persistent.Immunization;
 
 /**
  * Office Visit form used to document an Office Visit by the HCP. This will be
@@ -148,9 +149,20 @@ public class OfficeVisitForm implements Serializable {
      */
     private List<Diagnosis>        diagnoses;
 
+    /**
+     * Prescriptions associated with this visit
+     */
     private List<PrescriptionForm> prescriptions;
-
+    
+    /**
+     * Lab procedures associated with this visit
+     */
     private List<LabProcedureForm> labProcedure;
+    
+    /**
+	 * Immunizations associated with this visit
+	 */
+	private List<ImmunizationForm> immunizations;
 
     /**
      * Creates an OfficeVisitForm from the OfficeVisit provided
@@ -173,6 +185,8 @@ public class OfficeVisitForm implements Serializable {
                 .collect( Collectors.toList() ) );
         setLabProcedure( ov.getLabProcedures().stream().map( ( final LabProcedure lp ) -> new LabProcedureForm( lp ) )
                 .collect( Collectors.toList() ) );
+        setImmunizations(ov.getImmunizations().stream().map((Immunization imm) -> new ImmunizationForm(imm))
+				.collect(Collectors.toList()));
 
     }
 
@@ -593,4 +607,23 @@ public class OfficeVisitForm implements Serializable {
     public List<LabProcedureForm> getLabProcedures () {
         return labProcedure;
     }
+    
+    /**
+	 * Returns the list of immunizations associated with this office visit.
+	 * 
+	 * @return immunizations the list of immunizations
+	 */
+	public List<ImmunizationForm> getImmunizations() {
+		return immunizations;
+	}
+
+	/**
+	 * Sets the list of immunizations for this visit
+	 * 
+	 * @param immunizations
+	 *            the list of immunizations for this visit
+	 */
+	public void setImmunizations(final List<ImmunizationForm> immunizations) {
+		this.immunizations = immunizations;
+	}
 }

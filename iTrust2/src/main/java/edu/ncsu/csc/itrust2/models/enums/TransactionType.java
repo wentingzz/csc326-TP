@@ -366,8 +366,33 @@ public enum TransactionType {
     /**
      * Admin views all the vaccines in the system
      */
-    VACCINE_VIEW ( 1803, "Admin views all the vaccines in the system", true );
-
+    VACCINE_VIEW ( 1803, "Admin views all the vaccines in the system", true ),
+    
+    /**
+     * HCP created a new immunization
+     */
+    IMMUNIZATION_CREATE(1804, "HCP created a new immunization", true), 
+    
+    /**
+     * HCP edited an existing immunization
+     */
+    IMMUNIZATION_EDIT(1805, "HCP edited an existing immunization", true), 
+    
+    /**
+     * HCP deleted an existing immunization
+     */
+    IMMUNIZATION_DELETE(1806, "HCP deleted an existing immunization", true), 
+    
+    /**
+     * User viewed an existing immunization
+     */
+    IMMUNIZATION_VIEW(1807, "User viewed an existing immunization", true), 
+    
+    /**
+     * User viewed a patient's immunizations
+     */
+    IMMUNIZATIONS_VIEW(1808, "User viewed a patient's immunizations", true);
+	
     /**
      * Creates a TransactionType for logging events
      *

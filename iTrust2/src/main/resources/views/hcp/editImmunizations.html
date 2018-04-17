@@ -1,0 +1,263 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="layout :: head(title=~{::title},links=~{})">
+  <title>Edit Immunizations</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+</head>
+
+<body th:include="layout :: body" th:with="content=~{::content}">
+  <div th:fragment="content">
+
+
+    <script th:inline="javascript">
+      /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+      /*<![CDATA[*/
+      var app = angular.module("immunizationsApp", []);
+      app.controller('immunizationsCtrl', function ($scope, $http) {
+        $scope.immunizations = [];
+        $scope.loadTable = function () {
+          $http.get("/iTrust2/api/v1/immunizations").then(
+            function (response) {
+              $scope.immunizations = response.data;
+              $scope.message = "";
+            }, function (rejection) {
+              $scope.immunizations = [];
+              $scope.message = "Could not display immunizations";
+            });
+        }
+
+        var checkValidImmunization = function (imm) {
+          var err = [];
+          if (!imm.vaccine) {
+            err.push("Immunization must be associated with a vaccine");
+          }
+          if (!imm.patient) {
+            err.push("Immunization must be associated with a patient");
+          }
+
+          return err.join(". ");
+        }
+
+        $scope.addImmunization = function () {
+          var err = checkValidImmunization($scope.immunization);
+          if (err) {
+            $scope.errorAdding = err;
+            return;
+          }
+          $http.post("/iTrust2/api/v1/immunizations", $scope.immunization).then(
+            function (response) {
+              $scope.loadTable();
+              $scope.immunization.vaccine = "";
+              $scope.immunization.patient = "";
+              $scope.errorAdding = "";
+            }, function (rejection) {
+              $scope.errorAdding = "Could not add immunization";
+            });
+
+        }
+        $scope.deleteImmunization = function (immunization) {
+          var msg = "Are you sure you want to remove the immunization of " + immunization.vaccine.name + " for " + immunization.patient.username + "?";
+          if (confirm(msg)) {
+	          $http.delete('/iTrust2/api/v1/immunizations/' + immunization.id).then(
+	            function (response) {
+	              $scope.loadTable();
+	              $scope.message = "";
+	            }, function (rejection) {
+	              $scope.message = "Could not remove immunization";
+	            });
+          };
+        }
+
+        $http.get("/iTrust2/api/v1/patients").then(
+          function (response) {
+            $scope.patients = response.data;
+          });
+
+        $http.get("/iTrust2/api/v1/vaccines").then(
+          function (response) {
+            $scope.vaccines = response.data;
+            $scope.message = "";
+          }, function (rejection) {
+            $scope.vaccines = [];
+            $scope.message = "Could not display vaccines";
+          });
+
+        // gets the template to ng-include for a table row / item
+        $scope.selectedImmunization = {};
+
+        $scope.getTemplate = function (immunization) {
+          if (immunization.id === $scope.selectedImmunization.id) return 'edit';
+          else return 'view';
+        };
+
+        $scope.editImmunization = function (immunization) {
+          $scope.selectedImmunization = angular.copy(immunization);
+          $scope.selectedImmunization.vaccine = immunization.vaccine.code;
+          $scope.selectedImmunization.patient = immunization.patient.username;
+        };
+        $scope.saveImmunization = function () {
+          var err = checkValidImmunization($scope.selectedImmunization);
+          if (err) {
+            $scope.errorAdding = err;
+          } else {
+            $http.put("/iTrust2/api/v1/immunizations", $scope.selectedImmunization).then(
+              function (response) {
+                $scope.loadTable();
+                $scope.resetSelected();
+              }, function (rejection) {
+                $scope.errorAdding = "Failed to edit immunization";
+              });
+          }
+        };
+
+        $scope.resetSelected = function () {
+          $scope.selectedImmunization = {};
+        };
+
+
+        $scope.loadTable();
+      });
+			/*]]>*/
+    </script>
+
+
+
+    <div ng-app="immunizationsApp" ng-controller="immunizationsCtrl">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3>HCP Manage Immunizations</h3>
+              </div>
+              <div class="panel-body">
+                <table class="table table-bordered">
+                  <caption>Existing Immunizations:</caption>
+                  <thead>
+                    <tr>
+                      <th>Vaccine</th>
+                      <th>Patient</th>
+                      <th>Manage</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr name="immunizationTableRow" ng-repeat="imm in immunizations | orderBy: 'vaccine'" ng-include="getTemplate(imm)" immunizationId={{imm.id}}>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <!-- table in view mode -->
+                <script type="text/ng-template" id="view">
+                  <td name="vaccineCell">{{imm.vaccine.name}}</td>
+                  <td name="patientCell">{{imm.patient.username}}</td>
+                  <td>
+                    <div class="row text-center">
+                      <div class="col-md-6">
+                        <input type="button" value="Edit" class="btn btn-primary" name="editImmunization" ng-click="editImmunization(imm)" />                         
+                      </div>
+                      <div class="col-md-6">
+                          <input type="button" value="Delete" class="btn btn-danger" name="deleteImmunization" ng-click="deleteImmunization(imm)" />                          
+                      </div>
+                    </div>                  
+                  </td>
+                </script>
+
+                <!-- table in edit mode -->
+                <script type="text/ng-template" id="edit">
+                  <td name="editVaccineCell">
+                    <ul style="list-style: none;">
+                      <li ng-repeat="v in vaccines">
+                        <label>
+                          <input type="radio" ng-model="$parent.selectedImmunization.vaccine" name="vaccine" value="{{v.code}}" required="true" /> {{v.name}}
+                        </label>
+                      </li>
+                    </ul>                  
+                  </td>
+                  <td name="editPatientCell">
+                    <ul style="max-height:15%;overflow:auto;list-style: none;">
+                      <li ng-repeat="patient in patients">
+                        <label>
+                          <input type="radio" ng-model="$parent.selectedImmunization.patient" name="name" value="{{patient.self.username}}" required="true"
+                          />&nbsp; {{patient.self.username}}
+                        </label>
+                      </li>
+                    </ul>
+                  </td>
+                  <td>
+                    <div class="row text-center">
+                      <div class="col-md-6">
+                          <input type="button" value="Save" class="btn btn-success" name="saveVaccine" ng-click="saveImmunization()" />                          
+                      </div>
+                      <div class="col-md-6">
+                          <input type="button" value="Cancel" class="btn btn-danger" name="cancelEdit" ng-click="resetSelected()" />                            
+                      </div>
+                    </div>                  
+                  </td>
+                </script>
+
+
+
+
+                <br>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="panel panel-default">
+                      <div class="panel-heading ">Add an Immunization </div>
+                      <div class="panel-body">
+                        <form class="form-horizontal" role="form" name="addImmunizationForm" ng-submit="addImmunization(addImmunizationForm.$valid)">
+                          <div class="row">
+
+                            <!-- patient -->
+                            <div class="col-md-5 radio-box">
+                              <div class="form-check">
+                                <label>Patient:</label>
+                                <ul style="max-height:15%;overflow:auto;list-style: none;">
+                                  <li ng-repeat="patient in patients">
+                                    <label>
+                                      <input type="radio" ng-model="$parent.immunization.patient" name="name" value="{{patient.self.username}}" required="true"
+                                      />&nbsp; {{patient.self.username}}
+                                    </label>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            <!-- vaccine -->
+                            <div class="col-md-5 radio-box">
+                              <div class="form-check">
+                                <label>Vaccine:</label>
+                                <ul style="list-style: none;">
+                                  <li ng-repeat="v in vaccines">
+                                    <label>
+                                      <input type="radio" ng-model="$parent.immunization.vaccine" name="vaccine" value="{{v.code}}" required="true" /> {{v.name}}
+                                    </label>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                          </div>
+                          <br>
+                          <br>
+                          <br>
+                          <div class="row">
+                            <div class="col-md-12 text-center">
+                              <button type="submit" class="btn btn-success" name="submit">Add Immunization</button>
+                            </div>
+                          </div>
+                        </form>
+                        <div>
+                          <p class="text-danger" ng-model="errorAdding" id="errP">{{errorAdding}}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+</body>
+
+</html>
