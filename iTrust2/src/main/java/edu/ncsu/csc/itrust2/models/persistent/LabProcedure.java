@@ -43,6 +43,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     // the office visit during which the procedure is performed
     @NotNull
     @ManyToOne
+    @JoinColumn ( name = "visit_id" )
     OfficeVisit      officeVisit;
     // the patient for which the procedure is performed
     User             patient;

@@ -249,7 +249,6 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
                     .collect( Collectors.toList() ) );
             for ( final LabProcedure lp : labProcedures ) {
                 lp.setOfficevisit( this );
-                // lp.save();
             }
 
         }
@@ -671,7 +670,9 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
 
         // Save each of the prescriptions
         this.getLabProcedures().forEach( lp -> {
+            lp.save();
             final boolean lpIsSaved = savedLPIds.contains( lp.getId() );
+
             if ( lpIsSaved ) {
                 LoggerUtil.log( TransactionType.EIDT_LAB_PROCEDURE, LoggerUtil.currentUser(),
                         getPatient().getUsername(), "Editing lab procedure with id " + lp.getId() );
@@ -680,7 +681,7 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
                 LoggerUtil.log( TransactionType.CREATE_LAB_PROCEDURE, LoggerUtil.currentUser(),
                         getPatient().getUsername(), "Creating lab procedure with id " + lp.getId() );
             }
-            lp.save();
+
         } );
 
         // Remove prescriptions no longer included

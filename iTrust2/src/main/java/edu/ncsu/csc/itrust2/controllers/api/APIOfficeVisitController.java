@@ -1,6 +1,7 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.ncsu.csc.itrust2.forms.hcp.LabProcedureForm;
 import edu.ncsu.csc.itrust2.forms.hcp.OfficeVisitForm;
 import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.models.enums.TransactionType;
+import edu.ncsu.csc.itrust2.models.persistent.LabProcedure;
 import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
 import edu.ncsu.csc.itrust2.models.persistent.User;
 import edu.ncsu.csc.itrust2.utils.LoggerUtil;
@@ -104,6 +107,17 @@ public class APIOfficeVisitController extends APIController {
     @PostMapping ( BASE_PATH + "/officevisits" )
     public ResponseEntity createOfficeVisit ( @RequestBody final OfficeVisitForm visitF ) {
         try {
+            final List<LabProcedureForm> lpfs = visitF.getLabProcedures();
+            if ( lpfs != null ) {
+                final List<LabProcedure> lplist = lpfs.stream()
+                        .map( ( final LabProcedureForm lpf ) -> new LabProcedure( lpf ) )
+                        .collect( Collectors.toList() );
+                for ( final LabProcedure lp : lplist ) {
+                    lp.save();
+                }
+
+            }
+
             final OfficeVisit visit = new OfficeVisit( visitF );
             if ( null != OfficeVisit.getById( visit.getId() ) ) {
                 return new ResponseEntity(
