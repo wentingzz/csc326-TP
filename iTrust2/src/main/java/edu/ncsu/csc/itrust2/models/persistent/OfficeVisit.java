@@ -666,6 +666,34 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
         }
 
         //// END PRESCRIPTIONS ////
+        final Set<Long> savedLPIds = oldVisit == null ? Collections.emptySet()
+                : oldVisit.getLabProcedures().stream().map( LabProcedure::getId ).collect( Collectors.toSet() );
+
+        // Save each of the prescriptions
+        this.getLabProcedures().forEach( lp -> {
+            final boolean lpIsSaved = savedLPIds.contains( lp.getId() );
+            if ( lpIsSaved ) {
+                LoggerUtil.log( TransactionType.EIDT_LAB_PROCEDURE, LoggerUtil.currentUser(),
+                        getPatient().getUsername(), "Editing lab procedure with id " + lp.getId() );
+            }
+            else {
+                LoggerUtil.log( TransactionType.CREATE_LAB_PROCEDURE, LoggerUtil.currentUser(),
+                        getPatient().getUsername(), "Creating lab procedure with id " + lp.getId() );
+            }
+            lp.save();
+        } );
+
+        // Remove prescriptions no longer included
+        if ( !savedLPIds.isEmpty() ) {
+            savedLPIds.forEach( lpId -> {
+                final boolean lpIsMissing = currentIds.contains( lpId );
+                if ( lpIsMissing ) {
+                    LoggerUtil.log( TransactionType.Delete_LAB_PROCEDURE, LoggerUtil.currentUser(),
+                            getPatient().getUsername(), "Deleting lab procedure with id " + lpId );
+                    LabProcedure.getById( lpId ).delete();
+                }
+            } );
+        }
 
         try {
             super.save();
@@ -726,57 +754,65 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
 
             // get list of ids associated with this visit if this visit already
             // exists
-            final Set<Long> previousLP = LabProcedure.getByVisit( id ).stream().map( LabProcedure::getId )
-                    .collect( Collectors.toSet() );
-            if ( getLabProcedures() != null ) {
-                for ( final LabProcedure lp : getLabProcedures() ) {
-                    if ( lp == null ) {
-                        continue;
-                    }
-
-                    final boolean had = previousLP.remove( lp.getId() );
-                    try {
-                        if ( !had ) {
-                            // new Diagnosis
-                            LoggerUtil.log( TransactionType.CREATE_LAB_PROCEDURE, getHcp().getUsername(),
-                                    getPatient().getUsername(), getHcp() + " created Lab Procedure " + getPatient() );
-                        }
-                        else {
-                            // already had - check if edited
-                            final LabProcedure old = LabProcedure.getById( lp.getId() );
-                            if ( !old.getCode().getCode().equals( lp.getCode().getCode() )
-                                    || old.getPriority() != lp.getPriority() || !old.getNotes().equals( lp.getNotes() )
-                                    || !old.getLabtech().getUsername().equals( lp.getLabtech().getUsername() ) ) {
-                                // was edited:
-                                LoggerUtil.log( TransactionType.EIDT_LAB_PROCEDURE, getHcp().getUsername(),
-                                        getPatient().getUsername(),
-                                        getHcp() + " edit a lab procedure for " + getPatient() );
-
-                            }
-                        }
-                    }
-                    catch ( final Exception e ) {
-                        e.printStackTrace();
-                    }
-                    lp.save();
-
-                }
-            }
+            // final Set<Long> previousLP = LabProcedure.getByVisit( id
+            // ).stream().map( LabProcedure::getId )
+            // .collect( Collectors.toSet() );
+            // if ( getLabProcedures() != null ) {
+            // for ( final LabProcedure lp : getLabProcedures() ) {
+            // if ( lp == null ) {
+            // continue;
+            // }
+            //
+            // final boolean had = previousLP.remove( lp.getId() );
+            // try {
+            // if ( !had ) {
+            // // new Diagnosis
+            // LoggerUtil.log( TransactionType.CREATE_LAB_PROCEDURE,
+            // getHcp().getUsername(),
+            // getPatient().getUsername(), getHcp() + " created Lab Procedure "
+            // + getPatient() );
+            // }
+            // else {
+            // // already had - check if edited
+            // final LabProcedure old = LabProcedure.getById( lp.getId() );
+            // if ( !old.getCode().getCode().equals( lp.getCode().getCode() )
+            // || old.getPriority() != lp.getPriority() ||
+            // !old.getNotes().equals( lp.getNotes() )
+            // || !old.getLabtech().getUsername().equals(
+            // lp.getLabtech().getUsername() ) ) {
+            // // was edited:
+            // LoggerUtil.log( TransactionType.EIDT_LAB_PROCEDURE,
+            // getHcp().getUsername(),
+            // getPatient().getUsername(),
+            // getHcp() + " edit a lab procedure for " + getPatient() );
+            //
+            // }
+            // }
+            // }
+            // catch ( final Exception e ) {
+            // e.printStackTrace();
+            // }
+            // lp.save();
+            //
+            // }
+            // }
             // delete any previous associations - they were deleted by user.
-            for ( final Long oldLPId : previousLP ) {
-                final LabProcedure dLPDie = LabProcedure.getById( oldLPId );
-                if ( dLPDie != null ) {
-                    dLPDie.delete();
-                    try {
-                        LoggerUtil.log( TransactionType.Delete_LAB_PROCEDURE, getHcp().getUsername(),
-                                getPatient().getUsername(),
-                                getHcp().getUsername() + " deleted a lab procedure for " + getPatient().getUsername() );
-                    }
-                    catch ( final Exception e ) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+            // for ( final Long oldLPId : previousLP ) {
+            // final LabProcedure dLPDie = LabProcedure.getById( oldLPId );
+            // if ( dLPDie != null ) {
+            // dLPDie.delete();
+            // try {
+            // LoggerUtil.log( TransactionType.Delete_LAB_PROCEDURE,
+            // getHcp().getUsername(),
+            // getPatient().getUsername(),
+            // getHcp().getUsername() + " deleted a lab procedure for " +
+            // getPatient().getUsername() );
+            // }
+            // catch ( final Exception e ) {
+            // e.printStackTrace();
+            // }
+            // }
+            // }
         }
         catch ( final Exception ex ) {
             // we don't want to save the bhm if an error occurs
