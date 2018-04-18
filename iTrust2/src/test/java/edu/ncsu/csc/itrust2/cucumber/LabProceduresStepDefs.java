@@ -117,7 +117,7 @@ public class LabProceduresStepDefs {
             final String procComments, final String procAssignedTech ) {
         // ( (JavascriptExecutor) driver ).executeScript(
         // "document.getElementById('documentOfficeVisit').click();" );
-
+        //
         // wait.until( ExpectedConditions.and(
         // ExpectedConditions.visibilityOfElementLocated( By.name( "type" ) ),
         // ExpectedConditions.visibilityOfElementLocated( By.name( "name" ) ),
@@ -206,21 +206,23 @@ public class LabProceduresStepDefs {
         // .findElement( By.cssSelector( "input[value=\"" +
         // PatientSmokingStatus.NEVER.toString() + "\"]" ) );
         // patientSmokeElement.click();
-        // final WebElement labProcedureCode = driver.findElement( By.id( "code"
-        // ) );
+        // final WebElement labProcedureCode = driver.findElement( By.id(
+        // procCode ) );
         // labProcedureCode.clear();
-        // labProcedureCode.sendKeys( procCode );
+        // labProcedureCode.click();
         // wait.until( ExpectedConditions.visibilityOfElementLocated( By.name(
         // "submit" ) ) );
-        // final WebElement procedurePriority = driver.findElement( By.id(
+        // //final WebElement procedurePriority = driver.findElement( By.id(
         // "priority" + procPriority ) );
+        // final WebElement procedurePriority = driver.findElement( By.xpath(
+        // "//input[@ng-model='" + procPriority + "']" ) );
         // procedurePriority.click();
-        // final WebElement procedureComments = driver.findElement( By.id(
+        // final WebElement procedureComments = driver.findElement( By.name(
         // "comments" ) );
         // procedureComments.clear();
         // procedureComments.sendKeys( procComments );
-        // final WebElement procedureAssignedTech = driver.findElement( By.id(
-        // procAssignedTech ) );
+        // final WebElement procedureAssignedTech = driver.findElement(
+        // By.xpath( "//input[@value='" + procAssignedTech + "']" ) );
         // procedureAssignedTech.click();
         // final WebElement submit = driver.findElement( By.name( "submit" ) );
         // submit.click();
@@ -242,6 +244,7 @@ public class LabProceduresStepDefs {
         // wait.until( ExpectedConditions.textToBePresentInElementLocated(
         // By.name( "success" ),
         // "Office visit created successfully" ) );
+        // assertTrue( driver.getPageSource().contains( "Office Visit" ) );
     }
 
     // Referenced this StackOverflow post:

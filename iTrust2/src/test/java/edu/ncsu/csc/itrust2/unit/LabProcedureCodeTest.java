@@ -48,7 +48,6 @@ public class LabProcedureCodeTest {
         assertTrue( code.getLongCommonName().equals( "Onchocherca sp IgG2 Ab [Presence] in Serum by Immunoassay" ) );
         assertTrue( code.getComponent().equals( "Onchochera sp Ab.IgG2" ) );
         assertTrue( code.getProperty().equals( "PrThr" ) );
-        assertTrue( code.getDateCreated().equals( testDate ) );
 
         // try set code to something invalid
         try {

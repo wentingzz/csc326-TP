@@ -2,6 +2,7 @@ package edu.ncsu.csc.itrust2.models.persistent;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -621,7 +622,7 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     public transient List<Diagnosis> diagnoses;
 
     @OneToMany ( mappedBy = "officeVisit" )
-    private List<LabProcedure>       labProcedures;
+    private List<LabProcedure>       labProcedures = new ArrayList<LabProcedure>();
 
     /**
      * The notes of this office visit

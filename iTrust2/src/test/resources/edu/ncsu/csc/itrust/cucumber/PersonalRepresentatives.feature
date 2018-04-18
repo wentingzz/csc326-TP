@@ -17,7 +17,7 @@ When I click the 'Add Representative' button
 Then <patientrep> is successfully added as a representative.
 Examples:
 	| user | password | patient | patientrep |
-	| hcp | 123456 | cscThreeTwentySix  | patient |
+	| hcp | 123456 | patient  | cscThreeTwentySix |
 	
 Scenario Outline: Test Patient Adding A Personal Representative for Themselves
 Given I am able to log in to iTrust as <user> with password <password>
@@ -26,7 +26,7 @@ When I add the patient <patientrep> by selecting their name and clicking the 'Ad
 Then <patientrep> is succesfully added as a representative.
 Examples:
 	| user | password | patientrep |
-	| cscThreeTwentySix | redball | AliceThirteen |
+	| cscThreeTwentySix | redball | patient |
 	
 Scenario Outline: Test Patient Removing Their Patient Representative
 Given I am able to log in to iTrust as <user> with password <password>
@@ -36,4 +36,4 @@ When I remove the representative <patientrep> by clicking the 'Delete' button fo
 Then that representative <patientrep> does not appear.
 Examples:
 	| user | password | patientrep |
-	| cscThreeTwentySix | redball | AliceThirteen |
+	| cscThreeTwentySix | redball | patient |
