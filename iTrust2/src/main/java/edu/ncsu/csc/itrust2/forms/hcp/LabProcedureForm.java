@@ -11,7 +11,7 @@ public class LabProcedureForm implements Serializable {
     private static final long serialVersionUID = 1L;
     private String            code;
     private int               priority;
-    private String            comment;
+    private String            comments;
     private String            labtech;
     private Long              id;
 
@@ -32,7 +32,7 @@ public class LabProcedureForm implements Serializable {
             final Long id ) {
         this.code = code;
         this.priority = priority;
-        this.comment = comment;
+        this.comments = comment;
         this.labtech = labtech;
         this.id = id;
     }
@@ -58,7 +58,7 @@ public class LabProcedureForm implements Serializable {
      *            the comment to set
      */
     public void setComment ( final String comment ) {
-        this.comment = comment;
+        this.comments = comment;
     }
 
     /**
@@ -102,7 +102,7 @@ public class LabProcedureForm implements Serializable {
      * @return the comment
      */
     public String getComment () {
-        return comment;
+        return comments;
     }
 
     /**

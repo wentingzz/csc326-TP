@@ -316,7 +316,7 @@
 										$scope.visit.labProcedure = $scope.labProcedure;
 										$scope.visit.labProcedure
 												.forEach(function(lp) {
-													lp.code = lp.code.code;
+													lp.code = lp.code.id;
 												});
 										$scope.visit.prescriptions = $scope.prescriptions;
 										$scope.visit.prescriptions
@@ -945,11 +945,13 @@
 												<div class="col-xs-6 radio-box">
 													<div class="form-check">
 														<ul style="list-style: none;">
-															<li ng-repeat="i in labTechs"><label> <input
-																	type="radio" ng-model="labtech" name="labTech"
-																	ng-value="i.username" required="true" />
-																	{{i.username}}
-															</label></li>
+															<li>
+                                                              <label> 
+                                                                <select ng-model="labTech">
+                                                                 <option ng-repeat="x in labTechs" value="{{x.username}}"> {{x.username}}</option>
+                                                               </select>
+                                                              </label>
+                                								</li>
 														</ul>
 													</div>
 												</div>

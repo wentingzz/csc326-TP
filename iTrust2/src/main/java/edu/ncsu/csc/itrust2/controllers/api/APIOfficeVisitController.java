@@ -1,7 +1,6 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import edu.ncsu.csc.itrust2.forms.hcp.LabProcedureForm;
 import edu.ncsu.csc.itrust2.forms.hcp.OfficeVisitForm;
 import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.models.enums.TransactionType;
-import edu.ncsu.csc.itrust2.models.persistent.LabProcedure;
 import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
 import edu.ncsu.csc.itrust2.models.persistent.User;
 import edu.ncsu.csc.itrust2.utils.LoggerUtil;
@@ -108,24 +106,46 @@ public class APIOfficeVisitController extends APIController {
     public ResponseEntity createOfficeVisit ( @RequestBody final OfficeVisitForm visitF ) {
         try {
             final List<LabProcedureForm> lpfs = visitF.getLabProcedures();
-            if ( lpfs != null ) {
-                final List<LabProcedure> lplist = lpfs.stream()
-                        .map( ( final LabProcedureForm lpf ) -> new LabProcedure( lpf ) )
-                        .collect( Collectors.toList() );
-                for ( final LabProcedure lp : lplist ) {
-                    lp.save();
-                }
-
-            }
-
             final OfficeVisit visit = new OfficeVisit( visitF );
+            // if ( lpfs != null ) {
+            // for ( final LabProcedureForm lpf : lpfs ) {
+            // final LabProcedure lp = new LabProcedure( lpf );
+            // // String result = "";
+            // // if ( lp != null ) {
+            // // result += "\n\n\n\n" + lp.getNotes() + "\t\t" +
+            // // lp.getPriority() + "\t\t";
+            // // if ( lp.getCode() != null ) {
+            // // result += lp.getCode().getCode();
+            // // }
+            // // else {
+            // // result += "null code\t";
+            // // }
+            // // if ( lp.getLabtech() != null ) {
+            // // result += "\t\t" + lp.getLabtech().getUsername() + "\n";
+            // // }
+            // // else {
+            // // result += "null labtech\n";
+            // // }
+            // // }
+            // //
+            // // result += lpf.getComment() + "\t\t" + lpf.getPriority() +
+            // // "\t\t" + lpf.getCode() + "\t\t"
+            // // + lpf.getLabtech() + "\n\n\n\n";
+            // // System.out.println( result );
+            // // lp.setOfficevisit( visit );
+            //
+            // lp.save();
+            // visit.addLabProcedures( lp );
+            // }
+            //
+            // }
+
             if ( null != OfficeVisit.getById( visit.getId() ) ) {
                 return new ResponseEntity(
                         errorResponse( "Office visit with the id " + visit.getId() + " already exists" ),
                         HttpStatus.CONFLICT );
             }
             visit.save();
-            visit.getLabProcedures().get( 0 );
 
             LoggerUtil.log( TransactionType.OFFICE_VISIT_CREATE, LoggerUtil.currentUser(),
                     visit.getPatient().getUsername() );

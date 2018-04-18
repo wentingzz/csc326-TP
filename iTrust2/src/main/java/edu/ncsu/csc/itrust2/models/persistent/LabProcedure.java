@@ -3,19 +3,21 @@ package edu.ncsu.csc.itrust2.models.persistent;
 import java.util.List;
 import java.util.Vector;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.criterion.Criterion;
 
 import edu.ncsu.csc.itrust2.forms.hcp.LabProcedureForm;
+import edu.ncsu.csc.itrust2.models.enums.Role;
 
 /**
  * represents a lab procedure that a patient can have
@@ -29,22 +31,24 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     @Id
     @GeneratedValue ( strategy = GenerationType.AUTO )
     private Long     id;
+    // @NotNull
+    @ManyToOne ( cascade = CascadeType.ALL, fetch = FetchType.LAZY )
+    @JoinColumn ( name = "office_visit" )
+    OfficeVisit      officeVisit;
     // priority ranking for the procedure (1-4)
+
     int              priority;
     // code that corresponds to the procedure
     @NotNull
-    @OneToOne
+    @ManyToOne
     @JoinColumn ( name = "code" )
     LabProcedureCode code;
     // notes associated with the procedure
     String           notes;
     // the lab tech assigned to the procedure
-    User             labtech;
+    String           labtech;
     // the office visit during which the procedure is performed
-    @NotNull
-    @ManyToOne
-    @JoinColumn ( name = "visit_id" )
-    OfficeVisit      officeVisit;
+
     // the patient for which the procedure is performed
     User             patient;
     // the hcp with which the procedure is associated
@@ -60,7 +64,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
         this.priority = priority;
         this.code = code;
         this.notes = notes;
-        this.labtech = labtech;
+        this.labtech = labtech.getUsername();
         this.officeVisit = officeVisit;
         this.patient = patient;
         this.hcp = hcp;
@@ -69,8 +73,17 @@ public class LabProcedure extends DomainObject<LabProcedure> {
 
     public LabProcedure ( final LabProcedureForm lpf ) {
 
-        final LabProcedureCode lpc = LabProcedureCode.getById( id );
+        final LabProcedureCode lpc = LabProcedureCode.getById( Long.valueOf( lpf.getCode() ) );
+        System.out.println( "\n\n\n\n" + Long.valueOf( lpf.getCode() ) + " " + lpc.getCode() );
         this.setCode( lpc );
+        this.setNotes( lpf.getComment() );
+        this.setLabtech( lpf.getLabtech() );
+        this.setPriority( lpf.getPriority() );
+    }
+
+    private void setLabtech ( final String labtech ) {
+        this.labtech = labtech;
+
     }
 
     /**
@@ -137,7 +150,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
      * @return
      */
     public User getLabtech () {
-        return labtech;
+        return User.getByNameAndRole( labtech, Role.ROLE_LABTECH );
     }
 
     /**
@@ -146,7 +159,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
      * @param labtech
      */
     public void setLabtech ( final User labtech ) {
-        this.labtech = labtech;
+        this.labtech = labtech.getUsername();
     }
 
     /**
@@ -268,9 +281,13 @@ public class LabProcedure extends DomainObject<LabProcedure> {
         return (List<LabProcedure>) getWhere( LabProcedure.class, where );
     }
 
+    /**
+     * Returns Lab Procedure's id
+     *
+     * @return id of the lab procedure
+     */
     @Override
     public Long getId () {
-        // TODO Auto-generated method stub
         return id;
     }
 
