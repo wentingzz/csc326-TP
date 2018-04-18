@@ -313,7 +313,7 @@
 										}
 
 										$scope.visit.diagnoses = $scope.diagnoses;
-										$scope.visit.labProcedure = $scope.labProcedure;
+										$scope.visit.labProcedure = angular.copy($scope.labProcedure);
 										$scope.visit.labProcedure
 												.forEach(function(lp) {
 													lp.code = lp.code.id;
