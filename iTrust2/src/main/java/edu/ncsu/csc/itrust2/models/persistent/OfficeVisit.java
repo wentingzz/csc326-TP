@@ -622,7 +622,7 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     public transient List<Diagnosis> diagnoses;
 
     @OneToMany ( mappedBy = "officeVisit" )
-    private List<LabProcedure>       labProcedures = new ArrayList<LabProcedure>();
+    private List<LabProcedure>       labProcedures;
 
     /**
      * The notes of this office visit
