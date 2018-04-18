@@ -157,7 +157,7 @@ public class LabProcedureCodeTest {
                 "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", Role.ROLE_LABTECH, 1 );
         final LabProcedureForm procedureForm = new LabProcedureForm( "5724-1", 3, "none", testLabTech.getUsername(),
                 (long) 0 );
-        // test setters
+        // test getters and setters
         procedureForm.setCode( "5724-0" );
         assertTrue( procedureForm.getCode().equals( "5724-0" ) );
         procedureForm.setComment( "remember to perform a blood test" );
