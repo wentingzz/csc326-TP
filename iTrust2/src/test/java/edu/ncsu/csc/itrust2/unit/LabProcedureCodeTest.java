@@ -7,6 +7,7 @@ import java.util.Date;
 import org.junit.Test;
 
 import edu.ncsu.csc.itrust2.forms.admin.LabProcedureCodeForm;
+import edu.ncsu.csc.itrust2.forms.hcp.LabProcedureForm;
 import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.models.persistent.LabProcedure;
 import edu.ncsu.csc.itrust2.models.persistent.LabProcedureCode;
@@ -143,5 +144,27 @@ public class LabProcedureCodeTest {
         assertTrue( procedure.getPriority() == 1 );
         assertTrue( procedure.getNotes().equals( "updated notes with additional details" ) );
         assertTrue( procedure.getOfficevisit().equals( testVisit ) );
+    }
+
+    /**
+     * tests the LabProcedureForm class
+     */
+    @Test
+    public void testLabProcedureForm () {
+        final User testLabTech = new User( "anotherTestTech",
+                "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", Role.ROLE_LABTECH, 1 );
+        final User testLabTechTwo = new User( "anotherTestTechTwo",
+                "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", Role.ROLE_LABTECH, 1 );
+        final LabProcedureForm procedureForm = new LabProcedureForm( "5724-1", 3, "none", testLabTech.getUsername(),
+                (long) 0 );
+        // test setters
+        procedureForm.setCode( "5724-0" );
+        assertTrue( procedureForm.getCode().equals( "5724-0" ) );
+        procedureForm.setComment( "remember to perform a blood test" );
+        assertTrue( procedureForm.getComment().equals( "remember to perform a blood test" ) );
+        procedureForm.setPriority( 2 );
+        assertTrue( procedureForm.getPriority() == 2 );
+        procedureForm.setLabtech( testLabTechTwo.getUsername() );
+        assertTrue( procedureForm.getLabtech().equals( testLabTechTwo.getUsername() ) );
     }
 }
