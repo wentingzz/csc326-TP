@@ -52,11 +52,11 @@ public class DomainObjectTest {
         h.setAddress( "2770 Wolf Village Drive, Raleigh" );
         h.setState( State.NC );
         h.setZip( "27607" );
-        h.setName( "iTrust Test Hospital 2: Electric Boogaloo" );
+        h.setName( "Hospital Three" );
         h.save();
 
         h.delete();
-        final Hospital retrieve = Hospital.getByName( "iTrust Test Hospital 2: Electric Boogaloo" );
+        final Hospital retrieve = Hospital.getByName( "Hospital Three" );
         assertNull( retrieve );
 
     }

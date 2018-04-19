@@ -104,7 +104,7 @@ public class APIUserTest {
                 .content( TestUtils.asJsonString( sven ) ) ).andExpect( status().isNotFound() );
 
         // create ER User
-        final UserForm ERUser = new UserForm( "Test ERUSER", "123456", Role.ROLE_ER, 1 );
+        final UserForm ERUser = new UserForm( "emergen c", "123456", Role.ROLE_ER, 1 );
         mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( ERUser ) ) ).andExpect( status().isOk() );
 

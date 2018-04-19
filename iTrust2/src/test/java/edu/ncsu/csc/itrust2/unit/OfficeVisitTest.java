@@ -2,6 +2,7 @@ package edu.ncsu.csc.itrust2.unit;
 
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -9,6 +10,7 @@ import org.junit.Test;
 
 import edu.ncsu.csc.itrust2.models.enums.AppointmentType;
 import edu.ncsu.csc.itrust2.models.enums.HouseholdSmokingStatus;
+import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.models.persistent.BasicHealthMetrics;
 import edu.ncsu.csc.itrust2.models.persistent.Diagnosis;
 import edu.ncsu.csc.itrust2.models.persistent.Drug;
@@ -23,7 +25,7 @@ public class OfficeVisitTest {
     @Test
     public void testOfficeVisit () {
 
-        final Hospital hosp = new Hospital( "Dr. Jenkins' Insane Asylum", "123 Main St", "12345", "NC" );
+        final Hospital hosp = new Hospital( "Dr Jenkins' Asylum", "123 Main St", "12345", "NC" );
         hosp.save();
 
         final OfficeVisit visit = new OfficeVisit();
@@ -46,6 +48,35 @@ public class OfficeVisitTest {
         visit.setPatient( User.getByName( "AliceThirteen" ) );
         visit.setHcp( User.getByName( "AliceThirteen" ) );
         visit.setDate( Calendar.getInstance() );
+
+        // make LabProcedure form, then use the form to make the
+        // LabProcedureCode,
+        // then use the LabProcedureCode to make the LabProcedure
+        // make the test date a random constant date/time;
+        // to use the current date/time, can use empty Date() constructor
+        final Date testDate = new Date( 9998999899L );
+        // create a form with valid information filled in
+        // final LabProcedureCodeForm form = new LabProcedureCodeForm();
+        // form.setId( (long) 1 );
+        // form.setCode( "88573-1" );
+        // form.setLongCommonName( "Onchocherca sp IgG2 Ab [Presence] in Serum
+        // by Immunoassay" );
+        // form.setComponent( "Onchochera sp Ab.IgG2" );
+        // form.setProperty( "PrThr" );
+        // form.setDateCreated( testDate );
+        // make a LabProcedureCode object using the form created above
+        // final LabProcedureCode procedureCode = new LabProcedureCode( form );
+        // create the users needed to make a LabProcedure, plus the office visit
+        final User labTech = new User( "labTech1", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
+                Role.ROLE_LABTECH, 1 );
+        final User testPatient = new User( "testPatient1",
+                "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", Role.ROLE_PATIENT, 1 );
+        final User testHCP = new User( "testHCP1", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
+                Role.ROLE_HCP, 1 );
+        // final LabProcedure procedure = new LabProcedure( 4, procedureCode,
+        // "scheduled test", labTech, visit,
+        // testPatient, testHCP, "in-progress" );
+        // visit.getLabProcedures().add( procedure );
         visit.save();
 
         final List<Diagnosis> diagnoses = new Vector<Diagnosis>();

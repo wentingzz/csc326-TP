@@ -84,7 +84,7 @@ public class APIDiagnosisTest {
         mvc.perform( formLogin( "/login" ).user( "admin" ).password( "pass" ) );
 
         /* Create a Hospital to use too */
-        final Hospital hospital = new Hospital( "iTrust Test Hospital 2", "1 iTrust Test Street", "27607", "NC" );
+        final Hospital hospital = new Hospital( "Hospital Two", "1 iTrust Test Street", "27607", "NC" );
         hospital.save();
 
         // create 2 ICDCode to use
@@ -118,7 +118,7 @@ public class APIDiagnosisTest {
         form.setPatient( "patient" );
         form.setNotes( "Test office visit" );
         form.setType( AppointmentType.GENERAL_CHECKUP.toString() );
-        form.setHospital( "iTrust Test Hospital 2" );
+        form.setHospital( "Hospital Two" );
         form.setHdl( 1 );
         form.setHeight( 1f );
         form.setWeight( 1f );

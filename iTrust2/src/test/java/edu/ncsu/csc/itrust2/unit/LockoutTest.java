@@ -10,13 +10,16 @@ import java.util.Calendar;
 import org.junit.Test;
 
 import edu.ncsu.csc.itrust2.models.enums.Role;
+import edu.ncsu.csc.itrust2.models.persistent.LoginAttempt;
 import edu.ncsu.csc.itrust2.models.persistent.LoginBan;
 import edu.ncsu.csc.itrust2.models.persistent.LoginLockout;
-import edu.ncsu.csc.itrust2.models.persistent.LoginAttempt;
 import edu.ncsu.csc.itrust2.models.persistent.User;
 
 public class LockoutTest {
 
+    /**
+     * Tests user's lockout after 3 failures to login
+     */
     @Test
     public void testUserLockouts () {
         final String userName = "lockoutUser";
@@ -86,6 +89,9 @@ public class LockoutTest {
         assertNull( ban.getIp() );
     }
 
+    /**
+     * Tests lockout IP after 3 failures to login
+     */
     @Test
     public void testIPLockouts () {
 

@@ -113,6 +113,15 @@ public class User extends DomainObject<User> implements Serializable {
     }
 
     /**
+     * Get all lab techs in the database
+     *
+     * @return all patients in the database
+     */
+    public static List<User> getLabtechs () {
+        return getByRole( Role.ROLE_LABTECH );
+    }
+
+    /**
      * Get users where the passed query is true
      *
      * @SuppressWarnings for Unchecked cast from List<capture#1-of ? extends

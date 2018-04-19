@@ -1,0 +1,81 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="layout :: head(title=~{::title},links=~{})">
+<title>View Immunizations</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+</head>
+
+<body th:include="layout :: body" th:with="content=~{::content}">
+	<div th:fragment="content">
+
+
+		<script th:inline="javascript">
+			/* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+			/*<![CDATA[*/
+			var app = angular.module("immunizationsApp", []);
+			app
+					.controller(
+							'immunizationsCtrl',
+							function($scope, $http) {
+								$scope.immunizations = [];
+								$scope.pattern = /^\d{5}$/;
+								$scope.loadTable = function() {
+									$http
+											.get(
+													"/iTrust2/api/v1/immunizations")
+											.then(
+													function(response) {
+														$scope.immunizations = response.data;
+														$scope.message = "";
+													},
+													function(rejection) {
+														$scope.immunizations = [];
+														$scope.message = "Could not display immunizations";
+													});
+								}
+								$scope.loadTable();
+							});
+			/*]]>*/
+		</script>
+
+		<div ng-app="immunizationsApp" ng-controller="immunizationsCtrl">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<h3>Patient View Immunizations</h3>
+							</div>
+							<div class="panel-body">
+								<table class="table table-bordered">
+									<caption>My Immunizations:</caption>
+									<thead>
+										<tr>
+											<th>CPT Code</th>
+											<th>Vaccine</th>
+											<th>Description</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr name="immunizationTableRow"
+											ng-repeat="i in immunizations | orderBy: 'vaccine'"
+											immunizationId={{i.id}}>
+											<td name="codeCell">{{i.vaccine.code}}</td>
+											<td name="vaccineCell">{{i.vaccine.name}}</td>
+											<td name="descriptionCell">{{i.vaccine.description}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
