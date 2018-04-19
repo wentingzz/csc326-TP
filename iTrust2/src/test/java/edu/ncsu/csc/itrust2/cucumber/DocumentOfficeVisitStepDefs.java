@@ -41,11 +41,11 @@ public class DocumentOfficeVisitStepDefs {
 
     private final WebDriver driver       = new HtmlUnitDriver( true );
     private final String    baseUrl      = "http://localhost:8080/iTrust2";
-
-    private final String    hospitalName = "Office Visit Hospital" + ( new Random() ).nextInt();
+    String alphabet = "abcdefghijklmnopqrstuvwxyz- '";
+    private final String    hospitalName = "OVH" + alphabet.charAt((new Random()).nextInt(26));
     BasicHealthMetrics      expectedBhm;
 
-    WebDriverWait           wait         = new WebDriverWait( driver, 2 );
+    WebDriverWait           wait         = new WebDriverWait( driver, 10 );
 
     @Given ( "The required facilities exist" )
     public void personnelExists () throws Exception {

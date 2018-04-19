@@ -32,6 +32,7 @@ import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.models.enums.State;
 import edu.ncsu.csc.itrust2.models.persistent.DomainObject;
 import edu.ncsu.csc.itrust2.models.persistent.Patient;
+import edu.ncsu.csc.itrust2.models.persistent.User;
 import edu.ncsu.csc.itrust2.mvc.config.WebMvcConfiguration;
 
 /**
@@ -185,6 +186,12 @@ public class APIPatientTest {
         final Patient antti = new Patient( patient );
         antti.save(); // create the patient if they don't exist already
 
+        final Patient ivan = new Patient( patient );
+        final User ivanUser = new User( "ivan", "password", Role.ROLE_PATIENT, 1 );
+        ivanUser.save();
+        ivan.setSelf( ivanUser );
+        ivan.save();
+
         // a patient can edit their own info
         mvc.perform( put( "/api/v1/patients/antti" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isOk() );
@@ -193,6 +200,23 @@ public class APIPatientTest {
         patient.setSelf( "patient" );
         mvc.perform( put( "/api/v1/patients/patient" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isUnauthorized() );
+
+        // test adding a representative
+        mvc.perform( put( "/api/v1/patient/addrepresentative/ivan" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isOk() );
+
+        // test removing a representative
+        mvc.perform( delete( "/api/v1/patient/ivan" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isOk() );
+
+        // test getting the representatives
+        mvc.perform( get( "/api/v1/patient/representatives" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isOk() );
+
+        // test getting who the user represents (no one)
+        mvc.perform( get( "/api/v1/patient/represented" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isOk() );
+
     }
 
 }

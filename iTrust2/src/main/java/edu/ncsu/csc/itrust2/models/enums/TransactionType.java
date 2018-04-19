@@ -267,11 +267,132 @@ public enum TransactionType {
      * An email would be sent but email address is missing.
      */
     CREATE_MISSING_EMAIL_LOG ( 1404, "Email notification could not be sent due to missing email address", true ),
-	/**
-	 * Emergency Report was viewed
-	 */
-	VIEW_ER_REPORT ( 1501, "Emergency report was viewed", true );
 
+    /**
+     * Personal Representatives are viewed
+     */
+    VIEW_PERSONAL_REPRESENTATIVES ( 1600, "Personal representatives were viewed", true ),
+
+    /**
+     * Personal Representatives are declared
+     */
+    DECLARE_PERSONAL_REPRESENTATIVES ( 1601, "Personal representatives were declared", true ),
+
+    /**
+     * Personal Representatives are undeclared
+     */
+    UNDECLARE_PERSONAL_REPRESENTATIVES ( 1602, "Personal representatives were undeclared", true ),
+
+    /**
+     * Patient viewed who they represent
+     */
+    VIEW_REPRESENTED ( 1603, "Patient viewed who they represent", true ),
+
+    /**
+     * Patient undeclared who they represented
+     */
+    UNDECLARE_REPRESENTED ( 1604, "Patiented undeclared who they represented", true ),
+
+    /**
+     * Emergency Report was viewed
+     */
+    VIEW_ER_REPORT ( 1501, "Emergency report was viewed", true ),
+
+    /**
+     * Lab Procedure Code created
+     */
+    CREATE_LAB_PROCEDURE_CODE ( 1700, "Lab Procedure Code created", false ),
+
+    /**
+     * Lab Procedure Code edited
+     */
+    EDIT_LAB_PROCEDURE_CODE ( 1701, "Lab Procedure Code edited", false ),
+
+    /**
+     * Lab Procedure Code deleted
+     */
+    DELETE_LAB_PROCEDURE_CODE ( 1702, "Lab Procedure Code deleted", false ),
+
+    /**
+     * Lab Procedure Code viewed all
+     */
+    VIEWALL_LAB_PROCEDURE_CODE ( 1703, "Lab Procedure Code viewed", false ),
+
+    /**
+     * Lab Procedure Code viewed
+     */
+    VIEW_LAB_PROCEDURE_CODE ( 1704, "Lab Procedure Code viewed", false ),
+
+    /**
+     * Lab Procedure viewed
+     */
+    EIDT_LAB_PROCEDURE ( 1705, "Lab Procedure viewed", false ),
+
+    /**
+     * Lab Procedure deleted
+     */
+    Delete_LAB_PROCEDURE ( 1706, "Lab Procedure deleted", false ),
+
+    /**
+     * Lab Procedure viewed
+     */
+    VIEW_LAB_PROCEDURE ( 1707, "Lab Procedure deleted", false ),
+
+    /**
+     * Lab Procedure created
+     */
+    CREATE_LAB_PROCEDURE ( 1705, "Lab Procedure viewed", false ),
+
+    /**
+     * User gets lab procedure for an office visit
+     */
+    LAB_PROCEDURE_VIEW_BY_OFFICE_VISIT ( 1708, "Lab Procedure retrived by office visit", false ),
+
+    /**
+     * Admin created a new vaccine
+     */
+    VACCINE_CREATE ( 1800, "Admin created a new vaccine", true ),
+
+    /**
+     * Admin edited an existing vaccine
+     */
+    VACCINE_EDIT ( 1801, "Admin edited an existing vaccine", true ),
+
+    /**
+     * Admin deleted an existing vaccine
+     */
+    VACCINE_DELETE ( 1802, "Admin deleted an existing vaccine", true ),
+
+    /**
+     * Admin views all the vaccines in the system
+     */
+    VACCINE_VIEW ( 1803, "Admin views all the vaccines in the system", true ),
+    
+    /**
+     * HCP created a new immunization
+     */
+    IMMUNIZATION_CREATE(1804, "HCP created a new immunization", true), 
+    
+    /**
+     * HCP edited an existing immunization
+     */
+    IMMUNIZATION_EDIT(1805, "HCP edited an existing immunization", true), 
+    
+    /**
+     * HCP deleted an existing immunization
+     */
+    IMMUNIZATION_DELETE(1806, "HCP deleted an existing immunization", true), 
+    
+    /**
+     * User viewed an existing immunization
+     */
+    IMMUNIZATION_VIEW(1807, "User viewed an existing immunization", true), 
+    
+    /**
+     * User viewed a patient's immunizations
+     */
+    IMMUNIZATIONS_VIEW(1808, "User viewed a patient's immunizations", true);
+	
     /**
      * Creates a TransactionType for logging events
      *

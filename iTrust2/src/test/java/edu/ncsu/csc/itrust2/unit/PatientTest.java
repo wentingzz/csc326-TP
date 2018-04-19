@@ -1,6 +1,7 @@
 package edu.ncsu.csc.itrust2.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.text.ParseException;
@@ -193,6 +194,66 @@ public class PatientTest {
         catch ( final Exception e ) {
             // we want an exception
         }
+    }
+
+    /**
+     * tests that the personal representatives methods work
+     *
+     * @throws ParseException
+     */
+    @Test
+    public void testRepresentatives () throws ParseException {
+        final User patientOne = new User( "patientTestPatient", "123456", Role.ROLE_PATIENT, 1 );
+        patientOne.save();
+        final PatientForm form = new PatientForm();
+        form.setFirstName( "patient" );
+        form.setPreferredName( "patient" );
+        form.setLastName( "mcpatientface" );
+        form.setEmail( "bademail@ncsu.edu" );
+        form.setAddress1( "Some town" );
+        form.setAddress2( "Somewhere" );
+        form.setCity( "placecity" );
+        form.setState( State.AL.getName() );
+        form.setZip( "27606" );
+        form.setPhone( "111-111-1111" );
+        form.setDateOfBirth( "01/01/1901" );
+        form.setDateOfDeath( "01/01/2001" );
+        form.setCauseOfDeath( "Hit by a truck" );
+        form.setBloodType( BloodType.ABPos.getName() );
+        form.setEthnicity( Ethnicity.Asian.getName() );
+        form.setGender( Gender.Male.getName() );
+        form.setSelf( patientOne.getUsername() );
+        final Patient p1 = new Patient( form );
+
+        final User patientTwo = new User( "patientTestPatient", "123456", Role.ROLE_PATIENT, 1 );
+        patientTwo.save();
+        final PatientForm formTwo = new PatientForm();
+        formTwo.setFirstName( "patient" );
+        formTwo.setPreferredName( "patient" );
+        formTwo.setLastName( "mcpatientface" );
+        formTwo.setEmail( "bademail@ncsu.edu" );
+        formTwo.setAddress1( "Some town" );
+        formTwo.setAddress2( "Somewhere" );
+        formTwo.setCity( "placecity" );
+        formTwo.setState( State.AL.getName() );
+        formTwo.setZip( "27606" );
+        formTwo.setPhone( "111-111-1111" );
+        formTwo.setDateOfBirth( "01/01/1901" );
+        formTwo.setDateOfDeath( "01/01/2001" );
+        formTwo.setCauseOfDeath( "Hit by a truck" );
+        formTwo.setBloodType( BloodType.ABPos.getName() );
+        formTwo.setEthnicity( Ethnicity.Asian.getName() );
+        formTwo.setGender( Gender.Male.getName() );
+        formTwo.setSelf( patientTwo.getUsername() );
+        final Patient p2 = new Patient( formTwo );
+        // make sure the size of the patient's personal reps
+        // and patients they are reps for are 0
+        assertTrue( p1.getPersonalRepresentatives().size() == 0 );
+        assertTrue( p1.getRepresented().size() == 0 );
+        // add p1 as a rep for p2
+        p1.addPersonalRepresentative( p2.getSelf().getUsername() );
+        // check that p1 has one representative
+        assertTrue( p1.getPersonalRepresentatives().size() > 0 );
     }
 
 }

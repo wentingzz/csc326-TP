@@ -13,6 +13,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 import edu.ncsu.csc.itrust2.models.enums.HouseholdSmokingStatus;
 import edu.ncsu.csc.itrust2.models.enums.PatientSmokingStatus;
 import edu.ncsu.csc.itrust2.models.persistent.Diagnosis;
+import edu.ncsu.csc.itrust2.models.persistent.Immunization;
+// import edu.ncsu.csc.itrust2.models.persistent.LabProcedure;
 import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
 import edu.ncsu.csc.itrust2.models.persistent.Prescription;
 
@@ -147,7 +149,20 @@ public class OfficeVisitForm implements Serializable {
      */
     private List<Diagnosis>        diagnoses;
 
+    /**
+     * Prescriptions associated with this visit
+     */
     private List<PrescriptionForm> prescriptions;
+
+    /**
+     * Lab procedures associated with this visit
+     */
+    // private List<LabProcedureForm> labProcedure;
+
+    /**
+     * Immunizations associated with this visit
+     */
+    private List<ImmunizationForm> immunizations;
 
     /**
      * Creates an OfficeVisitForm from the OfficeVisit provided
@@ -166,8 +181,14 @@ public class OfficeVisitForm implements Serializable {
         setId( ov.getId().toString() );
         setPreScheduled( ( (Boolean) ( ov.getAppointment() != null ) ).toString() );
         setDiagnoses( new ArrayList<Diagnosis>() );
-        setPrescriptions( ov.getPrescriptions().stream().map( ( Prescription p ) -> new PrescriptionForm( p ) )
+        setPrescriptions( ov.getPrescriptions().stream().map( ( final Prescription p ) -> new PrescriptionForm( p ) )
                 .collect( Collectors.toList() ) );
+        // setLabProcedure( ov.getLabProcedures().stream().map( ( final
+        // LabProcedure lp ) -> new LabProcedureForm( lp ) )
+        // .collect( Collectors.toList() ) );
+        setImmunizations( ov.getImmunizations().stream()
+                .map( ( final Immunization imm ) -> new ImmunizationForm( imm ) ).collect( Collectors.toList() ) );
+
     }
 
     /**
@@ -567,5 +588,44 @@ public class OfficeVisitForm implements Serializable {
      */
     public List<PrescriptionForm> getPrescriptions () {
         return prescriptions;
+    }
+
+    /**
+     * Sets the list of prescriptions for this visit.
+     *
+     * @param labProcedures
+     *            the list of prescriptions
+     */
+    // public void setLabProcedure ( final List<LabProcedureForm> labProcedures
+    // ) {
+    // this.labProcedure = labProcedures;
+    // }
+
+    /**
+     * Returns the list of prescriptions associated with this office visit.
+     *
+     * @return prescriptions the list prescriptions
+     */
+    // public List<LabProcedureForm> getLabProcedures () {
+    // return labProcedure;
+    // }
+    //
+    /**
+     * Returns the list of immunizations associated with this office visit.
+     * 
+     * @return immunizations the list of immunizations
+     */
+    public List<ImmunizationForm> getImmunizations () {
+        return immunizations;
+    }
+
+    /**
+     * Sets the list of immunizations for this visit
+     * 
+     * @param immunizations
+     *            the list of immunizations for this visit
+     */
+    public void setImmunizations ( final List<ImmunizationForm> immunizations ) {
+        this.immunizations = immunizations;
     }
 }

@@ -311,7 +311,7 @@ public class BasicHealthMetrics extends DomainObject<BasicHealthMetrics> {
             return;
         }
 
-        if ( !Pattern.matches( "^[0-9]{1,3}(\\.[0-9]?)?$", String.valueOf( height ) ) ) {
+        if ( !Pattern.matches( "^(0\\.[1-9]|[1-9][0-9]{0,2}(\\.[0-9])?)$", String.valueOf( height ) ) ) {
             throw new IllegalArgumentException( "Height cannot be less than .1 or greater than 999.9" );
         }
         this.height = height;
@@ -336,7 +336,7 @@ public class BasicHealthMetrics extends DomainObject<BasicHealthMetrics> {
         if ( weight == null ) {
             return;
         }
-        if ( !Pattern.matches( "^[0-9]{1,3}(\\.[0-9]?)?$", String.valueOf( weight ) ) ) {
+        if ( !Pattern.matches( "^(0\\.[1-9]|[1-9][0-9]{0,3}(\\.[0-9])?)$", String.valueOf( weight ) ) ) {
             throw new IllegalArgumentException( "Weight cannot be less than .1 or greater than 999.9" );
         }
         this.weight = weight;
@@ -361,7 +361,7 @@ public class BasicHealthMetrics extends DomainObject<BasicHealthMetrics> {
         if ( headCircumference == null ) {
             return;
         }
-        if ( !Pattern.matches( "^[0-9]{1,3}(\\.[0-9]?)?$", String.valueOf( headCircumference ) ) ) {
+        if ( !Pattern.matches( "^(0\\.[1-9]|[1-9][0-9]{0,2}(\\.[0-9])?)$", String.valueOf( headCircumference ) ) ) {
             throw new IllegalArgumentException( "Head circumference cannot be less than .1 or greater than 999.9" );
         }
         this.headCircumference = headCircumference;

@@ -90,41 +90,48 @@ a {
 </head>
 <body th:fragment="body">
 	<script th:inline="javascript">
-			$(function() {
-				$http = angular.injector(["ng"]).get("$http");
-				$http.get("/iTrust2/api/v1/role").then(
-						function(response) {
-							console.log(response);
-							var role = response.data.message; //contains user role
-							var navbarparent = document.getElementById('navbar-parent');
-							var admindropdown = document.getElementById('admin-dropdown');
-							var patientdropdown = document.getElementById('patient-dropdown');
-							var hcpdropdown = document.getElementById('hcp-dropdown');
-							var erdropdown = document.getElementById('er-dropdown');
-							var labtechdropdown = document.getElementById('labtech-dropdown');
-							if (!role.includes('PATIENT')) {
-								navbarparent.removeChild(patientdropdown);
-							}
-							if (!role.includes('ADMIN')) {
-								navbarparent.removeChild(admindropdown);
-							}
-							if (!role.includes('HCP')) {
-								navbarparent.removeChild(hcpdropdown);
-							}
-							if (!role.includes('ER')) {
-								navbarparent.removeChild(erdropdown);
-							}
-							if (!role.includes('LABTECH')) {
-								navbarparent.removeChild(labtechdropdown);
-							}
-						});
-				/* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
-				/*<![CDATA[*/
-				
-			})
-			
-			/*]]>*/
-		</script>
+		$(function() {
+			$http = angular.injector([ "ng" ]).get("$http");
+			$http.get("/iTrust2/api/v1/role")
+					.then(
+							function(response) {
+								console.log(response);
+								var role = response.data.message; //contains user role
+								var navbarparent = document
+										.getElementById('navbar-parent');
+								var admindropdown = document
+										.getElementById('admin-dropdown');
+								var patientdropdown = document
+										.getElementById('patient-dropdown');
+								var hcpdropdown = document
+										.getElementById('hcp-dropdown');
+								var erdropdown = document
+										.getElementById('er-dropdown');
+								var labtechdropdown = document
+										.getElementById('labtech-dropdown');
+								if (!role.includes('PATIENT')) {
+									navbarparent.removeChild(patientdropdown);
+								}
+								if (!role.includes('ADMIN')) {
+									navbarparent.removeChild(admindropdown);
+								}
+								if (!role.includes('HCP')) {
+									navbarparent.removeChild(hcpdropdown);
+								}
+								if (!role.includes('ER')) {
+									navbarparent.removeChild(erdropdown);
+								}
+								if (!role.includes('LABTECH')) {
+									navbarparent.removeChild(labtechdropdown);
+								}
+							});
+			/* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+			/*<![CDATA[*/
+
+		})
+
+		/*]]>*/
+	</script>
 	<div id="wrap">
 
 		<!-- Navbar -->
@@ -163,6 +170,10 @@ a {
 									Drugs</a></li>
 							<li><a href="/iTrust2/admin/manageICDCodes"
 								id="manageICDCodes">Manage ICD-10 Codes</a></li>
+<!-- 							<li><a href="/iTrust2/admin/manageLabProcedureCodes" -->
+<!-- 							    id="manageLabProcedureCodes">Manage Lab Procedure Codes</a></li> -->
+							<li><a href="/iTrust2/admin/vaccines" id="vaccines">Manage
+									Vaccines</a></li>
 						</ul></li>
 					<li class="dropdown"><a class="dropdown-toggle"
 						data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
@@ -184,6 +195,8 @@ a {
 							<li><a href="#">Add Patient -- Not Implemented</a></li>
 							<li><a href="/iTrust2/hcp/documentOfficeVisit.html"
 								id="documentOfficeVisit">Document Office Visit</a></li>
+							<li><a href="/iTrust2/hcp/viewPersonalRepresentatives"
+								id="personalRepresentatives">Edit Personal Representatives</a></li>
 							<li><a href="/iTrust2/personnel/emergencyRecords"
 								id="viewEmegencyRecords">View Emergency Records</a></li>
 						</ul></li>
@@ -196,6 +209,8 @@ a {
 								id="editOfficeVisit">Edit Office Visit</a></li>
 							<li><a href="/iTrust2/hcp/editPrescriptions"
 								id="editPrescriptions-personnel">Edit Prescriptions</a></li>
+							<li><a href="/iTrust2/hcp/editImmunizations"
+								id="editImmunizations-personnel">Edit Immunizations</a></li>
 						</ul></li>
 				</ul>
 				<ul id="patient-dropdown" class="nav navbar-nav">
@@ -213,20 +228,25 @@ a {
 								id="viewDiagnoses">Diagnoses</a></li>
 							<li><a href="/iTrust2/patient/viewPrescriptions"
 								id="viewPrescriptions">Prescriptions</a></li>
+							<li><a href="/iTrust2/patient/viewImmunizations"
+								id="viewImmunizations">Immunizations</a></li>
 						</ul></li>
 					<li class="dropdown"><a class="dropdown-toggle"
 						data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="/iTrust2/patient/editDemographics"
 								id="editdemographics-patient">Edit Demographics</a></li>
+							<li><a href="/iTrust2/patient/viewPersonalRepresentatives"
+								id="personalRepresentatives">Personal Representatives</a></li>
 						</ul></li>
+
 				</ul>
 				<ul id="labtech-dropdown" class="nav navbar-nav">
 					<li class="dropdown"><a class="dropdown-toggle"
 						data-toggle="dropdown" href="#">Lab Tech<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li><a href="/iTrust2/personnel/labprocedures"
-								id="viewLabProcedures">View Lab Procedures</a></li>
+<!-- 							<li><a href="/iTrust2/labtech/viewlabprocedure" -->
+<!-- 								id="viewLabProcedures">View Lab Procedures</a></li> -->
 						</ul></li>
 					<li class="dropdown"><a class="dropdown-toggle"
 						data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>

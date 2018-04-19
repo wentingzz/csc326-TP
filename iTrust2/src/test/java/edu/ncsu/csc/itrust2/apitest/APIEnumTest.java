@@ -30,40 +30,47 @@ import edu.ncsu.csc.itrust2.mvc.config.WebMvcConfiguration;
 @WebAppConfiguration
 public class APIEnumTest {
 
-    private MockMvc               mvc;
+	private MockMvc               mvc;
 
-    @Autowired
-    private WebApplicationContext context;
+	@Autowired
+	private WebApplicationContext context;
 
-    /**
-     * Sets up test
-     */
-    @Before
-    public void setup () {
-        mvc = MockMvcBuilders.webAppContextSetup( context ).build();
-    }
+	/**
+	 * Sets up test
+	 */
+	@Before
+	public void setup () {
+		mvc = MockMvcBuilders.webAppContextSetup( context ).build();
+	}
 
-    /**
-     * Tests EnumAPI
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testEnumAPI () throws Exception {
-        mvc.perform( get( "/api/v1/appointmenttype" ) ).andExpect( status().isOk() )
-                .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
+	/**
+	 * Tests EnumAPI
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testEnumAPI () throws Exception {
+		mvc.perform( get( "/api/v1/appointmenttype" ) ).andExpect( status().isOk() )
+		.andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
 
-        mvc.perform( get( "/api/v1/bloodtype" ) ).andExpect( status().isOk() )
-                .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
+		mvc.perform( get( "/api/v1/bloodtype" ) ).andExpect( status().isOk() )
+		.andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
 
-        mvc.perform( get( "/api/v1/ethnicity" ) ).andExpect( status().isOk() )
-                .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
+		mvc.perform( get( "/api/v1/ethnicity" ) ).andExpect( status().isOk() )
+		.andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
 
-        mvc.perform( get( "/api/v1/gender" ) ).andExpect( status().isOk() )
-                .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
+		mvc.perform( get( "/api/v1/gender" ) ).andExpect( status().isOk() )
+		.andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
 
-        mvc.perform( get( "/api/v1/state" ) ).andExpect( status().isOk() )
-                .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
-    }
+		mvc.perform( get( "/api/v1/state" ) ).andExpect( status().isOk() )
+		.andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
+
+		//reused from Guided Project
+		mvc.perform( get( "/api/v1/housesmoking" ) ).andExpect( status().isOk() )
+		.andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
+		//reused from Guided Project
+		mvc.perform( get( "/api/v1/patientsmoking" ) ).andExpect( status().isOk() )
+		.andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
+	}
 
 }

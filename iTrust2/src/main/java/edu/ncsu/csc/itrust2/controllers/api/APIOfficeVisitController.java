@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+// import edu.ncsu.csc.itrust2.forms.hcp.LabProcedureForm;
 import edu.ncsu.csc.itrust2.forms.hcp.OfficeVisitForm;
 import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.models.enums.TransactionType;
@@ -104,13 +105,48 @@ public class APIOfficeVisitController extends APIController {
     @PostMapping ( BASE_PATH + "/officevisits" )
     public ResponseEntity createOfficeVisit ( @RequestBody final OfficeVisitForm visitF ) {
         try {
+            // final List<LabProcedureForm> lpfs = visitF.getLabProcedures();
             final OfficeVisit visit = new OfficeVisit( visitF );
+            // if ( lpfs != null ) {
+            // for ( final LabProcedureForm lpf : lpfs ) {
+            // final LabProcedure lp = new LabProcedure( lpf );
+            // // String result = "";
+            // // if ( lp != null ) {
+            // // result += "\n\n\n\n" + lp.getNotes() + "\t\t" +
+            // // lp.getPriority() + "\t\t";
+            // // if ( lp.getCode() != null ) {
+            // // result += lp.getCode().getCode();
+            // // }
+            // // else {
+            // // result += "null code\t";
+            // // }
+            // // if ( lp.getLabtech() != null ) {
+            // // result += "\t\t" + lp.getLabtech().getUsername() + "\n";
+            // // }
+            // // else {
+            // // result += "null labtech\n";
+            // // }
+            // // }
+            // //
+            // // result += lpf.getComment() + "\t\t" + lpf.getPriority() +
+            // // "\t\t" + lpf.getCode() + "\t\t"
+            // // + lpf.getLabtech() + "\n\n\n\n";
+            // // System.out.println( result );
+            // // lp.setOfficevisit( visit );
+            //
+            // lp.save();
+            // visit.addLabProcedures( lp );
+            // }
+            //
+            // }
+
             if ( null != OfficeVisit.getById( visit.getId() ) ) {
                 return new ResponseEntity(
                         errorResponse( "Office visit with the id " + visit.getId() + " already exists" ),
                         HttpStatus.CONFLICT );
             }
             visit.save();
+
             LoggerUtil.log( TransactionType.OFFICE_VISIT_CREATE, LoggerUtil.currentUser(),
                     visit.getPatient().getUsername() );
             return new ResponseEntity( visit, HttpStatus.OK );

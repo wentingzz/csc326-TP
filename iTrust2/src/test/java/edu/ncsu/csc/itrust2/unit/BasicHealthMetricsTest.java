@@ -19,7 +19,8 @@ public class BasicHealthMetricsTest {
 	@Test
 	public void test() {
 		BasicHealthMetrics metric = new BasicHealthMetrics();
-
+		metric.hashCode();
+		assertTrue(metric.equals(metric));
 		//test getPatient
 		User patient = new User();
 		patient.setUsername("patient");
@@ -31,11 +32,14 @@ public class BasicHealthMetricsTest {
 		assertFalse(metric.equals(metric2));
 		//initialize metric2
 		metric2 = new BasicHealthMetrics();
-		metric.setDiastolic(2);
+		//test diastolic in equals
+		assertFalse(metric.equals(metric2));
 		metric2.setDiastolic(2);
-
+		assertFalse(metric.equals(metric2));
+		assertFalse(metric2.equals(metric));
+		metric.setDiastolic(2);
 		//test null hcp in equals
-		
+
 		//test getHCP
 		User hcp = new User();
 		hcp.setUsername("hcp");
@@ -43,66 +47,88 @@ public class BasicHealthMetricsTest {
 		metric2.setHcp(hcp);
 		assertEquals(metric2.getHcp().getUsername(), "hcp");
 		assertFalse(metric.equals(metric2));
-		
-		
-		
+
+
+
 		//test null other hcp in equals
 		metric2.setHcp(null);
 		metric.setHcp(hcp);
 		assertFalse(metric.equals(metric2));
 		metric2.setHcp(hcp);
-		
-		
-		//test null hdl in equals
+
+
 		metric.setHdl(null);
 		metric2.setHdl(5);
 		assertFalse(metric.equals(metric2));
+
+		metric.setHdl(2);
+		assertFalse(metric2.equals(metric));
 		metric.setHdl(5);
-		metric2.setHdl(null);
-		assertFalse(metric.equals(metric2));
-		metric2.setHdl(5);
-		
-		//set both heights to be equal
-		metric.setHeadCircumference((float) 5);
+		metric.setHeadCircumference(null);
 		metric2.setHeadCircumference((float) 5);
-		
-		//test null height in equals
+		assertFalse(metric.equals(metric2));
+		metric.setHeadCircumference((float) 6);
+		assertFalse(metric.equals(metric2));
+		metric2.setHeadCircumference((float) 6);
+
+
 		metric.setHeight(null);
 		metric2.setHeight((float) 5);
 		assertFalse(metric.equals(metric2));
-		//set them equal to each other
-		metric.setHeight((float) 5);
-		metric2.setHeight((float) 5);
-		
-		//test null ldl in equals
+		metric.setHeight((float) 6);
+		assertFalse(metric.equals(metric2));
+		metric2.setHeight((float) 6);
+
 		metric.setLdl(null);
 		metric2.setLdl(5);
 		assertFalse(metric.equals(metric2));
-		//make them equal to each other
+
+		metric.setLdl(2);
+		assertFalse(metric2.equals(metric));
 		metric.setLdl(5);
-		metric2.setPatient(patient);
-		
-		//test null systolic in equals
+
+		User pat = new User();
+		pat.setUsername("patient");
+		User patient2 = null;
+		metric.setPatient(pat);
+		metric2.setPatient(patient2);
+		assertFalse(metric.equals(metric2));
+		assertFalse(metric2.equals(metric));
+		patient2 = new User();
+		patient2.setUsername("patient");
+		metric2.setPatient(patient2);
+
 		metric.setSystolic(null);
 		metric2.setSystolic(5);
 		assertFalse(metric.equals(metric2));
+		metric.setSystolic(2);
+		assertFalse(metric2.equals(metric));
 		metric.setSystolic(5);
-		
-		//test null tri in equals
+
 		metric.setTri(null);
 		metric2.setTri(500);
 		assertFalse(metric.equals(metric2));
+		metric.setTri(200);
+		assertFalse(metric2.equals(metric));
 		metric.setTri(500);
-		
-		//test null weight
+
 		metric.setWeight(null);
 		metric2.setWeight((float) 5);
 		assertFalse(metric.equals(metric2));
-		metric.setWeight((float) 5);
-		
-		
-		
+		metric.setWeight((float) 6);
+		assertFalse(metric.equals(metric2));
+		metric2.setWeight((float) 6);
 
+		assertTrue(metric.equals(metric2));
+
+		assertFalse(BasicHealthMetrics.getBasicHealthMetrics().isEmpty());
+		assertFalse(BasicHealthMetrics.getBasicHealthMetricsForHCP(hcp.getUsername()).isEmpty());
+		//assertTrue(metric.getBasicHealthMetricsForPatient(patient.getUsername()).isEmpty());
+		//	assertTrue(metric.getBasicHealthMetricsForHCPAndPatient(hcp.getUsername(), patient.getUsername()).isEmpty());
+
+		assertEquals(metric.getPatient().getUsername(), "patient");
+		assertEquals(metric.getHcp().getUsername(), "hcp");
+		metric.setDiastolic(null);
 	}
 
 }

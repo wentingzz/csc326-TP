@@ -28,4 +28,19 @@ public class LabtechController {
         return edu.ncsu.csc.itrust2.models.enums.Role.ROLE_LABTECH.getLanding();
     }
 
+    /**
+     * Returns the Landing screen for the ER
+     *
+     * @param model
+     *            Data from the front end
+     * @return The page to display
+     */
+    // @RequestMapping ( value = "labtech/viewlabprocedure" )
+    // @PreAuthorize ( "hasRole('ROLE_LABTECH')" )
+    // public String viewLabProcedures () {
+    // // LoggerUtil.log( TransactionType.VIEW_LAB_PROCEDURES, self
+    // // );
+    // return "labtech/viewlabprocedure";
+    // }
+
 }

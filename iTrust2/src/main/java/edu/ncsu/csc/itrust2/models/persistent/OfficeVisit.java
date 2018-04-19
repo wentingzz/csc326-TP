@@ -26,8 +26,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.criterion.Criterion;
 
+import edu.ncsu.csc.itrust2.forms.hcp.ImmunizationForm;
+// import edu.ncsu.csc.itrust2.forms.hcp.LabProcedureForm;
 import edu.ncsu.csc.itrust2.forms.hcp.OfficeVisitForm;
 import edu.ncsu.csc.itrust2.forms.hcp.PrescriptionForm;
 import edu.ncsu.csc.itrust2.models.enums.AppointmentType;
@@ -237,6 +241,20 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
         final List<PrescriptionForm> ps = ovf.getPrescriptions();
         if ( ps != null ) {
             setPrescriptions( ps.stream().map( ( final PrescriptionForm pf ) -> new Prescription( pf ) )
+                    .collect( Collectors.toList() ) );
+        }
+
+        // associate all lab procedure with this visit
+        // final List<LabProcedureForm> lpfs = ovf.getLabProcedures();
+        // if ( lpfs != null ) {
+        // setLabProcedures( lpfs.stream().map( ( final LabProcedureForm lpf )
+        // -> new LabProcedure( lpf ) )
+        // .collect( Collectors.toList() ) );
+        // }
+
+        final List<ImmunizationForm> imf = ovf.getImmunizations();
+        if ( imf != null ) {
+            setImmunizations( imf.stream().map( ( final ImmunizationForm immForm ) -> new Immunization( immForm ) )
                     .collect( Collectors.toList() ) );
         }
     }
@@ -498,12 +516,50 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     }
 
     /**
+     * Returns the list of lab procedures for this visit
+     *
+     * @return The list of lab procedures
+     */
+    // public List<LabProcedure> getLabProcedures () {
+    // return labProcedures;
+    // }
+
+    /**
+     * Sets the list of lab procedures associated with this visit
+     *
+     * @param labProcedures
+     *            The list of lab procedures
+     */
+    // public void setLabProcedures ( final List<LabProcedure> labProcedures ) {
+    // this.labProcedures = labProcedures;
+    // }
+
+    /**
      * Returns the list of prescriptions for this visit
      *
      * @return The list of prescriptions
      */
     public List<Prescription> getPrescriptions () {
         return prescriptions;
+    }
+
+    /**
+     * Sets the list of immunizations associated with this visit
+     *
+     * @param immunizations
+     *            the list of immunizations associated with this visit
+     */
+    public void setImmunizations ( final List<Immunization> immunizations ) {
+        this.immunizations = immunizations;
+    }
+
+    /**
+     * Returns the list of immunizations associated with this visit
+     *
+     * @return the list of immunizations associated with this visit
+     */
+    public List<Immunization> getImmunizations () {
+        return immunizations;
     }
 
     /**
@@ -565,6 +621,9 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     @OneToMany ( mappedBy = "visit" )
     public transient List<Diagnosis> diagnoses;
 
+    // @OneToMany ( mappedBy = "officeVisit" )
+    // private List<LabProcedure> labProcedures;
+
     /**
      * The notes of this office visit
      */
@@ -580,6 +639,11 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     @OneToMany ( fetch = FetchType.EAGER )
     @JoinColumn ( name = "prescriptions_id" )
     private List<Prescription>       prescriptions = Collections.emptyList();
+
+    @OneToMany ( fetch = FetchType.EAGER )
+    @JoinColumn ( name = "immunizations_id" )
+    @Fetch ( value = FetchMode.SUBSELECT )
+    private List<Immunization>       immunizations = Collections.emptyList();
 
     /**
      * Overrides the basic domain object save in order to save basic health
@@ -631,6 +695,82 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
 
         //// END PRESCRIPTIONS ////
 
+        /// SAVE IMMUNIZATIONS ///
+
+        // Get immunization ids included in this office visit
+        final Set<Long> currentImmunizationIds = this.getImmunizations().stream().map( Immunization::getId )
+                .collect( Collectors.toSet() );
+
+        // Get immunization ids saved previously
+        final Set<Long> savedImmunizationIds = oldVisit == null ? Collections.emptySet()
+                : oldVisit.getImmunizations().stream().map( Immunization::getId ).collect( Collectors.toSet() );
+
+        // Save each of the immunizations
+        this.getImmunizations().forEach( i -> {
+            final boolean isImmunizationSaved = savedImmunizationIds.contains( i.getId() );
+            if ( isImmunizationSaved ) {
+                LoggerUtil.log( TransactionType.IMMUNIZATION_EDIT, LoggerUtil.currentUser(), getPatient().getUsername(),
+                        "Editing immunization with id " + i.getId() );
+            }
+            else {
+                LoggerUtil.log( TransactionType.IMMUNIZATION_CREATE, LoggerUtil.currentUser(),
+                        getPatient().getUsername(), "Creating immunization with id " + i.getId() );
+            }
+            i.save();
+        } );
+
+        // Remove immunizations no longer included
+        if ( !savedImmunizationIds.isEmpty() ) {
+            savedImmunizationIds.forEach( immId -> {
+                final boolean isImmunizationMissing = currentImmunizationIds.contains( immId );
+                if ( isImmunizationMissing ) {
+                    LoggerUtil.log( TransactionType.IMMUNIZATION_DELETE, LoggerUtil.currentUser(),
+                            getPatient().getUsername(), "Deleting immunization with id " + id );
+                    Immunization.getById( immId ).delete();
+                }
+            } );
+        }
+        /// END IMMUNIZATIONS///
+
+        // final Set<Long> savedLPIds = oldVisit == null ?
+        // Collections.emptySet()
+        // : oldVisit.getLabProcedures().stream().map( LabProcedure::getId
+        // ).collect( Collectors.toSet() );
+
+        // Save each of the prescriptions
+        // this.getLabProcedures().forEach( lp -> {
+        //
+        // final boolean lpIsSaved = savedLPIds.contains( lp.getId() );
+        //
+        // if ( lpIsSaved ) {
+        // LoggerUtil.log( TransactionType.EIDT_LAB_PROCEDURE,
+        // LoggerUtil.currentUser(),
+        // getPatient().getUsername(), "Editing lab procedure with id " +
+        // lp.getId() );
+        // }
+        // else {
+        // LoggerUtil.log( TransactionType.CREATE_LAB_PROCEDURE,
+        // LoggerUtil.currentUser(),
+        // getPatient().getUsername(), "Creating lab procedure with id " +
+        // lp.getId() );
+        // }
+        // lp.save();
+        // } );
+
+        // Remove prescriptions no longer included
+        // if ( !savedLPIds.isEmpty() ) {
+        // savedLPIds.forEach( lpId -> {
+        // final boolean lpIsMissing = currentIds.contains( lpId );
+        // if ( lpIsMissing ) {
+        // LoggerUtil.log( TransactionType.Delete_LAB_PROCEDURE,
+        // LoggerUtil.currentUser(),
+        // getPatient().getUsername(), "Deleting lab procedure with id " + lpId
+        // );
+        // LabProcedure.getById( lpId ).delete();
+        // }
+        // } );
+        // }
+
         try {
             super.save();
 
@@ -671,6 +811,7 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
 
                 }
             }
+
             // delete any previous associations - they were deleted by user.
             for ( final Long oldId : previous ) {
                 final Diagnosis dDie = Diagnosis.getById( oldId );
@@ -686,6 +827,68 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
                     }
                 }
             }
+
+            // get list of ids associated with this visit if this visit already
+            // exists
+            // final Set<Long> previousLP = LabProcedure.getByVisit( id
+            // ).stream().map( LabProcedure::getId )
+            // .collect( Collectors.toSet() );
+            // if ( getLabProcedures() != null ) {
+            // for ( final LabProcedure lp : getLabProcedures() ) {
+            // if ( lp == null ) {
+            // continue;
+            // }
+            //
+            // final boolean had = previousLP.remove( lp.getId() );
+            // try {
+            // if ( !had ) {
+            // // new Diagnosis
+            // LoggerUtil.log( TransactionType.CREATE_LAB_PROCEDURE,
+            // getHcp().getUsername(),
+            // getPatient().getUsername(), getHcp() + " created Lab Procedure "
+            // + getPatient() );
+            // }
+            // else {
+            // // already had - check if edited
+            // final LabProcedure old = LabProcedure.getById( lp.getId() );
+            // if ( !old.getCode().getCode().equals( lp.getCode().getCode() )
+            // || old.getPriority() != lp.getPriority() ||
+            // !old.getNotes().equals( lp.getNotes() )
+            // || !old.getLabtech().getUsername().equals(
+            // lp.getLabtech().getUsername() ) ) {
+            // // was edited:
+            // LoggerUtil.log( TransactionType.EIDT_LAB_PROCEDURE,
+            // getHcp().getUsername(),
+            // getPatient().getUsername(),
+            // getHcp() + " edit a lab procedure for " + getPatient() );
+            //
+            // }
+            // }
+            // }
+            // catch ( final Exception e ) {
+            // e.printStackTrace();
+            // }
+            // lp.save();
+            //
+            // }
+            // }
+            // delete any previous associations - they were deleted by user.
+            // for ( final Long oldLPId : previousLP ) {
+            // final LabProcedure dLPDie = LabProcedure.getById( oldLPId );
+            // if ( dLPDie != null ) {
+            // dLPDie.delete();
+            // try {
+            // LoggerUtil.log( TransactionType.Delete_LAB_PROCEDURE,
+            // getHcp().getUsername(),
+            // getPatient().getUsername(),
+            // getHcp().getUsername() + " deleted a lab procedure for " +
+            // getPatient().getUsername() );
+            // }
+            // catch ( final Exception e ) {
+            // e.printStackTrace();
+            // }
+            // }
+            // }
         }
         catch ( final Exception ex ) {
             // we don't want to save the bhm if an error occurs
@@ -723,10 +926,12 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
 
     /**
      * Deletes all Office visits, and all Diagnoses (No diagnoses without an
-     * office visit)
+     * office visit) and all Lab Procedure (No lab procedure without an office
+     * visit)
      */
     public static void deleteAll () {
         DomainObject.deleteAll( Diagnosis.class );
+        // DomainObject.deleteAll( LabProcedure.class );
         DomainObject.deleteAll( OfficeVisit.class );
     }
 

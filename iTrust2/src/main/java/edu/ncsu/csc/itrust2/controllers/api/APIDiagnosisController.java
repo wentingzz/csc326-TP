@@ -87,7 +87,7 @@ public class APIDiagnosisController extends APIController {
      * Returns a list of diagnoses for the logged in patient
      *
      * @param username
-     *            of the patient
+     *            patient's username
      * @return List of Diagnoses for the patient
      */
     @GetMapping ( BASE_PATH + "/patientDiagnoses/{username}" )

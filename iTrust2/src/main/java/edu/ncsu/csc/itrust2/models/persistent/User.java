@@ -113,6 +113,15 @@ public class User extends DomainObject<User> implements Serializable {
     }
 
     /**
+     * Get all lab techs in the database
+     *
+     * @return all patients in the database
+     */
+    public static List<User> getLabtechs () {
+        return getByRole( Role.ROLE_LABTECH );
+    }
+
+    /**
      * Get users where the passed query is true
      *
      * @SuppressWarnings for Unchecked cast from List<capture#1-of ? extends
@@ -367,6 +376,19 @@ public class User extends DomainObject<User> implements Serializable {
         catch ( final Exception e ) {
             // ignore to allow a second attempt at deleting this object
         }
+
+        try {
+            if ( getRole().equals( Role.ROLE_PATIENT ) ) {
+                Patient.getByName( getUsername() ).delete();
+            }
+            else {
+                Personnel.getByName( getUsername() ).delete();
+            }
+        }
+        catch ( final Exception e ) {
+            // nothing there
+        }
+
         super.delete();
     }
 

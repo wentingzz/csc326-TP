@@ -14,6 +14,7 @@ import edu.ncsu.csc.itrust2.models.persistent.Hospital;
 import edu.ncsu.csc.itrust2.models.persistent.Patient;
 import edu.ncsu.csc.itrust2.models.persistent.Personnel;
 import edu.ncsu.csc.itrust2.models.persistent.User;
+import edu.ncsu.csc.itrust2.models.persistent.Vaccine;
 
 /**
  * Newly revamped Test Data Generator. This class is used to generate database
@@ -117,18 +118,23 @@ public class HibernateDataGenerator {
         p.setZip( "12345" );
         p.setPhone( "111-222-3333" );
         p.save();
-
-        final User er = new User( "er", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", Role.ROLE_ER,
-                1 );
+        
+        final User er = new User( "er", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
+                Role.ROLE_ER, 1 );
         er.save();
         
-        final User labtech = new User( "labtech", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", Role.ROLE_LABTECH,
-                1 );
+        final User labtech = new User( "labtech", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
+                Role.ROLE_LABTECH	, 1 );
         labtech.save();
-
+        
         final User patient = new User( "patient", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
                 Role.ROLE_PATIENT, 1 );
         patient.save();
+        // this is Patient object corresponding to the user 'patient'
+        final Patient patientPatient = new Patient();
+        // sync the User 'patient' with the Patient 'patientPatient'
+        patientPatient.setSelf( patient );
+        patientPatient.save();
 
         final User admin = new User( "admin", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
                 Role.ROLE_ADMIN, 1 );
@@ -164,6 +170,45 @@ public class HibernateDataGenerator {
         final User lockoutUser2 = new User( "lockoutUser2",
                 "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", Role.ROLE_HCP, 1 );
         lockoutUser2.save();
+
+        final Patient csc326 = new Patient();
+        csc326.setFirstName( "cscThreeTwentySix" );
+        final User csc326User = new User( "cscThreeTwentySix", "$2a$10$hOCH0uJlfbR6xzKWPQToXu1RP1/yLAngFXbVKhcnteRIQ1r/bGflm",
+                Role.ROLE_PATIENT, 1 );
+        csc326User.save();
+        csc326.setSelf( csc326User );
+        csc326.setLastName( "User" );
+        csc326.setEmail( "csc326s18.203.02@gmail.com" );
+        final Calendar csc326Birth = Calendar.getInstance();
+        csc326Birth.add( Calendar.YEAR, -13 );
+        csc326.setDateOfBirth( csc326Birth );
+        csc326.save();
+
+        final Patient testER = new Patient();
+        testER.setFirstName( "ER" );
+        final User testERUser = new User( "testeruser", "$2a$10$hOCH0uJlfbR6xzKWPQToXu1RP1/yLAngFXbVKhcnteRIQ1r/bGflm",
+                Role.ROLE_ER, 1 );
+        testERUser.save();
+        testER.setSelf( testERUser );
+        testER.setLastName( "User" );
+        testER.setEmail( "csc326s18.203.02@gmail.com" );
+        final Calendar testeruserBirth = Calendar.getInstance();
+        testeruserBirth.add( Calendar.YEAR, -13 );
+        testER.setDateOfBirth( testeruserBirth );
+        testER.save();
+
+        final Patient testTech = new Patient();
+        testTech.setFirstName( "cscThreeTwentySix" );
+        final User testTechUser = new User( "testlabtech",
+                "$2a$10$hOCH0uJlfbR6xzKWPQToXu1RP1/yLAngFXbVKhcnteRIQ1r/bGflm", Role.ROLE_ER, 1 );
+        testTechUser.save();
+        testTech.setSelf( testTechUser );
+        testTech.setLastName( "User" );
+        testTech.setEmail( "csc326s18.203.02@gmail.com" );
+        final Calendar testtechBirth = Calendar.getInstance();
+        testeruserBirth.add( Calendar.YEAR, -13 );
+        testTech.setDateOfBirth( testtechBirth );
+        testTech.save();
 
     }
 
@@ -215,5 +260,11 @@ public class HibernateDataGenerator {
         d.setName( "Quetiane Fumarate" );
         d.setDescription( "atypical antipsychotic and antidepressant" );
         d.save();
+        
+        final Vaccine v = new Vaccine();
+        v.setCode("90281");
+        v.setName("IG");
+        v.setDescription("Immune Globulin");
+        v.save();
     }
 }

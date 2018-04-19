@@ -29,6 +29,7 @@ import com.google.gson.GsonBuilder;
 
 import edu.ncsu.csc.itrust2.config.RootConfiguration;
 import edu.ncsu.csc.itrust2.forms.admin.DrugForm;
+import edu.ncsu.csc.itrust2.forms.admin.VaccineForm;
 import edu.ncsu.csc.itrust2.models.persistent.Drug;
 import edu.ncsu.csc.itrust2.mvc.config.WebMvcConfiguration;
 
@@ -124,11 +125,26 @@ public class APIDrugTest {
         mvc.perform( put( "/api/v1/drugs" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( drug2 ) ) ).andExpect( status().isConflict() );
 
+     // Attempt invalid edit with invalid code
+        drug2.setCode( "0000-0000-003" );
+        mvc.perform( put( "/api/v1/drugs" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( drug2 ) ) ).andExpect( status().isBadRequest() );
+        
         // Follow up with valid edit
         drug2.setCode( "0000-0000-03" );
         mvc.perform( put( "/api/v1/drugs" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( drug2 ) ) ).andExpect( status().isOk() );
 
+        // Create drug for testing
+        final DrugForm form3 = new DrugForm();
+        form3.setCode( "0000-0000-0123" );
+        form3.setName( "TEST3" );
+        form3.setDescription( "Desc3" );
+
+        
+        //Add an invalid code for a drug.
+        mvc.perform( post( "/api/v1/drugs" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( form3 ) ) ).andExpect( status().isBadRequest() );
         // Delete test drugs
         mvc.perform( delete( "/api/v1/drugs/" + drug1.getId() ) ).andExpect( status().isOk() )
                 .andExpect( content().string( drug1.getId().toString() ) );
