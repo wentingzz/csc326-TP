@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import edu.ncsu.csc.itrust2.forms.hcp.LabProcedureForm;
+// import edu.ncsu.csc.itrust2.forms.hcp.LabProcedureForm;
 import edu.ncsu.csc.itrust2.forms.hcp.OfficeVisitForm;
 import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.models.enums.TransactionType;
@@ -105,7 +105,7 @@ public class APIOfficeVisitController extends APIController {
     @PostMapping ( BASE_PATH + "/officevisits" )
     public ResponseEntity createOfficeVisit ( @RequestBody final OfficeVisitForm visitF ) {
         try {
-            final List<LabProcedureForm> lpfs = visitF.getLabProcedures();
+            // final List<LabProcedureForm> lpfs = visitF.getLabProcedures();
             final OfficeVisit visit = new OfficeVisit( visitF );
             // if ( lpfs != null ) {
             // for ( final LabProcedureForm lpf : lpfs ) {

@@ -35,12 +35,12 @@ public class LabtechController {
      *            Data from the front end
      * @return The page to display
      */
-    @RequestMapping ( value = "labtech/viewlabprocedure" )
-    @PreAuthorize ( "hasRole('ROLE_LABTECH')" )
-    public String viewLabProcedures () {
-        // LoggerUtil.log( TransactionType.VIEW_LAB_PROCEDURES, self
-        // );
-        return "labtech/viewlabprocedure";
-    }
+    // @RequestMapping ( value = "labtech/viewlabprocedure" )
+    // @PreAuthorize ( "hasRole('ROLE_LABTECH')" )
+    // public String viewLabProcedures () {
+    // // LoggerUtil.log( TransactionType.VIEW_LAB_PROCEDURES, self
+    // // );
+    // return "labtech/viewlabprocedure";
+    // }
 
 }

@@ -9,24 +9,24 @@
   <script th:inline="javascript">
       /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
       /*<![CDATA[*/
-      var app = angular.module("viewLabProcedureApp", []);
-      app.controller('labProcedureCtrl', function ($scope, $http) {
-        $scope.procedures = [];
-        $scope.selected = "";
-        $scope.selectedStatus = "";
-        $scope.allStatus = ["NEW", "IN_PROGRESS", "COMPLETE"];
-        $scope.allLabtech = [];
+      //var app = angular.module("viewLabProcedureApp", []);
+//       app.controller('labProcedureCtrl', function ($scope, $http) {
+//         $scope.procedures = [];
+//         $scope.selected = "";
+//         $scope.selectedStatus = "";
+//         $scope.allStatus = ["NEW", "IN_PROGRESS", "COMPLETE"];
+//         $scope.allLabtech = [];
 
-        $scope.loadTable = function(){
-        		$http.get("/iTrust2/api/v1/labtech/labprocedures/").then(
-        	          function (response) {
-        	            $scope.procedures = response.data;
-        	            $scope.message = "";
-        	          }, function (rejection) {
-        	            $scope.procedures = [];
-        	            $scope.message = "Could not display lab procedures";
-        	          });
-        };
+//         $scope.loadTable = function(){
+//         		$http.get("/iTrust2/api/v1/labtech/labprocedures/").then(
+//         	          function (response) {
+//         	            $scope.procedures = response.data;
+//         	            $scope.message = "";
+//         	          }, function (rejection) {
+//         	            $scope.procedures = [];
+//         	            $scope.message = "Could not display lab procedures";
+//         	          });
+//         };
         $scope.loadTable();
 
         
@@ -47,14 +47,14 @@
                     });
         }
         
-        $scope.update = function ( ) {
-        		$http.put('/iTrust2/api/v1/labprocedure/' + $scope.selectedProcedure.id + "/" +  $scope.updateStatus+ "/" +  $scope.updateLabTech + "/").then(
-					function(response) {
-						$scope.loadTable();
-					}, function(rejection) {
-						$scope.message = "Could not update lab procedure";
-					})
-        };
+//         $scope.update = function ( ) {
+//         		$http.put('/iTrust2/api/v1/labprocedure/' + $scope.selectedProcedure.id + "/" +  $scope.updateStatus+ "/" +  $scope.updateLabTech + "/").then(
+// 					function(response) {
+// 						$scope.loadTable();
+// 					}, function(rejection) {
+// 						$scope.message = "Could not update lab procedure";
+// 					})
+//         };
 
         
       });
