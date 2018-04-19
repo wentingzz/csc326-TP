@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import edu.ncsu.csc.itrust2.forms.admin.UserForm;
 import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.models.persistent.User;
 
@@ -47,6 +48,9 @@ public class UserTest {
         u2.setUsername( "abcdefg" );
 
         assertTrue( u1.equals( u2 ) );
+        
+        UserForm form = new UserForm(u1);
+        assertEquals(u1.getUsername(), form.getUsername() );
     }
 
 }

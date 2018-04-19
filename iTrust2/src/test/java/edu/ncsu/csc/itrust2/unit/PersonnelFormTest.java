@@ -1,6 +1,6 @@
 package edu.ncsu.csc.itrust2.unit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -36,6 +36,7 @@ public class PersonnelFormTest {
         person.setSpecialty( "special" );
         person.setEmail( "email@email.com" );
         person.setId( 1L );
+        person.setEnabled(1);
         final PersonnelForm form = new PersonnelForm( person );
         assertEquals( "username", form.getSelf() );
         assertEquals( "first", form.getFirstName() );
@@ -49,5 +50,14 @@ public class PersonnelFormTest {
         assertEquals( "special", form.getSpecialty() );
         assertEquals( "email@email.com", form.getEmail() );
         assertEquals( "1", form.getId() );
+        assertEquals( "1", form.getEnabled() );
+        
+        Personnel p = null;
+        PersonnelForm form2 = new PersonnelForm(p);
+        assertNull(form2.getSelf());
+        final User user = new User();
+        user.setUsername("hcp");
+        PersonnelForm form3 = new PersonnelForm(user);
+        assertNotNull(form3.getSelf());
     }
 }

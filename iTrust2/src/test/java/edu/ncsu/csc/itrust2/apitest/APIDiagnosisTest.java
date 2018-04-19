@@ -118,7 +118,7 @@ public class APIDiagnosisTest {
         form.setPatient( "patient" );
         form.setNotes( "Test office visit" );
         form.setType( AppointmentType.GENERAL_CHECKUP.toString() );
-        form.setHospital( "iTrust Test Hospital Two" );
+        form.setHospital( "Hospital Two" );
         form.setHdl( 1 );
         form.setHeight( 1f );
         form.setWeight( 1f );
