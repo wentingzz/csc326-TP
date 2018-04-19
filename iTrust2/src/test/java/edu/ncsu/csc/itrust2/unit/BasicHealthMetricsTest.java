@@ -121,7 +121,6 @@ public class BasicHealthMetricsTest {
 
 		assertTrue(metric.equals(metric2));
 
-		assertFalse(BasicHealthMetrics.getBasicHealthMetrics().isEmpty());
 		assertFalse(BasicHealthMetrics.getBasicHealthMetricsForHCP(hcp.getUsername()).isEmpty());
 		//assertTrue(metric.getBasicHealthMetricsForPatient(patient.getUsername()).isEmpty());
 		//	assertTrue(metric.getBasicHealthMetricsForHCPAndPatient(hcp.getUsername(), patient.getUsername()).isEmpty());
