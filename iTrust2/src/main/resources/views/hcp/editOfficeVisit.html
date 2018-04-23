@@ -76,6 +76,28 @@
 										return err.join(". ");
 									}
 
+									var checkValidLabProcedure = function(lp) {
+										var err = [];
+										if (!lp.code) {
+											err
+													.push("Lab procedure must be associated with a code");
+										}
+										if (!lp.priority) {
+											err
+													.push("Lab procedure must have a priority");
+										}
+										if (lp.comments.length > 499) {
+											err
+													.push("Lab procedure comment can be upto 500 characters");
+										}
+										if (!lp.labtech) {
+											err
+													.push("Lab procedure must have an assigned lab tech");
+										}
+
+										return err.join(". ");
+									}
+
 									var checkValidImmunization = function(imm) {
 										var err = [];
 										if (!imm.vaccine) {
@@ -109,33 +131,37 @@
 
 									$scope.noVisitSelected = true;
 									$scope.loadingVisits = true;
-									$http
-											.get("/iTrust2/api/v1/officevisits")
-											.then(
-													function(response) {
-														$scope.noVisitSelected = true;
-														$scope.loadingVisits = false;
-														$scope.visits = response.data;
-														var visitsLength = $scope.visits.length;
-														//The problem is that the visit does not contain an actual reference to the patient as a patient, only as a user
-														//to get around this, we will use the patients api which can get us this mapping, and we will have angular help
-														for (var i = 0; i < visitsLength; i++) {
-															$scope.visits[i].formattedDate = $scope
-																	.getDate($scope.visits[i].date);
-															//passing to inner loop taken from https://stackoverflow.com/questions/17244614/passing-variable-to-promise-in-a-loop
-															(function(i) {
-																$http
-																		.get(
-																				"/iTrust2/api/v1/patients/"
-																						+ $scope.visits[i].patient.username)
-																		.then(
-																				function(
-																						response) {
-																					$scope.visits[i].actualPatient = response.data;
-																				});
-															})(i);
-														}
-													});
+									$scope.loadVisit = function() {
+										$http
+										.get("/iTrust2/api/v1/officevisits")
+										.then(
+												function(response) {
+													$scope.noVisitSelected = true;
+													$scope.loadingVisits = false;
+													$scope.visits = response.data;
+													var visitsLength = $scope.visits.length;
+													//The problem is that the visit does not contain an actual reference to the patient as a patient, only as a user
+													//to get around this, we will use the patients api which can get us this mapping, and we will have angular help
+													for (var i = 0; i < visitsLength; i++) {
+														$scope.visits[i].formattedDate = $scope
+																.getDate($scope.visits[i].date);
+														//passing to inner loop taken from https://stackoverflow.com/questions/17244614/passing-variable-to-promise-in-a-loop
+														(function(i) {
+															$http
+																	.get(
+																			"/iTrust2/api/v1/patients/"
+																					+ $scope.visits[i].patient.username)
+																	.then(
+																			function(
+																					response) {
+																				$scope.visits[i].actualPatient = response.data;
+																			});
+														})(i);
+													}
+												});
+									};
+									$scope.loadVisit();
+									
 
 									$http
 											.get(
@@ -182,19 +208,19 @@
 														$scope.icdcodes = response.data;
 													});
 
-// 									$http
-// 											.get(
-// 													"/iTrust2/api/v1/labprocedurecodes")
-// 											.then(
-// 													function(response) {
-// 														$scope.labprocedurecodes = response.data;
-// 													});
+									$http
+											.get(
+													"/iTrust2/api/v1/labprocedurecodes")
+											.then(
+													function(response) {
+														$scope.labprocedurecodes = response.data;
+													});
 
 									$http
 											.get("/iTrust2/api/v1/labtechs/")
 											.then(
 													function(response) {
-														$scope.labTechs = response.data;
+														$scope.labtechs = response.data;
 													});
 
 									$scope.selectedVisitID = null;
@@ -211,6 +237,7 @@
 										$scope.prescriptions = [];
 										$scope.diagnoses = [];
 										$scope.immunizations = [];
+										$scope.labProcedures = [];
 										var visitsLength = $scope.visits.length;
 										$scope.noVisitSelected = false;
 										for (var i = 0; i < visitsLength; i++) {
@@ -260,25 +287,20 @@
 																	}
 																});
 
-// 												$http
-// 														.get(
-// 																"/iTrust2/api/v1/labProcedureforvisit/"
-// 																		+ $scope.selectedVisitID)
-// 														.then(
-// 																function(
-// 																		response) {
-// 																	$scope.labProcedureResponse = response.data;
-// 																	var dLength = $scope.labProcedureResponse.length;
-// 																	for (var i = 0; i < dLength; i++) {
-// 																		$scope.diagnoses
-// 																				.push({
-// 																					labProcedureCode : $scope.labProcedureResponse[i].labProcedureCode,
-// 																					priority : $scope.labProcedureResponse[i].priority,
-// 																					comments : $scope.labProcedureResponse[i].comments,
-// 																					labTech : $scope.labProcedureResponse[i].labTech
-// 																				});
-// 																	}
-// 																});
+												//labProcedure
+												var lpLength = $scope.visits[i].labProcedures.length;
+												for (var j = 0; j < lpLength; j++) {
+													$scope.labProcedures
+															.push({
+																id : $scope.visits[i].labProcedures[j].id,
+																code : $scope.visits[i].labProcedures[j].code,
+																priority : $scope.visits[i].labProcedures[j].priority,
+																comments : $scope.visits[i].labProcedures[j].comments,
+																labtech : $scope.visits[i].labProcedures[j].labtech.username,
+																status : $scope.visits[i].labProcedures[j].status
+																
+															});
+												}
 
 												// prescriptions
 												var pLength = $scope.visits[i].prescriptions.length;
@@ -440,8 +462,9 @@
 											}
 										}
 										$scope.selectedVisit.diagnoses = $scope.diagnoses;
-										//$scope.selectedVisit.labProcedure = $scope.labProcedure;
+										$scope.selectedVisit.labProcedures = $scope.labProcedures;
 										$scope.selectedVisit.prescriptions = $scope.prescriptions;
+
 										$scope.selectedVisit.prescriptions
 												.forEach(function(p) {
 													p.patient = $scope.selectedVisit.patient;
@@ -450,6 +473,14 @@
 										$scope.selectedVisit.immunizations
 												.forEach(function(imm) {
 													imm.patient = $scope.selectedVisit.patient;
+												});
+
+										$scope.selectedVisit.labProcedures
+												.forEach(function(lp) {
+													lp.patient = $scope.selectedVisit.patient;
+													lp.hcp = $scope.selectedVisit.hcp;
+													lp.status = "ASSIGNED";
+											<!--		lp.hcp = $scope.selectedVisit.hcp; -->
 												});
 
 										$http(
@@ -461,10 +492,11 @@
 												})
 												.then(
 														function(response) {
-															$scope.message = "Office visit edited successfully";
-														},
+															$scope.loadVisit();
+															$scope.message = "Office visit is updated successfully";
+														} ,
 														function(rejection) {
-															$scope.message = "Error occurred editing office visit";
+															$scope.message = "Error occurred deleting office visit";
 														})
 									}
 
@@ -486,30 +518,6 @@
 										});
 										resetDiagnosisForm();
 									}
-
-									/** lab procedure **/
-// 									$scope.labProcedureCode = "";
-// 									$scope.priority = "";
-// 									$scope.comments = "";
-// 									$scope.labTech = "";
-
-									//clears local variables for lab procedure form
-// 									function resetLabProcedureForm() {
-// 										$scope.labProcedureCode = "";
-// 										$scope.priority = "";
-// 										$scope.comments = "";
-// 										$scope.labTech = "";
-// 									}
-
-// 									$scope.fillLabProcedure = function() {
-// 										$scope.labProcedure.push({
-// 											code : $scope.labProcedureCode,
-// 											priority : $scope.priority,
-// 											comments : $scope.comments,
-// 											labtech : $scope.labTech
-// 										});
-// 										resetLabProcedureForm();
-// 									}
 
 									/** prescriptions **/
 
@@ -573,9 +581,24 @@
 									}
 
 									//remove local lab procedure from list
-// 									$scope.removeLabProcedure = function($index) {
-// 										$scope.labProcedure.splice($index, 1);
-// 									}
+									$scope.removeLabProcedure = function($index, id) {
+										$scope.labProcedures.splice($index, 1);
+										$http(
+												{
+													method : 'DELETE',
+													url : '/iTrust2/api/v1/labprocedures/'
+															+ id + '/'
+												})
+												.then(
+														function(response) {
+															$scope.loadVisit();
+															$scope.selectedVisitID = id;
+															$scope.message = "Office visit edited successfully";
+														}/* ,
+														function(rejection) {
+															$scope.message = "Error occurred editing office visit";
+														} */)
+									}
 
 									//remove local prescription from list
 									$scope.removePrescription = function($index) {
@@ -1009,7 +1032,7 @@
 																	<div class="panel-body">
 																		<div class="row" ng-repeat="p in prescriptions">
 																			<div class="col-md-2">{{p.drug}}</div>
-																			<div class="col-md-2">{{p.dosage}}mg</div>
+																			<div class="col-md-2">{{p.dosage}}</div>
 																			<div class="col-md-2">{{p.startDate}}</div>
 																			<div class="col-md-2">{{p.endDate}}</div>
 																			<div class="col-md-2">{{p.renewals}}</div>
@@ -1032,119 +1055,44 @@
 										</div>
 
 										<!-- Lab Procedure Panel  -->
-<!-- 										<div class="col-md-4"> -->
-<!-- 											<div class="panel panel-info"> -->
-<!-- 												<div class="panel-heading"> -->
-<!-- 													<h4>Lab Procedure</h4> -->
-<!-- 												</div> -->
-<!-- 												<div class="panel-body"> -->
-<!-- 													<div class="form-group row"> -->
-<!-- 														<div class="col-xs-6"> -->
-<!-- 															<label>Lab Procedure:</label> -->
-<!-- 														</div> -->
-<!-- 														<div class="col-xs-6 radio-box"> -->
-<!-- 															<div class="form-check"> -->
-<!-- 																<ul style="list-style: none;"> -->
-<!-- 																	<li ng-repeat="i in labprocedurecodes"><label> -->
-<!-- 																			<input type="radio" -->
-<!-- 																			ng-model="$parent.labProcedureCode" id="{{i.code}}" -->
-<!-- 																			name="{{i.commonLongName}}" ng-value="i" -->
-<!-- 																			required="true" /> {{i.code}} -->
-<!-- 																	</label></li> -->
-<!-- 																</ul> -->
-<!-- 															</div> -->
-<!-- 														</div> -->
-<!-- 													</div> -->
+										<div class="col-md-4">
+											<div class="panel panel-info">
+												<div class="panel-heading">
+													<h4>Lab Procedure</h4>
+												</div>
+												<div class="panel-body">
 
-<!-- 													<div class="form-group row"> -->
-<!-- 														<div class="col-xs-6"> -->
-<!-- 															<label>Priority:</label> -->
-<!-- 														</div> -->
-<!-- 														<div class="col-xs-6 radio-box"> -->
-<!-- 															<div class="form-check"> -->
-<!-- 																<ul style="list-style: none;"> -->
-<!-- 																	<li><label> <input type="radio" -->
-<!-- 																			ng-model="priority" ng-value="1" required="true" /> -->
-<!-- 																			1 (Highest) -->
-<!-- 																	</label></li> -->
-<!-- 																	<li><label> <input type="radio" -->
-<!-- 																			ng-model="priority" ng-value="2" required="true" /> -->
-<!-- 																			2 -->
-<!-- 																	</label></li> -->
-<!-- 																	<li><label> <input type="radio" -->
-<!-- 																			ng-model="priority" ng-value="3" required="true" /> -->
-<!-- 																			3 -->
-<!-- 																	</label></li> -->
-<!-- 																	<li><label> <input type="radio" -->
-<!-- 																			ng-model="priority" ng-value="4" required="true" /> -->
-<!-- 																			4 (Lowest) -->
-<!-- 																	</label></li> -->
-<!-- 																</ul> -->
-<!-- 															</div> -->
-<!-- 														</div> -->
-<!-- 													</div> -->
+													<div class="form-group row">
+														<div class="col-md-12">
+															<div class="panel panel-default">
+																<div class="panel-heading">Added Lab Procedure</div>
+																<div class="panel-body">
+																	<div class="row" ng-repeat="lp in labProcedures">
+																		<div class="col-md-4">{{lp.code.code}}</div>
+																		<div class="col-md-4">{{lp.comments}}</div>
+																		<div class="col-md-4">{{lp.priority}}</div>
+																		<div class="col-md-4">{{lp.labtech}}</div>
+																		<div class="col-md-4">{{lp.status}}</div>
+																		<div class="col-md-4">
+																			<button class="btn btn-danger btn-xs"
+																				ng-click="removeLabProcedure($index, lp.id)"
+																				name="removeLabProcedure">
+																				<b>x</b>
+																			</button>
+																		</div>
+																	</div>
+																	<button class="btn btn-success">
+																		<a href="/iTrust2/hcp/editLabProcedures" id="editLP">Edit Lab Procedures</a>
+																	</button>
+																			
+																</div>
+															</div>
+														</div>
+													</div>
 
-<!-- 													<div class="form-group row"> -->
-<!-- 														<div class="col-xs-6"> -->
-<!-- 															<label>Comments:</label> -->
-<!-- 														</div> -->
-<!-- 														<div class="col-xs-6"> -->
-<!-- 															<input class="form-control" name="comments" -->
-<!-- 																ng-model="comments" required="true" type="text"> -->
-<!-- 														</div> -->
-<!-- 													</div> -->
-
-<!-- 													<div class="form-group row"> -->
-<!-- 														<div class="col-xs-6"> -->
-<!-- 															<label>Lab Tech:</label> -->
-<!-- 														</div> -->
-<!-- 														<div class="col-xs-6 radio-box"> -->
-<!-- 															<div class="form-check"> -->
-<!-- 																<ul style="list-style: none;"> -->
-<!-- 																	<li ng-repeat="i in labTechs"><label> <input -->
-<!-- 																			type="radio" id="{{i.code}}" ng-model="labtech" -->
-<!-- 																			name="labtech" ng-value="i" required="true" /> -->
-<!-- 																			{{i.username}} -->
-<!-- 																	</label></li> -->
-<!-- 																</ul> -->
-<!-- 															</div> -->
-<!-- 														</div> -->
-<!-- 													</div> -->
-
-<!-- 													<div class="form-group row text-center"> -->
-<!-- 														<div class="col-md-12"> -->
-<!-- 															<button class="btn btn-success" -->
-<!-- 																ng-click="fillLabProcedure()" name="fillLabProcedure">Add -->
-<!-- 																Lab Procedure</button> -->
-<!-- 														</div> -->
-<!-- 													</div> -->
-
-<!-- 													<div class="form-group row"> -->
-<!-- 														<div class="col-md-12"> -->
-<!-- 															<div class="panel panel-default"> -->
-<!-- 																<div class="panel-heading">Added Lab Procedure</div> -->
-<!-- 																<div class="panel-body"> -->
-<!-- 																	<div class="row" ng-repeat="d in labProcedure"> -->
-<!-- 																		<div class="col-md-4">{{d.code.code}}</div> -->
-<!-- 																		<div class="col-md-4">{{d.comments}}</div> -->
-<!-- 																		<div class="col-md-4">{{d.priority}}</div> -->
-<!-- 																		<div class="col-md-4">{{d.labtech}}</div> -->
-<!-- 																		<div class="col-md-4"> -->
-<!-- 																			<button class="btn btn-danger btn-xs" -->
-<!-- 																				ng-click="removeLabProcedure($index)" -->
-<!-- 																				name="removeLabProcedure"> -->
-<!-- 																				<b>x</b> -->
-<!-- 																			</button> -->
-<!-- 																		</div> -->
-<!-- 																	</div> -->
-<!-- 																</div> -->
-<!-- 															</div> -->
-<!-- 														</div> -->
-<!-- 													</div> -->
-
-<!-- 												</div> -->
-<!-- 											</div> -->
-<!-- 										</div> -->
+												</div>
+											</div>
+										</div>
 										<!-- Immunization Panel -->
 										<div class="col-md-4">
 											<div class="panel panel-info">
