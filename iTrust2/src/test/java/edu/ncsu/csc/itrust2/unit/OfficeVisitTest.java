@@ -1,8 +1,11 @@
 package edu.ncsu.csc.itrust2.unit;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -10,12 +13,13 @@ import org.junit.Test;
 
 import edu.ncsu.csc.itrust2.models.enums.AppointmentType;
 import edu.ncsu.csc.itrust2.models.enums.HouseholdSmokingStatus;
-import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.models.persistent.BasicHealthMetrics;
 import edu.ncsu.csc.itrust2.models.persistent.Diagnosis;
 import edu.ncsu.csc.itrust2.models.persistent.Drug;
 import edu.ncsu.csc.itrust2.models.persistent.Hospital;
 import edu.ncsu.csc.itrust2.models.persistent.ICDCode;
+import edu.ncsu.csc.itrust2.models.persistent.Immunization;
+import edu.ncsu.csc.itrust2.models.persistent.LabProcedure;
 import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
 import edu.ncsu.csc.itrust2.models.persistent.Prescription;
 import edu.ncsu.csc.itrust2.models.persistent.User;
@@ -42,42 +46,19 @@ public class OfficeVisitTest {
 
         bhm.save();
 
+        final Calendar time = Calendar.getInstance();
         visit.setBasicHealthMetrics( bhm );
         visit.setType( AppointmentType.GENERAL_CHECKUP );
         visit.setHospital( hosp );
         visit.setPatient( User.getByName( "AliceThirteen" ) );
         visit.setHcp( User.getByName( "AliceThirteen" ) );
-        visit.setDate( Calendar.getInstance() );
-
-        // make LabProcedure form, then use the form to make the
-        // LabProcedureCode,
-        // then use the LabProcedureCode to make the LabProcedure
-        // make the test date a random constant date/time;
-        // to use the current date/time, can use empty Date() constructor
-        final Date testDate = new Date( 9998999899L );
-        // create a form with valid information filled in
-        // final LabProcedureCodeForm form = new LabProcedureCodeForm();
-        // form.setId( (long) 1 );
-        // form.setCode( "88573-1" );
-        // form.setLongCommonName( "Onchocherca sp IgG2 Ab [Presence] in Serum
-        // by Immunoassay" );
-        // form.setComponent( "Onchochera sp Ab.IgG2" );
-        // form.setProperty( "PrThr" );
-        // form.setDateCreated( testDate );
-        // make a LabProcedureCode object using the form created above
-        // final LabProcedureCode procedureCode = new LabProcedureCode( form );
-        // create the users needed to make a LabProcedure, plus the office visit
-        final User labTech = new User( "labTech1", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
-                Role.ROLE_LABTECH, 1 );
-        final User testPatient = new User( "testPatient1",
-                "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", Role.ROLE_PATIENT, 1 );
-        final User testHCP = new User( "testHCP1", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
-                Role.ROLE_HCP, 1 );
-        // final LabProcedure procedure = new LabProcedure( 4, procedureCode,
-        // "scheduled test", labTech, visit,
-        // testPatient, testHCP, "in-progress" );
-        // visit.getLabProcedures().add( procedure );
+        visit.setDate( time );
+        visit.setNotes( "comment" );
         visit.save();
+
+        assertTrue( visit.getHospital().getName().equals( "Dr Jenkins' Asylum" ) );
+        assertTrue( visit.getNotes().equals( "comment" ) );
+        assertTrue( time.equals( visit.getDate() ) );
 
         final List<Diagnosis> diagnoses = new Vector<Diagnosis>();
 
@@ -98,6 +79,24 @@ public class OfficeVisitTest {
         visit.setDiagnoses( diagnoses );
 
         visit.save();
+        // test the getter for appointments
+        assertNull( visit.getAppointment() );
+        // test the getter for the office visit's hospital
+        assertTrue( visit.getHospital().getName().equals( "Dr Jenkins' Asylum" ) );
+        // test the getter for the type of appointment
+        assertTrue( visit.getType().equals( AppointmentType.GENERAL_CHECKUP ) );
+        assertTrue( visit.getLabProcedures().isEmpty() );
+
+        final ArrayList<LabProcedure> lplist = new ArrayList<LabProcedure>();
+        lplist.add( new LabProcedure() );
+        visit.setLabProcedures( lplist );
+        assertTrue( visit.getLabProcedures().size() == 1 );
+        visit.setLabProcedures( Collections.emptyList() );
+        final ArrayList<Immunization> ilist = new ArrayList<Immunization>();
+        ilist.add( new Immunization() );
+        visit.setImmunizations( ilist );
+        assertTrue( visit.getImmunizations().size() == 1 );
+        visit.setImmunizations( Collections.emptyList() );
 
         final Drug drug = new Drug();
 

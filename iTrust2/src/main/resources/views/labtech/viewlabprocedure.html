@@ -9,29 +9,32 @@
   <script th:inline="javascript">
       /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
       /*<![CDATA[*/
-      //var app = angular.module("viewLabProcedureApp", []);
-//       app.controller('labProcedureCtrl', function ($scope, $http) {
-//         $scope.procedures = [];
-//         $scope.selected = "";
-//         $scope.selectedStatus = "";
-//         $scope.allStatus = ["NEW", "IN_PROGRESS", "COMPLETE"];
-//         $scope.allLabtech = [];
+      var app = angular.module("viewLabProcedureApp", []);
+      app.controller('labProcedureCtrl', function ($scope, $http) {
+        $scope.procedures = [];
+        $scope.selected = "";
+        $scope.selectedStatus = "";
+        $scope.allStatus = ["IN_PROGRESS", "COMPLETE"];
+        $scope.allLabtech = [];
+        $scope.condition = true;
+        $scope.updateStatus = "";
 
-//         $scope.loadTable = function(){
-//         		$http.get("/iTrust2/api/v1/labtech/labprocedures/").then(
-//         	          function (response) {
-//         	            $scope.procedures = response.data;
-//         	            $scope.message = "";
-//         	          }, function (rejection) {
-//         	            $scope.procedures = [];
-//         	            $scope.message = "Could not display lab procedures";
-//         	          });
-//         };
+        $scope.loadTable = function(){
+        		$http.get("/iTrust2/api/v1/labtech/labprocedures/").then(
+        	          function (response) {
+        	            $scope.procedures = response.data;
+        	            $scope.message = "";
+        	          }, function (rejection) {
+        	            $scope.procedures = [];
+        	            $scope.message = "Could not display lab procedures";
+        	          });
+        };
         $scope.loadTable();
 
         
         // gets the template to ng-include for a table row / item
         $scope.selectedProcedures = "";
+        $scope.updateComments = "";
 
         $scope.selectProcedures = function(lab){
         		$scope.selectedProcedure = lab;
@@ -47,14 +50,31 @@
                     });
         }
         
-//         $scope.update = function ( ) {
-//         		$http.put('/iTrust2/api/v1/labprocedure/' + $scope.selectedProcedure.id + "/" +  $scope.updateStatus+ "/" +  $scope.updateLabTech + "/").then(
-// 					function(response) {
-// 						$scope.loadTable();
-// 					}, function(rejection) {
-// 						$scope.message = "Could not update lab procedure";
-// 					})
-//         };
+        $scope.update = function ( ) {
+        	if ($scope.updateComments == "") {
+        		$http.put('/iTrust2/api/v1/labprocedure/' + $scope.selectedProcedure.id + "/" +  $scope.updateStatus + "/" +  $scope.updateLabTech + "/"/*  + $scope.updateComments + "/" */).then(
+        				function(response) {
+    						$scope.loadTable();
+    						$scope.selectedProcedure = [];
+    						$scope.updateStatus = "";
+    						$scope.updateLabTech = "";
+    						$scope.updateComments = "";
+    					}, function(rejection) {
+    						$scope.message = "Could not update lab procedure";
+    					})
+        	} else {
+        		$http.put('/iTrust2/api/v1/labprocedure/' + $scope.selectedProcedure.id + "/" +  $scope.updateStatus + "/" +  $scope.updateLabTech + "/"  + $scope.updateComments + "/" ).then(
+					function(response) {
+						$scope.loadTable();
+						$scope.selectedProcedure = [];
+						$scope.updateStatus = "";
+						$scope.updateLabTech = "";
+						$scope.updateComments = "";
+					}, function(rejection) {
+						$scope.message = "Could not update lab procedure";
+					})
+        	}
+        };
 
         
       });
@@ -76,7 +96,7 @@
                     		  <th>Priority</th>
                     		  <th>LOINC Code</th>
                     		  <th>Office Visit</th>
-                    		  <th>HCP</th>
+                    		<!--  <th>HCP</th> -->  
                     		  <th>Status</th>
                     		  <th>Lab Tech</th>
                     		  <th>Comments</th>
@@ -87,10 +107,10 @@
 									ng-click='selectProcedures(l)' />&nbsp;{{l.priority}}</td>
                     		  <td>{{l.code.code}}</td>
                     		  <td>{{l.patient.username}}'s {{l.officevisit.type}} on {{l.officevisit.date}}</td>
-                    		  <td>{{l.hcp.username}}</td>
+                    		<!--  <td>{{l.hcp.username}}</td> -->  
                     		  <td> {{l.status}}</td>
                     		  <td>{{l.labtech.username}}</td>
-                    		  <td>{{l.notes}}</td>
+                    		  <td>{{l.comments}}</td>
                     		</tr>
                   		</thead>
                 	   </table>
@@ -140,13 +160,21 @@
                  			   </tbody>
                 				 </table>
                 				 
-                              
+                				 <!--  <div><label>Comments: </label></div>
+                				 <div class="col-xs-6">
+										<input class="form-control" name="comments" ng-disabled=condition
+												ng-model="selected.comments" type="text">
+										</div>-->
+															
+                				 <label ng-show=(selectedProcedure.status=="COMPLETE")> Comments: 
+                				 	<input type="text" ng-model="updateComments">
+                              </label> 
                               <button ng-click="update()" type="submit" class="btn btn-success" name="submit">Update</button>
                             </div>
 				</table>
 				<br />
-                		<label>{{updateLabTech}}</label>
-               			 <label>{{updateStatus}}</label>
+                		<!--  <label>{{updateLabTech}}</label>
+               			 <label>{{updateStatus}}</label> -->
               </div>
             </div>
           </div>
