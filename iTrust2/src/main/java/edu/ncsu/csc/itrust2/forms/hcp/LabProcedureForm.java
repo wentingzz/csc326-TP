@@ -34,7 +34,7 @@ public class LabProcedureForm implements Serializable {
 
     /**
      * Constructs a new form from the given LabProcedure
-     *
+     * 
      * @param lp
      *            the LabProcedure object
      */
@@ -49,7 +49,7 @@ public class LabProcedureForm implements Serializable {
 
     /**
      * Constructs a LabProcedureForm from the given fields
-     *
+     * 
      * @param code
      *            the LOINC code of the procedure
      * @param priority
@@ -73,7 +73,7 @@ public class LabProcedureForm implements Serializable {
 
     /**
      * Sets the LOINC code
-     *
+     * 
      * @param code
      *            the LOINC code
      */
@@ -83,7 +83,7 @@ public class LabProcedureForm implements Serializable {
 
     /**
      * Sets the priority of the lab procedure
-     *
+     * 
      * @param priority
      *            the priority of the lab procedure
      */
@@ -93,7 +93,7 @@ public class LabProcedureForm implements Serializable {
 
     /**
      * Sets the comment of the lab procedure
-     *
+     * 
      * @param comment
      *            the comment to set
      */
@@ -103,7 +103,7 @@ public class LabProcedureForm implements Serializable {
 
     /**
      * Sets the lab tech of the lab procedure
-     *
+     * 
      * @param labtech
      *            the labtech of the lab procedure
      */
@@ -113,7 +113,7 @@ public class LabProcedureForm implements Serializable {
 
     /**
      * Sets the id of the lab procedure
-     *
+     * 
      * @param id
      *            the id of the lab procedure
      */
@@ -123,7 +123,7 @@ public class LabProcedureForm implements Serializable {
 
     /**
      * Returns the code of the lab procedure
-     *
+     * 
      * @return the code of the lab procedure
      */
     public LabProcedureCode getCode () {
@@ -132,7 +132,7 @@ public class LabProcedureForm implements Serializable {
 
     /**
      * Returns the priority of the lab procedure
-     *
+     * 
      * @return the priority of the lab procedure
      */
     public int getPriority () {
@@ -141,7 +141,7 @@ public class LabProcedureForm implements Serializable {
 
     /**
      * Returns the comment of the lab procedure
-     *
+     * 
      * @return the comment of the lab procedure
      */
     public String getComment () {
@@ -150,7 +150,7 @@ public class LabProcedureForm implements Serializable {
 
     /**
      * Returns the labtech of the lab procedure
-     *
+     * 
      * @return the labtech of the lab procedure
      */
     public String getLabtech () {
@@ -159,7 +159,7 @@ public class LabProcedureForm implements Serializable {
 
     /**
      * Returns the id of the lab procedure
-     *
+     * 
      * @return the id of the lab procedure
      */
     public Long getId () {
@@ -202,7 +202,7 @@ public class LabProcedureForm implements Serializable {
 
     /**
      * Returns the hcp associated with the lab procedure
-     *
+     * 
      * @return the hcp associated with the lab procedure
      */
     /**
@@ -211,7 +211,7 @@ public class LabProcedureForm implements Serializable {
 
     /**
      * Sets the hcp associated with the lab procedure
-     *
+     * 
      * @param hcp
      *            the hcp associated with the lab procedure
      */
