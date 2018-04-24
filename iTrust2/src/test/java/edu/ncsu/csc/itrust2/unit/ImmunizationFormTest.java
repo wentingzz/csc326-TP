@@ -32,6 +32,11 @@ public class ImmunizationFormTest {
         assertTrue( form.getPatient().equals( "isThereLifeOnMars" ) );
         assertTrue( form.getVaccine().equals( "Chicken Pox" ) );
 
+        final Immunization im = new Immunization( form );
+        assertTrue( im.getId() == null );
+        assertTrue( im.getPatient().equals( testPatient ) );
+        assertTrue( im.getVaccine().getCode().equals( "Chicken Pox" ) );
+
         // create a vaccine for the Immunization to use
         final Vaccine vaccine = new Vaccine();
         vaccine.setCode( "196" );

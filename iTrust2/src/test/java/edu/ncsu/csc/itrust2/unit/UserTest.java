@@ -63,52 +63,64 @@ public class UserTest {
     }
 
     /**
-     * Tests equals()
+     * Tests equals() and hashCode()
      */
     @Test
-    public void testEquals () {
+    public void testEqualsAndHashCode () {
         final User u1 = new User();
         final User u2 = new User();
 
         u2.setEnabled( null );
         u1.setEnabled( null );
         assertTrue( u1.equals( u2 ) );
+        assertTrue( u1.hashCode() == u2.hashCode() );
         u2.setEnabled( 1 );
         assertFalse( u1.equals( u2 ) );
+        assertTrue( u1.hashCode() != u2.hashCode() );
         u1.setEnabled( 1 );
         u2.setEnabled( null );
         assertFalse( u1.equals( u2 ) );
+        assertTrue( u1.hashCode() != u2.hashCode() );
         u2.setEnabled( 0 );
         assertFalse( u1.equals( u2 ) );
+        assertTrue( u1.hashCode() != u2.hashCode() );
         u1.setEnabled( 0 );
 
         u1.setPassword( null );
         u2.setPassword( null );
         assertTrue( u1.equals( u2 ) );
+        assertTrue( u1.hashCode() == u2.hashCode() );
         u2.setPassword( "123" );
         assertFalse( u1.equals( u2 ) );
+        assertTrue( u1.hashCode() != u2.hashCode() );
         u2.setPassword( "123" );
         u1.setPassword( null );
         assertFalse( u1.equals( u2 ) );
+        assertTrue( u1.hashCode() != u2.hashCode() );
         u1.setPassword( "234" );
         assertFalse( u1.equals( u2 ) );
+        assertTrue( u1.hashCode() != u2.hashCode() );
         u1.setPassword( "123" );
 
         u1.setRole( Role.ROLE_ADMIN );
         u2.setRole( Role.ROLE_ER );
         assertFalse( u1.equals( u2 ) );
+        assertTrue( u1.hashCode() != u2.hashCode() );
         u1.setRole( Role.ROLE_ER );
 
         u1.setUsername( null );
         u2.setUsername( null );
         assertTrue( u1.equals( u2 ) );
+        assertTrue( u1.hashCode() == u2.hashCode() );
         u2.setUsername( "s" );
         assertFalse( u1.equals( u2 ) );
+        assertTrue( u1.hashCode() != u2.hashCode() );
         u2.setUsername( null );
         u1.setUsername( "s" );
         assertFalse( u1.equals( u2 ) );
+        assertTrue( u1.hashCode() != u2.hashCode() );
         u2.setUsername( "s2" );
         assertFalse( u1.equals( u2 ) );
+        assertTrue( u1.hashCode() != u2.hashCode() );
     }
-
 }
