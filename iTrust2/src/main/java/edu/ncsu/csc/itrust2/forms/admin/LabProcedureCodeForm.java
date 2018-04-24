@@ -50,6 +50,7 @@ public class LabProcedureCodeForm {
         setProperty( code.getProperty() );
         setLongCommonName( code.getLongCommonName() );
         setId( code.getId() );
+        setDateCreated(code.getDateCreated());
     }
 
     /**

@@ -1,6 +1,6 @@
 package edu.ncsu.csc.itrust2.unit;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Date;
 
@@ -52,6 +52,11 @@ public class LabProcedureCodeTest {
         assertTrue( code.getProperty().equals( "PrThr" ) );
         assertTrue( code.getDateCreated().equals( testDate ) );
 
+        
+        LabProcedureCodeForm bleh = new LabProcedureCodeForm(code);
+        LabProcedureCodeForm bleh2 = new LabProcedureCodeForm(code);
+        assertTrue(bleh.equals(bleh2));
+        
         // try set code to something invalid
         try {
             code.setCode( "!!!" );
@@ -75,6 +80,9 @@ public class LabProcedureCodeTest {
         // create a valid LabProcedure using the LabProcedureCode
         final LabProcedure procedure = new LabProcedure( 4, code, "scheduled test", labTech, testVisit, testPatient,
                 testHCP, "in-progress" );
+        
+        assertEquals(code, procedure.getCode());
+       // assertEqauls(1701, )
         // test valid setting notes
         procedure.setComments( "updated notes with additional details" );
         // test invalid and valid setting priority
@@ -155,6 +163,8 @@ public class LabProcedureCodeTest {
         assertTrue( form2.getPriority() == ( procedure.getPriority() ) );
         assertTrue( form2.getStatus().equals( procedure.getStatus() ) );
 
+        LabProcedure testProcedure = new LabProcedure(form2);
+        assertEquals(form2.getCode(), testProcedure.getCode());
         // make sure setters work
         // create a new test patient and labtech
         final User davidBowie = new User( "spaceOddity", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
@@ -172,7 +182,7 @@ public class LabProcedureCodeTest {
     }
 
     @Test
-    public void testLabProcedureForm () {
-
+    public void testLabProcedureCodeForm () {
+    		//LabProcedureCode code = new LabProcedureCode();
     }
 }
