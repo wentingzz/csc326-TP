@@ -217,6 +217,51 @@ public class APIPatientTest {
         mvc.perform( get( "/api/v1/patient/represented" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isOk() );
 
+        // test removing someone else as a representative when that person does
+        // not
+        // actually represent the user; this will go through, but doesn't do
+        // anything
+        mvc.perform( delete( "/api/v1/patient/removerepresented/ivan" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isOk() );
+    }
+
+    /**
+     * Test accessing the patient PUT request as an HCP
+     *
+     * @throws Exception
+     */
+    @Test
+    @WithMockUser ( username = "hcp", roles = { "HCP" } )
+    public void testPatientAsHCP () throws Exception {
+        final PatientForm patient = new PatientForm();
+        patient.setAddress1( "1 Test Street" );
+        patient.setAddress2( "Some Location" );
+        patient.setBloodType( BloodType.APos.toString() );
+        patient.setCity( "Viipuri" );
+        patient.setDateOfBirth( "6/15/1977" );
+        patient.setEmail( "antti@itrust.fi" );
+        patient.setEthnicity( Ethnicity.Caucasian.toString() );
+        patient.setFirstName( "Antti" );
+        patient.setGender( Gender.Male.toString() );
+        patient.setLastName( "Walhelm" );
+        patient.setPhone( "123-456-7890" );
+        patient.setSelf( "antti" );
+        patient.setState( State.NC.toString() );
+        patient.setZip( "27514" );
+
+        final Patient ivan = new Patient( patient );
+        final User ivanUser = new User( "ivan", "password", Role.ROLE_PATIENT, 1 );
+        ivanUser.save();
+        ivan.setSelf( ivanUser );
+        ivan.save();
+
+        // test getting representatives for a particular user
+        mvc.perform( get( "/api/v1/patient/representatives/ivan" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isOk() );
+
+        // test getting who represents a user as an HCP
+        mvc.perform( get( "/api/v1/patient/represented/ivan" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( patient ) ) ).andExpect( status().isOk() );
     }
 
 }

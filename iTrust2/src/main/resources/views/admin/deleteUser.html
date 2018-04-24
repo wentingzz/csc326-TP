@@ -12,7 +12,7 @@
 			th:object="${deleteUserForm}" method="post" modelAttribute="userForm">
 			<div th:each="user : ${users}" class="radio">
 				<input type="radio" th:value="${user.username}" name="name"
-					th:id="${user.username}">
+					th:id="${user.username}" required>
 				<div name="${user.username}">
 					<br /> <strong>Username</strong>
 					<div th:text="${user.username}" style="display: inline-block"></div>
@@ -26,7 +26,7 @@
 			<span th:if="${users!=null and users.size() != 0}">
 
 				<tr>
-					<td><input type="checkbox" name="confirm" class="checkbox">Confirm
+					<td><input type="checkbox" name="confirm" class="checkbox" required>Confirm
 						Delete</input></td>
 				</tr> <br />
 				<button type="submit" class="btn btn-default">Submit</button>
