@@ -11,6 +11,7 @@ import edu.ncsu.csc.itrust2.models.enums.AppointmentType;
 import edu.ncsu.csc.itrust2.models.enums.BloodType;
 import edu.ncsu.csc.itrust2.models.enums.Ethnicity;
 import edu.ncsu.csc.itrust2.models.enums.Gender;
+import edu.ncsu.csc.itrust2.models.enums.LabProcedureStatus;
 import edu.ncsu.csc.itrust2.models.enums.PatientSmokingStatus;
 import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.models.enums.Status;
@@ -56,6 +57,10 @@ public class EnumTests {
 
 		//test state class
 		assertEquals(State.NC, State.parse("bleh"));
+		
+		assertEquals(1, LabProcedureStatus.ASSIGNED.getCode());
+		assertEquals(2, LabProcedureStatus.IN_PROGRESS.getCode());
+		assertEquals(3, LabProcedureStatus.COMPLETED.getCode());
 	
 
 	}

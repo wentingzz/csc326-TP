@@ -90,7 +90,8 @@ public class LabProceduresStepDefs {
 
     @When ( "I fill in values in the Add Lab Procedure form with (.+) and (.+) and (.+) and (.+)" )
     public void fillLabProcedureForm ( final String procName, final String procCode, final String procComponents,
-            final String procProperty ) {
+            final String procProperty ) throws InterruptedException {
+        Thread.sleep( 6000 );
         final WebElement procedureName = driver.findElement( By.name( "longCommonName" ) );
         procedureName.clear();
         procedureName.sendKeys( procName );
