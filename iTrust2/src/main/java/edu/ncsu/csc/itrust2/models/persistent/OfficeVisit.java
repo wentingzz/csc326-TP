@@ -2,6 +2,7 @@ package edu.ncsu.csc.itrust2.models.persistent;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,7 +32,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.criterion.Criterion;
 
 import edu.ncsu.csc.itrust2.forms.hcp.ImmunizationForm;
-// import edu.ncsu.csc.itrust2.forms.hcp.LabProcedureForm;
+import edu.ncsu.csc.itrust2.forms.hcp.LabProcedureForm;
 import edu.ncsu.csc.itrust2.forms.hcp.OfficeVisitForm;
 import edu.ncsu.csc.itrust2.forms.hcp.PrescriptionForm;
 import edu.ncsu.csc.itrust2.models.enums.AppointmentType;
@@ -119,7 +120,16 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
                 return o1.getDate().compareTo( o2.getDate() );
             }
         } );
-        return visits;
+        final int size = visits.size();
+        final ArrayList<OfficeVisit> result = new ArrayList<OfficeVisit>();
+        for ( int i = 0; i < size; i++ ) {
+            final OfficeVisit current = visits.get( i );
+            if ( !result.contains( current ) ) {
+                result.add( current );
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -212,6 +222,14 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
             }
         }
 
+        // associate all diagnoses with this visit
+        // if ( ovf.getLabProcedures() != null ) {
+        // setLabProcedures( ovf.getLabProcedures() );
+        // for ( final LabProcedure d : labProcedures ) {
+        // d.setOfficevisit( this );
+        // }
+        // }
+
         final Patient p = Patient.getPatient( patient );
         if ( p == null || p.getDateOfBirth() == null ) {
             return; // we're done, patient can't be tested against
@@ -245,11 +263,14 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
         }
 
         // associate all lab procedure with this visit
-        // final List<LabProcedureForm> lpfs = ovf.getLabProcedures();
-        // if ( lpfs != null ) {
-        // setLabProcedures( lpfs.stream().map( ( final LabProcedureForm lpf )
-        // -> new LabProcedure( lpf ) )
-        // .collect( Collectors.toList() ) );
+        final List<LabProcedureForm> lpfs = ovf.getLabProcedures();
+        if ( lpfs != null ) {
+            setLabProcedures( lpfs.stream().map( ( final LabProcedureForm lpf ) -> new LabProcedure( lpf ) )
+                    .collect( Collectors.toList() ) );
+        }
+
+        // for ( final LabProcedure lp : labProcedures ) {
+        // lp.setOfficevisit( this );
         // }
 
         final List<ImmunizationForm> imf = ovf.getImmunizations();
@@ -520,9 +541,20 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
      *
      * @return The list of lab procedures
      */
-    // public List<LabProcedure> getLabProcedures () {
-    // return labProcedures;
-    // }
+    public List<LabProcedure> getLabProcedures () {
+        return labProcedures;
+    }
+
+    /**
+     * Adds a lab procedure to the office visit and save to DB
+     *
+     * @param lp
+     *            new lab procedure to be added
+     */
+    public void addLabProcedure ( final LabProcedure lp ) {
+        this.labProcedures.add( lp );
+        this.save();
+    }
 
     /**
      * Sets the list of lab procedures associated with this visit
@@ -530,9 +562,9 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
      * @param labProcedures
      *            The list of lab procedures
      */
-    // public void setLabProcedures ( final List<LabProcedure> labProcedures ) {
-    // this.labProcedures = labProcedures;
-    // }
+    public void setLabProcedures ( final List<LabProcedure> labProcedures ) {
+        this.labProcedures = labProcedures;
+    }
 
     /**
      * Returns the list of prescriptions for this visit
@@ -621,8 +653,9 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     @OneToMany ( mappedBy = "visit" )
     public transient List<Diagnosis> diagnoses;
 
-    // @OneToMany ( mappedBy = "officeVisit" )
-    // private List<LabProcedure> labProcedures;
+    @OneToMany ( fetch = FetchType.EAGER )
+    @JoinColumn ( name = "labProcedure_id" )
+    private List<LabProcedure>       labProcedures = Collections.emptyList();
 
     /**
      * The notes of this office visit
@@ -638,6 +671,7 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
 
     @OneToMany ( fetch = FetchType.EAGER )
     @JoinColumn ( name = "prescriptions_id" )
+    @Fetch ( value = FetchMode.SUBSELECT )
     private List<Prescription>       prescriptions = Collections.emptyList();
 
     @OneToMany ( fetch = FetchType.EAGER )
@@ -725,43 +759,40 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
                 final boolean isImmunizationMissing = currentImmunizationIds.contains( immId );
                 if ( isImmunizationMissing ) {
                     LoggerUtil.log( TransactionType.IMMUNIZATION_DELETE, LoggerUtil.currentUser(),
-                            getPatient().getUsername(), "Deleting immunization with id " + id );
+                            getPatient().getUsername(), "Deleting immunization with id " + immId );
                     Immunization.getById( immId ).delete();
                 }
             } );
         }
         /// END IMMUNIZATIONS///
 
-        // final Set<Long> savedLPIds = oldVisit == null ?
-        // Collections.emptySet()
-        // : oldVisit.getLabProcedures().stream().map( LabProcedure::getId
-        // ).collect( Collectors.toSet() );
+        /// SAVE LAB PROCEDURES ///
+        final Set<Long> currentLPIds = this.getLabProcedures().stream().map( LabProcedure::getId )
+                .collect( Collectors.toSet() );
+        final Set<Long> savedLPIds = oldVisit == null ? Collections.emptySet()
+                : oldVisit.getLabProcedures().stream().map( LabProcedure::getId ).collect( Collectors.toSet() );
 
-        // Save each of the prescriptions
-        // this.getLabProcedures().forEach( lp -> {
-        //
-        // final boolean lpIsSaved = savedLPIds.contains( lp.getId() );
-        //
-        // if ( lpIsSaved ) {
-        // LoggerUtil.log( TransactionType.EIDT_LAB_PROCEDURE,
-        // LoggerUtil.currentUser(),
-        // getPatient().getUsername(), "Editing lab procedure with id " +
-        // lp.getId() );
-        // }
-        // else {
-        // LoggerUtil.log( TransactionType.CREATE_LAB_PROCEDURE,
-        // LoggerUtil.currentUser(),
-        // getPatient().getUsername(), "Creating lab procedure with id " +
-        // lp.getId() );
-        // }
-        // lp.save();
-        // } );
+        // Save each of the lab procedures
+        this.getLabProcedures().forEach( lp -> {
 
-        // Remove prescriptions no longer included
+            final boolean isLpSaved = savedLPIds.contains( lp.getId() );
+
+            if ( isLpSaved ) {
+                LoggerUtil.log( TransactionType.EIDT_LAB_PROCEDURE, LoggerUtil.currentUser(),
+                        getPatient().getUsername(), "Editing lab procedure with id " + lp.getId() );
+            }
+            else {
+                LoggerUtil.log( TransactionType.CREATE_LAB_PROCEDURE, LoggerUtil.currentUser(),
+                        getPatient().getUsername(), "Creating lab procedure with id " + lp.getId() );
+            }
+            lp.save();
+        } );
+
+        // Remove lab procedures no longer included
         // if ( !savedLPIds.isEmpty() ) {
         // savedLPIds.forEach( lpId -> {
-        // final boolean lpIsMissing = currentIds.contains( lpId );
-        // if ( lpIsMissing ) {
+        // final boolean isLpMissing = currentLPIds.contains( lpId );
+        // if ( isLpMissing ) {
         // LoggerUtil.log( TransactionType.Delete_LAB_PROCEDURE,
         // LoggerUtil.currentUser(),
         // getPatient().getUsername(), "Deleting lab procedure with id " + lpId
@@ -770,6 +801,8 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
         // }
         // } );
         // }
+
+        /// END LAB PROCEDURES ///
 
         try {
             super.save();
@@ -931,8 +964,8 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
      */
     public static void deleteAll () {
         DomainObject.deleteAll( Diagnosis.class );
-        // DomainObject.deleteAll( LabProcedure.class );
         DomainObject.deleteAll( OfficeVisit.class );
+        DomainObject.deleteAll( LabProcedure.class );
     }
 
 }

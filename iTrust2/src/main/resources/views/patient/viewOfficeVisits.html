@@ -144,6 +144,7 @@
 
 									$scope.populateVisit = function() {
 										$scope.prescriptions = [];
+										$scope.labProcedures = [];
 										$scope.diagnoses = [];
 										$scope.immunizations = [];
 										$scope.showBHM = true;
@@ -211,6 +212,22 @@
 																startDate : myStart,
 																endDate : myEnd,
 																renewals : $scope.visits[i].prescriptions[j].renewals
+															});
+												}
+												
+												// lab procedures
+												var lpLength = $scope.visits[i].labProcedures.length;
+												if (lpLength > 0) {
+													$scope.showLabProcedures = true;
+												}
+												for (var j = 0; j < lpLength; j++) {
+													$scope.labProcedures
+															.push({
+																code : $scope.visits[i].labProcedures[j].code.code,
+																priority : $scope.visits[i].labProcedures[j].priority,
+																comments : $scope.visits[i].labProcedures[j].comments,
+																labtech : $scope.visits[i].labProcedures[j].labtech.username,
+																//hcp : $scope.visits[i].labProcedures[j].hcp.username
 															});
 												}
 
@@ -490,6 +507,41 @@
 																<div class="col-md-2">{{p.startDate}}</div>
 																<div class="col-md-2">{{p.endDate}}</div>
 																<div class="col-md-2">{{p.renewals}}</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												
+												<!-- LabProcedure Panel -->
+												<div class="col-md-4">
+													<div class="panel panel-info">
+														<div class="panel-heading">
+															<h4>Lab Procedures</h4>
+														</div>
+														<div class="panel-body" ng-show="showLabProcedures">
+															<div class="row">
+																<div class="col-md-3">
+																	<b>Code</b>
+																</div>
+																<div class="col-md-3">
+																	<b>Comments</b>
+																</div>
+																<div class="col-md-2">
+																	<b>Priority</b>
+																</div>
+																<div class="col-md-2">
+																	<b>labTech</b>
+																</div>
+															<!--  	<div class="col-md-2">
+																	<b>HCP</b>
+																</div>-->
+															</div>
+															<div class="row" ng-repeat="lp in labProcedures">
+																<div class="col-md-3">{{lp.code}}</div>
+																<div class="col-md-3">{{lp.comments}}</div>
+																<div class="col-md-2">{{lp.priority}}</div>
+																<div class="col-md-2">{{lp.labtech}}</div>
+															<!--  	<div class="col-md-2">{{lp.hcp}}</div> -->
 															</div>
 														</div>
 													</div>

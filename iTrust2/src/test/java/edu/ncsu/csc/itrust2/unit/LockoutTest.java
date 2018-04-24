@@ -53,6 +53,8 @@ public class LockoutTest {
         attempt.setUser( user );
         attempt.save();
         assertEquals( 2, LoginAttempt.getUserFailures( user ) );
+        // only 2 attempts so the user shouldn't be locked out
+        assertTrue( LoginLockout.getRecentUserLockouts( user ) == 0 );
         LoginAttempt.clearUser( user );
 
         assertNull( attempt.getIp() );
@@ -147,9 +149,14 @@ public class LockoutTest {
         ban.setTime( d );
         ban.save();
         assertTrue( LoginBan.isIPBanned( ip ) );
+        // lockout is not recent so there should be zero recent lockouts
+        assertTrue( LoginLockout.getRecentIPLockouts( ip ) == 0 );
         LoginBan.clearIP( ip );
         assertFalse( LoginBan.isIPBanned( ip ) );
 
         assertNull( ban.getUser() );
+
+        lockout.setId( (long) 1 );
+
     }
 }

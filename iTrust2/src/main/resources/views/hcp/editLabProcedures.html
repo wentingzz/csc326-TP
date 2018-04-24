@@ -1,0 +1,332 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="layout :: head(title=~{::title},links=~{})">
+<title>Edit Lab Procedures</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+</head>
+
+<body th:include="layout :: body" th:with="content=~{::content}">
+	<div th:fragment="content">
+
+
+		<script th:inline="javascript">
+      /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+      /*<![CDATA[*/
+      var app = angular.module("labProceduresApp", []);
+      app.controller('labProceduresCtrl', function ($scope, $http) {
+        $scope.labProcedures = [];
+        $scope.visit = "";
+        $scope.loadTable = function () {
+          $http.get("/iTrust2/api/v1/labProcedures").then(
+            function (response) {
+              $scope.labProcedures = response.data;
+              $scope.message = "";
+            }, function (rejection) {
+              $scope.labProcedures = [];
+              $scope.message = "Could not display lab procedures";
+            });
+        }
+
+        var checkValidLabProcedure = function(lp) {
+			var err = [];
+			if (!lp.code) {
+				err
+						.push("Lab procedure must be associated with a code");
+			}
+			if (!lp.priority) {
+				err
+				.push("Lab procedure must have a priority");
+			}
+	/**		if ($scope.labProcedure.comments.length > 499) {
+				err
+						.push("Lab procedure comment can be upto 500 characters");
+			} **/
+		/**	if (!lp.labtech) {
+				err
+						.push("Lab procedure must have an assigned lab tech");
+			}**/
+
+			return err.join(". ");
+		}
+
+        $scope.addLabProcedure = function () {
+        	  $scope.labProcedure.patient = $scope.visit.patient.username;
+        	  var err = checkValidLabProcedure($scope.labProcedure);
+          if (err) {
+            $scope.errorAdding = err;
+            return;
+          }
+          $scope.labProcedure.code = JSON.parse($scope.labProcedure.code);
+          $http.post("/iTrust2/api/v1/labProcedures/" + $scope.visit.id, $scope.labProcedure).then(
+            function (response) {
+              $scope.loadTable();
+              $scope.labProcedure.code = "";
+			  $scope.labProcedure.priority = "";
+			  $scope.labProcedure.comments = "";
+			  $scope.labProcedure.labtech = "";
+			  $scope.labProcedure.patient = "";
+              $scope.errorAdding = "";
+            }, function (rejection) {
+              $scope.errorAdding = "Could not add lab procedure";
+            });
+
+        }
+        
+        $http
+		.get("/iTrust2/api/v1/labtechs/")
+		.then(
+				function(response) {
+					$scope.labtechs = response.data;
+				});
+        $http.get("/iTrust2/api/v1/officevisits").then(
+        		function(response) {
+				$scope.visits = response.data;
+				var visitsLength = $scope.visits.length;
+				$scope.message = "Could not load office visits";
+			}, function(rejection) {
+				$scope.message = "Office visit is loaded successfully";
+			}
+        );
+        
+        $scope.deleteLabProcedure = function (labProcedure) {
+          var msg = "Are you sure you want to remove the labProcedure of " + labProcedure.code.code + " for " + labProcedure.patient.username + "?";
+          if (confirm(msg)) {
+	          $http.delete('/iTrust2/api/v1/labprocedures/' + labProcedure.id + '/').then(
+	            function (response) {
+	              $scope.loadTable();
+	              $scope.message = "";
+	            }, function (rejection) {
+	              $scope.message = "Could not remove lab procedure";
+	            });
+          };
+        }
+
+        $http.get("/iTrust2/api/v1/patients").then(
+          function (response) {
+            $scope.patients = response.data;
+          });
+
+        $http.get("/iTrust2/api/v1/labprocedurecodes").then(
+          function (response) {
+            $scope.labprocedurecodes = response.data;
+            $scope.message = "";
+          }, function (rejection) {
+            $scope.labprocedurecodes = [];
+            $scope.message = "Could not display lab procedure codes";
+          });
+
+        // gets the template to ng-include for a table row / item
+        $scope.selectedLabProcedure = {};
+
+        $scope.getTemplate = function (labProcedure) {
+          if (labProcedure.id === $scope.selectedLabProcedure.id) return 'edit';
+          else return 'view';
+        };
+
+        $scope.editLabProcedure = function (labProcedure) {
+  //      	 $scope.labProcedure.code = JSON.parse(labProcedure.code);
+          $scope.selectedLabProcedure = angular.copy(labProcedure);
+          $scope.selectedLabProcedure.code = $scope.selectedLabProcedure.code.code;
+          $scope.selectedLabProcedure.patient = labProcedure.patient.username;
+          $scope.selectedLabProcedure.labtech = labProcedure.labtech.username;
+          $scope.selectedLabProcedure.priority = labProcedure.priority;
+          $scope.selectedLabProcedure.comments = labProcedure.comments;
+          //$scope.selectedLabProcedure.priority = labProcedures.priority
+          //$scope.selectedLabProcedure.comments = 
+          //$scope.selectedLabProcedure.labTech =
+        };
+        $scope.saveLabProcedure = function () {
+          var err = checkValidLabProcedure($scope.selectedLabProcedure );
+          if (err) {
+            $scope.errorAdding = err;
+          } else {
+        	  
+            $http.put("/iTrust2/api/v1/labProcedures", $scope.selectedLabProcedure).then(
+              function (response) {
+            	  $scope.selectedLabProcedure.code = JSON.parse($scope.selectedLabProcedure.code);
+                $scope.loadTable();
+              //  $scope.resetSelected();
+              }, function (rejection) {
+                $scope.errorAdding = "Failed to edit lab procedure";
+              });
+          }
+        };
+
+        $scope.resetSelected = function () {
+          $scope.selectedLabProcedure = {};
+        };
+
+
+        $scope.loadTable();
+      });
+			/*]]>*/
+    </script>
+
+
+
+		<div ng-app="labProceduresApp" ng-controller="labProceduresCtrl">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<h3>HCP Manage Lab Procedures</h3>
+							</div>
+							<div class="panel-body">
+								<table class="table table-bordered">
+									<caption>Existing Lab Procedures:</caption>
+									<thead>
+										<tr>
+											<th>Code</th>
+											<th>Priority</th>
+											<th>Comments</th>
+											<th>LabTech</th>
+											<th>Patient</th>
+											<th>Manage</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr name="labProceduresTableRow"
+											ng-repeat="lp in labProcedures | orderBy: 'code'"
+											ng-include="getTemplate(lp)" labProceduresId={{lp.id}}>
+										</tr>
+									</tbody>
+								</table>
+
+								<!-- table in view mode -->
+								<script type="text/ng-template" id="view">
+                  <td name="codeCell">{{lp.code.code}}</td>
+                  <td name="priorityCell">{{lp.priority}}</td>
+                  <td name="commentCell">{{lp.comments}}</td>
+                  <td name="labtechCell">{{lp.labtech.username}}</td>
+                  <td name="patientCell">{{lp.patient.username}}</td>
+                  <td>
+                    <div class="row text-center">
+                      <div class="col-md-6">
+                          <input type="button" value="Delete" class="btn btn-danger" name="deleteLabProcedure" ng-click="deleteLabProcedure(lp)" />                          
+                      </div>
+                    </div>                  
+                  </td>
+                </script>
+
+
+
+
+								<br>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="panel panel-default">
+											<div class="panel-heading ">Add a Lab Procedure</div>
+											<div class="panel-body">
+												<form class="form-horizontal" role="form"
+													name="addLabProcedureForm"
+													ng-submit="addLabProcedure(addLabProcedureForm.$valid)">
+													<div class="row">
+
+														<!-- patient -->
+														<div class="col-md-5 radio-box">
+															<div class="form-check">
+																<label>Office Visit:</label>
+																<ul
+																	style="max-height: 15%; overflow: auto; list-style: none;">
+																	<li ng-repeat="visit in visits"><label>
+																			<input type="radio"
+																			ng-model="$parent.visit" name="name"
+																			ng-value="{{visit}}" required="true" />&nbsp;
+																			{{visit.patient.username}}'s {{visit.type}} on {{visit.date.month + 1}}/{{visit.date.dayOfMonth}}/{{visit.date.year}} at {{visit.date.hourOfDay}}:{{visit.date.minute}}
+																	</label></li>
+																</ul>
+															</div>
+														</div>
+
+														<!-- code -->
+														<div class="col-md-5 radio-box">
+															<div class="form-check">
+																<label>Code:</label>
+																<ul style="list-style: none;">
+																	<li ng-repeat="d in labprocedurecodes"><label>
+																			<input type="radio"
+																			ng-model="$parent.labProcedure.code" name="code"
+																			value="{{d}}" required="true" /> {{d.code}}
+																	</label></li>
+																</ul>
+															</div>
+														</div>
+
+														<!-- priority -->
+														<div class="col-md-2">
+															<label>Priority:</label>
+															<div class="row">
+																<ul style="list-style: none">
+																	<li><label> <input type="radio"
+																			ng-model="labProcedure.priority" ng-value="1"
+																			name="ans" required /> 1 (Highest)
+																	</label></li>
+																	<li><label> <input type="radio"
+																			ng-model="labProcedure.priority" ng-value="2"
+																			name="ans" required /> 2
+																	</label></li>
+																	<li><label> <input type="radio"
+																			ng-model="labProcedure.priority" ng-value="3"
+																			name="ans" required /> 3
+																	</label></li>
+																	<li><label> <input type="radio"
+																			ng-model="labProcedure.priority" ng-value="4"
+																			name="ans" required /> 4 (Lowest)
+																	</label></li>
+																</ul>
+															</div>
+														</div>
+														<!-- lab tech -->
+													</div>
+													<div class="col-md-5 radio-box">
+														<div class="form-check">
+															<label>LabTech:</label>
+															<ul
+																style="max-height: 15%; overflow: auto; list-style: none;">
+																<li ng-repeat="lp in labtechs"><label> <input
+																		type="radio" ng-model="$parent.labProcedure.labtech"
+																		name="labtech" value="{{lp.username}}" required="true" />&nbsp;
+																		{{lp.username}}
+																</label></li>
+															</ul>
+														</div>
+													</div>
+
+													<!-- comments -->
+													<div class="col-md-5">
+														<label>Comments:</label>
+														<div class="row">
+															<div class="col-md-4">
+																<input type="text" class="form-control" name="comment"
+																	ng-model="labProcedure.comments" required />
+															</div>
+														</div>
+													</div>
+											</div>
+										</div>
+										<br> <br>
+										<div class="row">
+											<div class="col-md-12 text-center">
+												<button type="submit" class="btn btn-success" name="submit">Add
+													Lab Procedure</button>
+											</div>
+										</div>
+										</form>
+										<div>
+											<p class="text-danger" ng-model="errorAdding" id="errP">{{errorAdding}}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+</body>
+
+</html>

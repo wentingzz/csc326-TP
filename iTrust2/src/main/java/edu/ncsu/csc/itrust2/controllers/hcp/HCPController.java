@@ -50,7 +50,18 @@ public class HCPController {
     public String editPrescriptions () {
         return "/hcp/editPrescriptions";
     }
-    
+
+    /**
+     * Returns the page allowing HCPs to edit lab procedure
+     *
+     * @return The page to display
+     */
+    @GetMapping ( "/hcp/editLabProcedures" )
+    @PreAuthorize ( "hasRole('ROLE_HCP')" )
+    public String editLabProcedures () {
+        return "/hcp/editLabProcedures";
+    }
+
     /**
      * Returns the page allowing HCPs to edit immunizations
      *
@@ -64,7 +75,7 @@ public class HCPController {
 
     /**
      * Allows the HCP to view and add personal representatives
-     * 
+     *
      * @return The page to display
      */
     @GetMapping ( "/hcp/viewPersonalRepresentatives" )
