@@ -80,7 +80,25 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     private String           status;
 
     /**
-     * constructor
+     * a constructor for a LabProcedureCode that contains information about how
+     * a procedure is preformed during an appointment
+     *
+     * @param priority
+     *            the priority of the procedure, an integer
+     * @param code
+     *            the LabProcedureCode that accompanies the procedure
+     * @param comments
+     *            relevant comments regarding the procedure, may be blank
+     * @param labtech
+     *            the Labtech in charge of the procedure
+     * @param officeVisit
+     *            the OfficeVisit during which the procedure was performed
+     * @param patient
+     *            the Patient who underwent the Procedure
+     * @param hcp
+     *            the HCP that assigned the Procedure
+     * @param status
+     *            whether the procedure is assigned, in progress, or completed
      */
     public LabProcedure ( final int priority, final LabProcedureCode code, final String comments, final User labtech,
             final OfficeVisit officeVisit, final User patient, final User hcp, final String status ) {
@@ -100,6 +118,12 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     public LabProcedure () {
     }
 
+    /**
+     * another constructor makes a LabProcedure out of a lab procedure form
+     *
+     * @param lpf
+     *            the form on which to create the procedure
+     */
     public LabProcedure ( final LabProcedureForm lpf ) {
 
         // final LabProcedureCode lpc = lp
@@ -117,7 +141,8 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     /**
      * sets the patient associated with this lab procedure
      *
-     * @param patient
+     * @param user
+     *            the user that the patient is created from
      */
     public void setPatient ( final User user ) {
         this.patient = user;
@@ -126,7 +151,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     /**
      * returns the priority of the procedure
      *
-     * @return
+     * @return priority an int, the priority of the procedure
      */
     public int getPriority () {
         return priority;
@@ -137,6 +162,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
      * integer from 1-4
      *
      * @param priority
+     *            the priority to set the procedure as
      */
     public void setPriority ( final int priority ) {
         if ( ( priority < 1 ) || ( priority > 4 ) ) {
@@ -148,7 +174,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     /**
      * returns the code associated with the procedure
      *
-     * @return
+     * @return code the LabProcedureCode associated with the Lab Procedure
      */
     public LabProcedureCode getCode () {
         return code;
@@ -158,6 +184,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
      * sets the lab procedure code
      *
      * @param code
+     *            the code to set the procedure as
      */
     public void setCode ( final LabProcedureCode code ) {
         this.code = code;
@@ -166,7 +193,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     /**
      * returns the lab procedure's comments
      *
-     * @return
+     * @return comments the comments associated with the procedure
      */
     public String getComments () {
         return comments;
@@ -176,6 +203,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
      * sets the lab procedure's comments
      *
      * @param comments
+     *            the comments associated with the procedure
      */
     public void setComments ( final String comments ) {
         if ( comments != null && !comments.equals( "" ) ) {
@@ -186,7 +214,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     /**
      * returns the lab tech associated with the lab procedure
      *
-     * @return
+     * @return labtech the labtech that performs the procedure
      */
     public User getLabtech () {
         return labtech;
@@ -196,6 +224,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
      * sets the lab tech associated with the lab procedure
      *
      * @param labtech
+     *            the labtech to be associated with the procedure
      */
     public void setLabtech ( final User labtech ) {
         this.labtech = labtech;
@@ -222,7 +251,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     /**
      * gets the Patient associated with the lab procedure
      *
-     * @return
+     * @return patient the patient associated with the procedure
      */
     public User getPatient () {
         return patient;
@@ -249,7 +278,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
     /**
      * gets the status of the lab procedure
      *
-     * @return
+     * @return status the status associated with the procedure
      */
     public String getStatus () {
         return status;
@@ -259,6 +288,7 @@ public class LabProcedure extends DomainObject<LabProcedure> {
      * sets the status of the lab procedure
      *
      * @param status
+     *            the status associated with the procedure
      */
     public void setStatus ( final String status ) {
         this.status = status;
@@ -353,6 +383,14 @@ public class LabProcedure extends DomainObject<LabProcedure> {
         return getWhere( createCriterionAsList( "patient", User.getByNameAndRole( patient, Role.ROLE_PATIENT ) ) );
     }
 
+    /**
+     * returns all lab procedures associated with an office visit
+     * 
+     * @param id
+     *            the id of the office visit
+     * @return getByOfficeVisit a list of procedures associated with the office
+     *         visit
+     */
     public static List<LabProcedure> getByOfficeVisit ( final Long id ) {
         return getWhere( createCriterionAsList( "labProcedure_id", id ) );
     }
