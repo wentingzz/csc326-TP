@@ -1,4 +1,4 @@
-#Author Hannah and Abeer
+#Author Hannah and Abeer.
 
 Feature: Manage Immunizations
 	As an admin
